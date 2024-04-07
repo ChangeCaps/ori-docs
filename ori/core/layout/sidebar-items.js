@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FILL"],"enum":["Align","Axis","Justify"],"struct":["Affine","Alignment","JustifyIterator","Matrix","Padding","Point","Rect","Size","Space","Vector"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":["format_text","hstack","hwrap","vstack","vwrap","zstack"],"mod":["canvas","clipboard","command","debug","delegate","event","image","launcher","layout","rebuild","shell","style","text","transition","ui","view","views","window"]};

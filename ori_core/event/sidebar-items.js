@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Code","PointerButton","RequestFocus","SwitchFocus"],"struct":["AnimationFrame","CloseRequested","Event","KeyPressed","KeyReleased","Modifiers","Pointer","PointerClicked","PointerId","PointerLeft","PointerMoved","PointerPressed","PointerReleased","PointerScrolled","Quit"]};

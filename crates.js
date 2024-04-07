@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["ori","ori_core","ori_font_awesome","ori_glow","ori_macro","ori_wgpu","ori_winit"];
