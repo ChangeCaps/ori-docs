@@ -82,7 +82,7 @@
     </span><span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
     </span>Glow(ori_glow::GlowError),
     <span class="doccomment">/// A glutin render error.
-    </span><span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
+    </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
     </span>Glutin(ori_glow::GlutinError),
     <span class="doccomment">/// A wgpu render error.
     </span><span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
@@ -100,7 +100,7 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
+<span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
 </span><span class="kw">impl </span>From&lt;ori_glow::GlutinError&gt; <span class="kw">for </span>Error {
     <span class="kw">fn </span>from(err: ori_glow::GlutinError) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Glutin(err)
@@ -131,7 +131,7 @@
         <span class="kw">match </span><span class="self">self </span>{
             <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
             </span>Error::Glow(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
-            <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
+            <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
             </span>Error::Glutin(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
             <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
             </span>Error::Wgpu(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),

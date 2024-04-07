@@ -41,12 +41,12 @@
 </span><span class="kw">mod </span>mesh;
 <span class="kw">mod </span>render;
 
-<span class="attr">#[cfg(feature = <span class="string">"glutin"</span>)]
+<span class="attr">#[cfg(all(feature = <span class="string">"glutin"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
 </span><span class="kw">mod </span>glutin;
 
 <span class="kw">pub use </span>render::<span class="kw-2">*</span>;
 
-<span class="attr">#[cfg(feature = <span class="string">"glutin"</span>)]
+<span class="attr">#[cfg(all(feature = <span class="string">"glutin"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
 </span><span class="kw">pub use </span>glutin::{GlutinContext, GlutinError};
 
 <span class="kw">use </span>std::fmt::Display;

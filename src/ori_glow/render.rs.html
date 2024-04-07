@@ -126,7 +126,31 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::{ffi::c_void, fmt::Debug};
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 
 <span class="kw">use </span>glow::HasContext;
 
@@ -148,12 +172,36 @@
 
 <span class="kw">impl </span>GlowRender {
     <span class="doccomment">/// Create a new renderer.
+    </span><span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
     </span><span class="kw">pub fn </span>new(
-        loader: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;</span>str) -&gt; <span class="kw-2">*const </span>c_void,
+        loader: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;</span>str) -&gt; <span class="kw-2">*const </span>std::ffi::c_void,
         width: u32,
         height: u32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, GlowError&gt; {
         <span class="kw">let </span>gl = <span class="kw">unsafe </span>{ glow::Context::from_loader_function(loader) };
+
+        <span class="kw">let </span>mesh = <span class="kw">unsafe </span>{ MeshRender::new(<span class="kw-2">&amp;</span>gl)<span class="question-mark">? </span>};
+
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            gl,
+            width,
+            height,
+            mesh,
+        })
+    }
+
+    <span class="doccomment">/// Create a new renderer for WebGL.
+    </span><span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
+    </span><span class="kw">pub fn </span>new_webgl(
+        canvas: web_sys::HtmlCanvasElement,
+        width: u32,
+        height: u32,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, GlowError&gt; {
+        <span class="kw">use </span>web_sys::wasm_bindgen::JsCast;
+
+        <span class="kw">let </span>webgl = canvas.get_context(<span class="string">"webgl2"</span>).unwrap().unwrap();
+        <span class="kw">let </span>context = webgl.dyn_into::&lt;web_sys::WebGlRenderingContext&gt;().unwrap();
+        <span class="kw">let </span>gl = glow::Context::from_webgl1_context(context);
 
         <span class="kw">let </span>mesh = <span class="kw">unsafe </span>{ MeshRender::new(<span class="kw-2">&amp;</span>gl)<span class="question-mark">? </span>};
 
