@@ -150,6 +150,8 @@
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 
 <span class="kw">use </span>glow::HasContext;
@@ -232,6 +234,7 @@
         scene: <span class="kw-2">&amp;</span>Scene,
         clear: Color,
         logical_size: Size,
+        scale_factor: f32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), GlowError&gt; {
         <span class="kw">let </span>batches = scene.batches();
 
@@ -258,7 +261,7 @@
         </span><span class="self">self</span>.gl.enable(glow::MULTISAMPLE);
 
         <span class="kw">for </span>batch <span class="kw">in </span>batches.iter() {
-            <span class="self">self</span>.mesh.render_batch(<span class="kw-2">&amp;</span><span class="self">self</span>.gl, batch, logical_size)<span class="question-mark">?</span>;
+            (<span class="self">self</span>.mesh).render_batch(<span class="kw-2">&amp;</span><span class="self">self</span>.gl, batch, logical_size, scale_factor)<span class="question-mark">?</span>;
         }
 
         <span class="self">self</span>.gl.disable(glow::SCISSOR_TEST);
@@ -283,10 +286,11 @@
         clear: Color,
         logical_size: Size,
         physical_size: Size,
+        scale_factor: f32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), GlowError&gt; {
         <span class="kw">unsafe </span>{
             <span class="self">self</span>.resize(physical_size);
-            <span class="self">self</span>.render(scene, clear, logical_size)<span class="question-mark">?</span>;
+            <span class="self">self</span>.render(scene, clear, logical_size, scale_factor)<span class="question-mark">?</span>;
         };
 
         <span class="prelude-val">Ok</span>(())

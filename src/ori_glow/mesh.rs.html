@@ -293,6 +293,13 @@
 <a href="#291" id="291">291</a>
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, mem};
 
 <span class="kw">use </span>glow::HasContext;
@@ -515,7 +522,8 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         gl: <span class="kw-2">&amp;</span>glow::Context,
         batch: <span class="kw-2">&amp;</span>Batch,
-        resolution: Size,
+        logical_size: Size,
+        scale_factor: f32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), GlowError&gt; {
         <span class="kw">if </span><span class="self">self</span>.batches.len() &lt;= batch.index {
             <span class="self">self</span>.batches.push(PreparedBatch::new(gl)<span class="question-mark">?</span>);
@@ -528,7 +536,7 @@
         gl.use_program(<span class="prelude-val">Some</span>(<span class="self">self</span>.program));
 
         <span class="kw">let </span>location = gl.get_uniform_location(<span class="self">self</span>.program, <span class="string">"resolution"</span>);
-        gl.uniform_2_f32(location.as_ref(), resolution.width, resolution.height);
+        gl.uniform_2_f32(location.as_ref(), logical_size.width, logical_size.height);
 
         <span class="kw">let </span>location = gl.get_uniform_location(<span class="self">self</span>.program, <span class="string">"image"</span>);
         gl.uniform_1_i32(location.as_ref(), <span class="number">0</span>);
@@ -553,12 +561,18 @@
         );
 
         <span class="comment">// opengl is bad... i don't like having to do this...
-        </span><span class="kw">let </span>scissor_y = resolution.height - batch.clip.max.y;
+        </span><span class="kw">let </span>scissor_y = logical_size.height - batch.clip.max.y;
+
+        <span class="kw">let </span>clip_x = batch.clip.min.x * scale_factor;
+        <span class="kw">let </span>clip_y = scissor_y * scale_factor;
+        <span class="kw">let </span>clip_width = batch.clip.width() * scale_factor;
+        <span class="kw">let </span>clip_height = batch.clip.height() * scale_factor;
+
         gl.scissor(
-            batch.clip.min.x.round() <span class="kw">as </span>i32,
-            scissor_y.round() <span class="kw">as </span>i32,
-            batch.clip.width().round() <span class="kw">as </span>i32,
-            batch.clip.height().round() <span class="kw">as </span>i32,
+            clip_x.round() <span class="kw">as </span>i32,
+            clip_y.round() <span class="kw">as </span>i32,
+            clip_width.round() <span class="kw">as </span>i32,
+            clip_height.round() <span class="kw">as </span>i32,
         );
 
         <span class="kw">let </span>index_count = batch.mesh.indices.len() <span class="kw">as </span>i32;

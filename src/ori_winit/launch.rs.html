@@ -486,6 +486,7 @@
 <a href="#484" id="484">484</a>
 <a href="#485" id="485">485</a>
 <a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, mem};
 
 <span class="kw">use </span>ori_core::{
@@ -808,26 +809,27 @@
 
         <span class="kw">let </span>logical = window.window().size();
         <span class="kw">let </span>physical = window.window().physical_size();
+        <span class="kw">let </span>scale_factor = window.window().scale_factor();
         <span class="kw">let </span>scene = window.scene();
 
         <span class="comment">/* glow */
         </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>((render, context)) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
             context.make_current()<span class="question-mark">?</span>;
-            render.render_scene(scene, clear_color, logical, physical)<span class="question-mark">?</span>;
+            render.render_scene(scene, clear_color, logical, physical, scale_factor)<span class="question-mark">?</span>;
             context.swap_buffers()<span class="question-mark">?</span>;
         }
 
         <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(render) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            render.render_scene(scene, clear_color, logical, physical)<span class="question-mark">?</span>;
+            render.render_scene(scene, clear_color, logical, physical, scale_factor)<span class="question-mark">?</span>;
         }
 
         <span class="comment">/* wgpu */
         </span><span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(render) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">let </span>cx = <span class="self">self</span>.ui.contexts.get::&lt;ori_wgpu::WgpuContext&gt;().unwrap();
-            render.render_scene(cx, scene, clear_color, logical, physical);
+            render.render_scene(cx, scene, clear_color, logical, physical, scale_factor);
         }
 
         <span class="prelude-val">Ok</span>(())

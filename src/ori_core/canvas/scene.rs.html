@@ -153,6 +153,9 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{cmp::Ordering, mem};
 
 <span class="kw">use crate</span>::{
@@ -170,6 +173,9 @@
     <span class="doccomment">/// The items to draw.
     </span><span class="kw">pub </span>mesh: Mesh,
     <span class="doccomment">/// The clipping rectangle of the batch.
+    ///
+    /// Note that the clipping rectangle is in logical coordinates, and must be transformed to
+    /// physical coordinates before being used by the rendering backend.
     </span><span class="kw">pub </span>clip: Rect,
 }
 

@@ -268,6 +268,11 @@
 <a href="#266" id="266">266</a>
 <a href="#267" id="267">267</a>
 <a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{mem, sync::Arc};
 
 <span class="kw">use </span>ori_core::{
@@ -513,16 +518,21 @@
         (context.queue).write_buffer(<span class="kw-2">&amp;</span>prepared.index_buffer, <span class="number">0</span>, index_bytes);
     }
 
-    <span class="kw">pub fn </span>render_batch&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, pass: <span class="kw-2">&amp;mut </span>RenderPass&lt;<span class="lifetime">'a</span>&gt;, index: usize) {
+    <span class="kw">pub fn </span>render_batch&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, pass: <span class="kw-2">&amp;mut </span>RenderPass&lt;<span class="lifetime">'a</span>&gt;, index: usize, scale_factor: f32) {
         <span class="kw">let </span>batch = <span class="kw-2">&amp;</span><span class="self">self</span>.batches[index];
 
         <span class="kw">let </span>image_bind_group = <span class="kw-2">&amp;</span>batch.image.as_ref().unwrap().bind_group;
 
+        <span class="kw">let </span>clip_x = batch.clip.min.x * scale_factor;
+        <span class="kw">let </span>clip_y = batch.clip.min.y * scale_factor;
+        <span class="kw">let </span>clip_width = batch.clip.width() * scale_factor;
+        <span class="kw">let </span>clip_height = batch.clip.height() * scale_factor;
+
         pass.set_scissor_rect(
-            batch.clip.min.x <span class="kw">as </span>u32,
-            batch.clip.min.y <span class="kw">as </span>u32,
-            batch.clip.width() <span class="kw">as </span>u32,
-            batch.clip.height() <span class="kw">as </span>u32,
+            clip_x.round() <span class="kw">as </span>u32,
+            clip_y.round() <span class="kw">as </span>u32,
+            clip_width.round() <span class="kw">as </span>u32,
+            clip_height.round() <span class="kw">as </span>u32,
         );
 
         pass.set_pipeline(<span class="kw-2">&amp;</span><span class="self">self</span>.pipeline);
