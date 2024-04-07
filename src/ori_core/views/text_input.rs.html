@@ -639,10 +639,14 @@
 <a href="#637" id="637">637</a>
 <a href="#638" id="638">638</a>
 <a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
-<span class="kw">use </span>ori_macro::Build;
+<span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Quad},
@@ -668,7 +672,8 @@
 }
 
 <span class="doccomment">/// A text input.
-</span><span class="attr">#[derive(Build)]
+</span><span class="attr">#[example(name = <span class="string">"text_input"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Build)]
 </span><span class="kw">pub struct </span>TextInput&lt;T&gt; {
     <span class="doccomment">/// The text.
     </span><span class="attr">#[build(ignore)]
@@ -1072,6 +1077,7 @@
             <span class="kw">if </span>e.is(Code::X) &amp;&amp; e.modifiers.ctrl {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                     cx.clipboard().set(selection);
+                    cx.request_layout();
                 }
 
                 state.editor.delete_selection();
@@ -1081,6 +1087,8 @@
             <span class="kw">if </span>e.is(Code::V) &amp;&amp; e.modifiers.ctrl {
                 <span class="kw">let </span>text = cx.clipboard().get();
                 state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
+
+                cx.request_layout();
                 changed = <span class="bool-val">true</span>;
             }
 

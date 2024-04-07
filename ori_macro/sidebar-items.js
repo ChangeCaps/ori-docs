@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["main"],"derive":["Build","Rebuild"],"macro":["include_font"]};
+window.SIDEBAR_ITEMS = {"attr":["example","main"],"derive":["Build","Rebuild"],"macro":["include_font"]};

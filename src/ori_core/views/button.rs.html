@@ -257,7 +257,8 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::Build;
+<a href="#258" id="258">258</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color},
@@ -268,6 +269,11 @@
     transition::Transition,
     view::{BuildCx, DrawCx, EventCx, LayoutCx, Pod, RebuildCx, State, View},
 };
+
+<span class="doccomment">/// Create a new [`Button`].
+</span><span class="kw">pub fn </span>button&lt;V&gt;(content: V) -&gt; Button&lt;V&gt; {
+    Button::new(content)
+}
 
 <span class="doccomment">/// The style of a button.
 </span><span class="attr">#[derive(Clone, Debug)]
@@ -302,13 +308,9 @@
     }
 }
 
-<span class="doccomment">/// Create a new [`Button`].
-</span><span class="kw">pub fn </span>button&lt;V&gt;(content: V) -&gt; Button&lt;V&gt; {
-    Button::new(content)
-}
-
 <span class="doccomment">/// A button.
-</span><span class="attr">#[derive(Build, Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"button"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Build, Rebuild)]
 </span><span class="kw">pub struct </span>Button&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="attr">#[build(ignore)]

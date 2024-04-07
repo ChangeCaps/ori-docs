@@ -285,9 +285,10 @@
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Range;
 
-<span class="kw">use </span>ori_macro::Build;
+<span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
@@ -340,7 +341,8 @@
 <span class="doccomment">/// A view that lays out it's content in a line wrapping if it doesn't fit.
 ///
 /// Note that unlike [`Stack`](super::Stack) this view does not care about flex.
-</span><span class="attr">#[derive(Build, Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"wrap"</span>, width = <span class="number">400</span>, height = <span class="number">600</span>)]
+#[derive(Build, Rebuild)]
 </span><span class="kw">pub struct </span>Wrap&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="attr">#[build(ignore)]

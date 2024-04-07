@@ -270,7 +270,12 @@
 <a href="#268" id="268">268</a>
 <a href="#269" id="269">269</a>
 <a href="#270" id="270">270</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
+
+<span class="kw">use crate</span>::{
     canvas::{BorderRadius, Canvas, Color},
     event::{
         AnimationFrame, Event, PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
@@ -293,7 +298,8 @@
 }
 
 <span class="doccomment">/// A scrollable view.
-</span><span class="attr">#[derive(Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"scroll"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Rebuild)]
 </span><span class="kw">pub struct </span>Scroll&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,

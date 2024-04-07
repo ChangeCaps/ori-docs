@@ -95,7 +95,12 @@
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
 <a href="#95" id="95">95</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
+
+<span class="kw">use crate</span>::{
     canvas::Canvas,
     event::Event,
     layout::{Padding, Size, Space},
@@ -129,7 +134,8 @@
 }
 
 <span class="doccomment">/// A view that adds padding to its content.
-</span><span class="attr">#[derive(Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"pad"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Rebuild)]
 </span><span class="kw">pub struct </span>Pad&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,

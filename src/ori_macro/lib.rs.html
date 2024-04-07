@@ -89,12 +89,26 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Macros for the Ori crate.
 
 </span><span class="attr">#![warn(missing_docs)]
 
 </span><span class="kw">mod </span>build;
 <span class="kw">mod </span>entry;
+<span class="kw">mod </span>example;
 <span class="kw">mod </span>font;
 <span class="kw">mod </span>rebuild;
 
@@ -165,6 +179,18 @@
 #[proc_macro_derive(Build, attributes(build))]
 </span><span class="kw">pub fn </span>derive_build(input: proc_macro::TokenStream) -&gt; manyhow::Result&lt;proc_macro::TokenStream&gt; {
     build::derive_build(input)
+}
+
+<span class="doccomment">/// Embed an example in the documentation.
+///
+/// This is an internal macro used by the `ori` crate.
+</span><span class="attr">#[manyhow::manyhow]
+#[proc_macro_attribute]
+</span><span class="kw">pub fn </span>example(
+    args: proc_macro::TokenStream,
+    input: proc_macro::TokenStream,
+) -&gt; manyhow::Result&lt;proc_macro::TokenStream&gt; {
+    example::example(args, input)
 }
 
 <span class="doccomment">/// A macro to generate boilerplate for the `main` function.

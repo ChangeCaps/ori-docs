@@ -241,9 +241,10 @@
 <a href="#239" id="239">239</a>
 <a href="#240" id="240">240</a>
 <a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
-<span class="kw">use </span>ori_macro::Build;
+<span class="kw">use </span>ori_macro::{example, Build};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
@@ -261,6 +262,21 @@
 <span class="kw">use </span>smol_str;
 
 <span class="kw">pub use </span><span class="kw">crate</span>::format_text <span class="kw">as </span>text;
+
+<span class="doccomment">/// Create a formatted [`Text`].
+///
+/// This macro is slightly more efficient than using [`format!`] and [`Text::new`].
+</span><span class="attr">#[macro_export]
+</span><span class="macro">macro_rules! </span>format_text {
+    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; {
+        <span class="macro-nonterminal">$crate::views::Text::from</span>(<span class="macro">::std::format_args!</span>($(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>))
+    };
+}
+
+<span class="doccomment">/// Create a new [`Text`].
+</span><span class="kw">pub fn </span>text(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Text {
+    Text::new(text)
+}
 
 <span class="doccomment">/// The style of a text.
 </span><span class="attr">#[derive(Clone, Debug)]
@@ -301,23 +317,9 @@
     }
 }
 
-<span class="doccomment">/// Create a formatted [`Text`].
-///
-/// This macro is slightly more efficient than using [`format!`] and [`Text::new`].
-</span><span class="attr">#[macro_export]
-</span><span class="macro">macro_rules! </span>format_text {
-    ($(<span class="macro-nonterminal">$tt</span>:tt)<span class="kw-2">*</span>) =&gt; {
-        <span class="macro-nonterminal">$crate::views::Text::from</span>(<span class="macro">::std::format_args!</span>($(<span class="macro-nonterminal">$tt</span>)<span class="kw-2">*</span>))
-    };
-}
-
-<span class="doccomment">/// Create a new [`Text`].
-</span><span class="kw">pub fn </span>text(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Text {
-    Text::new(text)
-}
-
 <span class="doccomment">/// A view that displays text.
-</span><span class="attr">#[derive(Build)]
+</span><span class="attr">#[example(name = <span class="string">"text"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Build)]
 </span><span class="kw">pub struct </span>Text {
     <span class="doccomment">/// The text.
     </span><span class="kw">pub </span>text: SmolStr,

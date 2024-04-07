@@ -89,7 +89,17 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
+
+<span class="kw">use crate</span>::{
     canvas::Canvas,
     event::Event,
     layout::{Affine, Size, Space, Vector},
@@ -108,8 +118,13 @@
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that rotates its content.
-</span><span class="kw">pub fn </span>rotate&lt;V&gt;(rotation: f32, content: V) -&gt; Transform&lt;V&gt; {
-    Transform::new(Affine::rotate(rotation), content)
+</span><span class="kw">pub fn </span>rotate&lt;V&gt;(degrees: f32, content: V) -&gt; Transform&lt;V&gt; {
+    Transform::new(Affine::rotate(degrees), content)
+}
+
+<span class="doccomment">/// Create a new [`Transform`] view that rotates its content in degrees.
+</span><span class="kw">pub fn </span>rotate_degrees&lt;V&gt;(degrees: f32, content: V) -&gt; Transform&lt;V&gt; {
+    rotate(degrees.to_radians(), content)
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that scales its content.
@@ -118,7 +133,8 @@
 }
 
 <span class="doccomment">/// A view that transforms its content.
-</span><span class="attr">#[derive(Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"transform"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Rebuild)]
 </span><span class="kw">pub struct </span>Transform&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,

@@ -125,7 +125,12 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
+
+<span class="kw">use crate</span>::{
     canvas::Canvas,
     event::Event,
     layout::{Alignment, Size, Space},
@@ -134,7 +139,8 @@
 };
 
 <span class="doccomment">/// A view that aligns its content.
-</span><span class="attr">#[derive(Rebuild)]
+</span><span class="attr">#[example(name = <span class="string">"align"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
+#[derive(Rebuild)]
 </span><span class="kw">pub struct </span>Aligned&lt;V&gt; {
     <span class="doccomment">/// The content to align.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
