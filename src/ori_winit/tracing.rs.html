@@ -25,9 +25,18 @@
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
 <a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{env, error::Error};
 
-<span class="kw">use </span>tracing_subscriber::{filter::LevelFilter, fmt, layer::SubscriberExt, EnvFilter, Layer};
+<span class="kw">use </span>tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, EnvFilter};
 
 <span class="kw">pub fn </span>init_tracing() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>filter = EnvFilter::default()
@@ -41,10 +50,19 @@
         filter = filter.add_directive(env.parse()<span class="question-mark">?</span>);
     }
 
-    <span class="kw">let </span>subscriber = tracing_subscriber::registry();
+    <span class="kw">let </span>subscriber = tracing_subscriber::registry().with(filter);
 
-    <span class="kw">let </span>fmt_layer = fmt::Layer::default().with_filter(filter);
-    <span class="kw">let </span>subscriber = subscriber.with(fmt_layer);
+    <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+    </span><span class="kw">let </span>subscriber = {
+        <span class="kw">let </span>fmt_layer = tracing_subscriber::fmt::Layer::default();
+        subscriber.with(fmt_layer)
+    };
+
+    <span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
+    </span><span class="kw">let </span>subscriber = {
+        <span class="kw">let </span>console_layer = tracing_wasm::WASMLayer::new(Default::default());
+        subscriber.with(console_layer)
+    };
 
     tracing::subscriber::set_global_default(subscriber)<span class="question-mark">?</span>;
 

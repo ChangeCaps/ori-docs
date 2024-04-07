@@ -353,14 +353,10 @@
 <a href="#351" id="351">351</a>
 <a href="#352" id="352">352</a>
 <a href="#353" id="353">353</a>
-<a href="#354" id="354">354</a>
-<a href="#355" id="355">355</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::{
-    collections::VecDeque,
-    time::{Duration, Instant},
-};
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::VecDeque;
 
 <span class="kw">use crate</span>::{event::Event, window::WindowId};
+<span class="kw">use </span>instant::{Duration, Instant};
 
 <span class="doccomment">/// Emitted when a window builds it's view tree.
 </span><span class="attr">#[derive(Clone, Debug)]

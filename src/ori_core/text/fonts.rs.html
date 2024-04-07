@@ -190,10 +190,53 @@
 <a href="#188" id="188">188</a>
 <a href="#189" id="189">189</a>
 <a href="#190" id="190">190</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::io;
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{io, sync::Arc};
 
-<span class="kw">use </span>cosmic_text::{Buffer, FontSystem, SwashCache};
-<span class="kw">use </span>ori_macro::include_font;
+<span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, FontSystem, SwashCache};
+
+<span class="kw">const </span>ROBOTO_BLACK: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Black.ttf"</span>);
+<span class="kw">const </span>ROBOTO_BLACK_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-BlackItalic.ttf"</span>);
+<span class="kw">const </span>ROBOTO_BOLD: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Bold.ttf"</span>);
+<span class="kw">const </span>ROBOTO_BOLD_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-BoldItalic.ttf"</span>);
+<span class="kw">const </span>ROBOTO_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Italic.ttf"</span>);
+<span class="kw">const </span>ROBOTO_LIGHT: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Light.ttf"</span>);
+<span class="kw">const </span>ROBOTO_LIGHT_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-LightItalic.ttf"</span>);
+<span class="kw">const </span>ROBOTO_MEDIUM: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Medium.ttf"</span>);
+<span class="kw">const </span>ROBOTO_MEDIUM_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-MediumItalic.ttf"</span>);
+<span class="kw">const </span>ROBOTO_REGULAR: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Regular.ttf"</span>);
+<span class="kw">const </span>ROBOTO_THIN: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Thin.ttf"</span>);
+<span class="kw">const </span>ROBOTO_THIN_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-ThinItalic.ttf"</span>);
 
 <span class="kw">use crate</span>::{
     canvas::{Color, Mesh, Vertex},
@@ -227,8 +270,36 @@
     <span class="doccomment">/// Creates a new font context.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>swash_cache = SwashCache::new();
-        <span class="kw">let </span>font_system = FontSystem::new();
         <span class="kw">let </span>font_atlas = FontAtlas::new();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>fonts = Vec::new();
+
+        <span class="kw">for </span>font <span class="kw">in </span><span class="kw-2">&amp;</span>[
+            ROBOTO_BLACK,
+            ROBOTO_BLACK_ITALIC,
+            ROBOTO_BOLD,
+            ROBOTO_BOLD_ITALIC,
+            ROBOTO_ITALIC,
+            ROBOTO_LIGHT,
+            ROBOTO_LIGHT_ITALIC,
+            ROBOTO_MEDIUM,
+            ROBOTO_MEDIUM_ITALIC,
+            ROBOTO_REGULAR,
+            ROBOTO_THIN,
+            ROBOTO_THIN_ITALIC,
+        ] {
+            fonts.push(Source::Binary(Arc::new(font.to_vec())));
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>font_system = FontSystem::new_with_fonts(fonts);
+
+        <span class="kw">let </span>db = font_system.db_mut();
+
+        db.set_serif_family(<span class="string">"Roboto"</span>);
+        db.set_sans_serif_family(<span class="string">"Roboto"</span>);
+        db.set_monospace_family(<span class="string">"Roboto"</span>);
+        db.set_cursive_family(<span class="string">"Roboto"</span>);
+        db.set_fantasy_family(<span class="string">"Roboto"</span>);
 
         <span class="self">Self </span>{
             swash_cache,
@@ -264,16 +335,7 @@
     /// This is a platform-specific operation, for more information see the
     /// documentation for [`fontdb::Database::load_system_fonts`](cosmic_text::fontdb::Database::load_system_fonts).
     </span><span class="kw">pub fn </span>load_system_fonts(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>db = <span class="self">self</span>.font_system.db_mut();
-
-        db.load_system_fonts();
-        db.set_serif_family(<span class="string">"Roboto"</span>);
-        db.set_sans_serif_family(<span class="string">"Roboto"</span>);
-        db.set_monospace_family(<span class="string">"Roboto"</span>);
-        db.set_cursive_family(<span class="string">"Roboto"</span>);
-        db.set_fantasy_family(<span class="string">"Roboto"</span>);
-
-        (<span class="self">self</span>.load_font(<span class="macro">include_font!</span>(<span class="string">"font"</span>))).expect(<span class="string">"loading builtin fonts works"</span>);
+        <span class="self">self</span>.font_system.db_mut().load_system_fonts();
     }
 
     <span class="doccomment">/// Calculates the size of a text buffer.
