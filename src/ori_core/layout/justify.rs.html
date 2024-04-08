@@ -153,19 +153,19 @@
         <span class="kw">let </span>total_gap = gap * (count - <span class="number">1.0</span>);
         <span class="kw">let </span>total_size = sizes.iter().sum::&lt;f32&gt;() + total_gap;
 
+        <span class="kw">let </span>gap = <span class="kw">match </span><span class="self">self </span>{
+            <span class="self">Self</span>::Start | <span class="self">Self</span>::End | <span class="self">Self</span>::Center =&gt; gap,
+            <span class="self">Self</span>::SpaceBetween =&gt; (size - (total_size - total_gap)) / (count - <span class="number">1.0</span>),
+            <span class="self">Self</span>::SpaceAround =&gt; (size - (total_size - total_gap)) / count,
+            <span class="self">Self</span>::SpaceEvenly =&gt; (size - (total_size - total_gap)) / (count + <span class="number">1.0</span>),
+        };
+
         <span class="kw">let </span>position = <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Start | <span class="self">Self</span>::SpaceBetween =&gt; <span class="number">0.0</span>,
             <span class="self">Self</span>::Center =&gt; (size - total_size) / <span class="number">2.0</span>,
             <span class="self">Self</span>::End =&gt; size - total_size,
             <span class="self">Self</span>::SpaceAround =&gt; gap / <span class="number">2.0</span>,
             <span class="self">Self</span>::SpaceEvenly =&gt; gap,
-        };
-
-        <span class="kw">let </span>gap = <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::Start | <span class="self">Self</span>::End | <span class="self">Self</span>::Center =&gt; gap,
-            <span class="self">Self</span>::SpaceBetween =&gt; (size - (total_size - total_gap)) / (count - <span class="number">1.0</span>),
-            <span class="self">Self</span>::SpaceAround =&gt; (size - total_size) / (count - <span class="number">1.0</span>),
-            <span class="self">Self</span>::SpaceEvenly =&gt; (size - total_size) / (count + <span class="number">1.0</span>),
         };
 
         JustifyIterator {
