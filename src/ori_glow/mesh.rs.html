@@ -300,6 +300,11 @@
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
 <a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, mem};
 
 <span class="kw">use </span>glow::HasContext;
@@ -559,6 +564,11 @@
             batch.mesh.index_bytes(),
             glow::STREAM_DRAW,
         );
+
+        <span class="comment">// winit on wasm32 is just strange, this should be needed
+        // FIMXE: this is a hack, i don't like it
+        </span><span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
+        </span><span class="kw">let </span>scale_factor = <span class="number">1.0</span>;
 
         <span class="comment">// opengl is bad... i don't like having to do this...
         </span><span class="kw">let </span>scissor_y = logical_size.height - batch.clip.max.y;

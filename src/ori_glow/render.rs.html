@@ -152,6 +152,18 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::Debug;
 
 <span class="kw">use </span>glow::HasContext;
@@ -215,7 +227,8 @@
         })
     }
 
-    <span class="kw">unsafe fn </span>resize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, physical_size: Size) {
+    <span class="attr">#[allow(unused_variables)]
+    </span><span class="kw">unsafe fn </span>resize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, logical_size: Size, physical_size: Size) {
         <span class="kw">let </span>width = physical_size.width <span class="kw">as </span>u32;
         <span class="kw">let </span>height = physical_size.height <span class="kw">as </span>u32;
 
@@ -226,7 +239,18 @@
         <span class="self">self</span>.width = width;
         <span class="self">self</span>.height = height;
 
-        <span class="self">self</span>.gl.viewport(<span class="number">0</span>, <span class="number">0</span>, width <span class="kw">as </span>i32, height <span class="kw">as </span>i32);
+        <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+        </span><span class="self">self</span>.gl.viewport(
+            <span class="number">0</span>,
+            <span class="number">0</span>,
+            physical_size.width <span class="kw">as </span>i32,
+            physical_size.height <span class="kw">as </span>i32,
+        );
+
+        <span class="comment">// winit on wasm32 is just strange, this should be needed
+        // FIXME: this is a hack, i don't like it
+        </span><span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
+        </span>(<span class="self">self</span>.gl).viewport(<span class="number">0</span>, <span class="number">0</span>, logical_size.width <span class="kw">as </span>i32, logical_size.height <span class="kw">as </span>i32);
     }
 
     <span class="kw">unsafe fn </span>render(
@@ -289,7 +313,7 @@
         scale_factor: f32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), GlowError&gt; {
         <span class="kw">unsafe </span>{
-            <span class="self">self</span>.resize(physical_size);
+            <span class="self">self</span>.resize(logical_size, physical_size);
             <span class="self">self</span>.render(scene, clear, logical_size, scale_factor)<span class="question-mark">?</span>;
         };
 
