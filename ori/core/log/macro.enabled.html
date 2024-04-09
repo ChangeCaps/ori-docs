@@ -9,15 +9,15 @@
     (kind: <span class="macro-nonterminal">$kind</span>:expr, <span class="macro-nonterminal">$lvl</span>:expr) =&gt; { ... };
     (<span class="macro-nonterminal">$lvl</span>:expr) =&gt; { ... };
     (<span class="macro-nonterminal">$lvl</span>:expr, $(<span class="macro-nonterminal">$field</span>:tt)<span class="kw-2">*</span>) =&gt; { ... };
-}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Checks whether a span or event is <a href="../../prelude/trait.Subscriber.html#tymethod.enabled" title="method ori::prelude::Subscriber::enabled">enabled</a> based on the provided <a href="../../prelude/struct.Metadata.html" title="struct ori::prelude::Metadata">metadata</a>.</p>
+}</pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Checks whether a span or event is <a href="trait.Subscriber.html#tymethod.enabled" title="method ori::core::log::Subscriber::enabled">enabled</a> based on the provided <a href="struct.Metadata.html" title="struct ori::core::log::Metadata">metadata</a>.</p>
 <p>This macro is a specialized tool: it is intended to be used prior
 to an expensive computation required <em>just</em> for that event, but
 <em>cannot</em> be done as part of an argument to that event, such as
 when multiple events are emitted (e.g., iterating over a collection
 and emitting an event for each item).</p>
 <h2 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h2>
-<p><a href="../../prelude/trait.Subscriber.html" title="trait ori::prelude::Subscriber">Subscribers</a> can make filtering decisions based all the data included in a
-span or event’s <a href="../../prelude/struct.Metadata.html" title="struct ori::prelude::Metadata"><code>Metadata</code></a>. This means that it is possible for <code>enabled!</code>
+<p><a href="trait.Subscriber.html" title="trait ori::core::log::Subscriber">Subscribers</a> can make filtering decisions based all the data included in a
+span or event’s <a href="struct.Metadata.html" title="struct ori::core::log::Metadata"><code>Metadata</code></a>. This means that it is possible for <code>enabled!</code>
 to return a <em>false positive</em> (indicating that something would be enabled
 when it actually would not be) or a <em>false negative</em> (indicating that
 something would be disabled when it would actually be enabled).</p>
@@ -36,7 +36,7 @@ indicated otherwise.</li>
 <li>The subscriber can choose to enable <em>only</em> spans or <em>only</em> events, which <code>enabled</code>
 will not reflect.</li>
 </ul>
-<p><code>enabled!()</code> requires a <a href="../../prelude/struct.Level.html" title="struct ori::prelude::Level">level</a> argument, an optional <code>target:</code>
+<p><code>enabled!()</code> requires a <a href="struct.Level.html" title="struct ori::core::log::Level">level</a> argument, an optional <code>target:</code>
 argument, and an optional set of field names. If the fields are not provided,
 they are considered to be unknown. <code>enabled!</code> attempts to match the
 syntax of <code>event!()</code> as closely as possible, which can be seen in the
@@ -66,8 +66,8 @@ to true:</p>
     <span class="comment">// some expensive work...
 </span>}</code></pre></div>
 <h2 id="alternatives"><a class="doc-anchor" href="#alternatives">§</a>Alternatives</h2>
-<p><code>enabled!</code> queries subscribers with <a href="../../prelude/struct.Metadata.html" title="struct ori::prelude::Metadata"><code>Metadata</code></a> where
-<a href="../../prelude/struct.Metadata.html#method.is_event" title="method ori::prelude::Metadata::is_event"><code>is_event</code></a> and <a href="../../prelude/struct.Metadata.html#method.is_span" title="method ori::prelude::Metadata::is_span"><code>is_span</code></a> both return <code>false</code>. Alternatively,
-use <a href="../../prelude/macro.event_enabled.html" title="macro ori::prelude::event_enabled"><code>event_enabled!</code></a> or <a href="../../prelude/macro.span_enabled.html" title="macro ori::prelude::span_enabled"><code>span_enabled!</code></a> to ensure one of these
+<p><code>enabled!</code> queries subscribers with <a href="struct.Metadata.html" title="struct ori::core::log::Metadata"><code>Metadata</code></a> where
+<a href="struct.Metadata.html#method.is_event" title="method ori::core::log::Metadata::is_event"><code>is_event</code></a> and <a href="struct.Metadata.html#method.is_span" title="method ori::core::log::Metadata::is_span"><code>is_span</code></a> both return <code>false</code>. Alternatively,
+use <a href="macro.event_enabled.html" title="macro ori::core::log::event_enabled"><code>event_enabled!</code></a> or <a href="macro.span_enabled.html" title="macro ori::core::log::span_enabled"><code>span_enabled!</code></a> to ensure one of these
 returns true.</p>
 </div></details></section></div></main></body></html>

@@ -75,7 +75,6 @@
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(missing_docs)]
 #![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
 
@@ -127,10 +126,9 @@
             Affine, Align, Alignment, Axis, Justify, Matrix, Padding, Point, Rect, Size, Space,
             Vector, FILL,
         },
-        log::<span class="kw-2">*</span>,
+        log::{debug, error, info, trace, warn},
         rebuild::Rebuild,
         style::{palette, style, style_or, styled, Palette, Style, Styles},
-        text,
         text::{
             include_font, FontFamily, FontSource, FontStretch, FontStyle, FontWeight, Fonts,
             TextAlign, TextBuffer, TextWrap,
