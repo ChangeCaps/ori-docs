@@ -242,7 +242,7 @@
     event::Event,
     layout::{Size, Space, Vector},
     rebuild::Rebuild,
-    style::{style, Styled, Styles},
+    style::{style, Style, Styles},
     view::{BuildCx, DrawCx, EventCx, LayoutCx, Pod, RebuildCx, State, View},
 };
 
@@ -292,8 +292,8 @@
     </span><span class="kw">pub </span>shadow: BoxShadow,
 }
 
-<span class="kw">impl </span>Styled <span class="kw">for </span>ContainerStyle {
-    <span class="kw">fn </span>from_style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
+<span class="kw">impl </span>Style <span class="kw">for </span>ContainerStyle {
+    <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             background: style.palette().secondary().into(),
             border_radius: BorderRadius::all(<span class="number">0.0</span>),

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["palette","style","style_or","styled","try_style"],"struct":["Palette","Styles"],"trait":["Style","Styled"]};
+window.SIDEBAR_ITEMS = {"fn":["palette","style","style_or","styled","try_style"],"struct":["Palette","Styles"],"trait":["IntoStyles","Style"]};

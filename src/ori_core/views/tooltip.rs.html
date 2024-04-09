@@ -361,7 +361,7 @@
     event::{AnimationFrame, Event, PointerMoved},
     layout::{Affine, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{style, Styled, Styles},
+    style::{style, Style, Styles},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -409,8 +409,8 @@
     </span><span class="kw">pub </span>border_color: Color,
 }
 
-<span class="kw">impl </span>Styled <span class="kw">for </span>TooltipStyle {
-    <span class="kw">fn </span>from_style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
+<span class="kw">impl </span>Style <span class="kw">for </span>TooltipStyle {
+    <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             delay: <span class="number">0.2</span>,
             padding: Padding::from([<span class="number">8.0</span>, <span class="number">4.0</span>]),

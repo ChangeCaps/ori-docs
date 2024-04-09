@@ -144,7 +144,7 @@
     debug::debug_ui,
     delegate::Delegate,
     shell::{Shell, Windows},
-    style::{Palette, Style, Styles},
+    style::{Palette, IntoStyles, Styles},
     text::FontSource,
     ui::{Ui, UiBuilder},
     view::{any, View},
@@ -193,7 +193,7 @@
     </span>}
 
     <span class="doccomment">/// Append the style of the application.
-    </span><span class="kw">pub fn </span>style(<span class="kw-2">mut </span><span class="self">self</span>, style: <span class="kw">impl </span>Style) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>style(<span class="kw-2">mut </span><span class="self">self</span>, style: <span class="kw">impl </span>IntoStyles) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.ui.style.extend(style.into_styles());
         <span class="self">self
     </span>}

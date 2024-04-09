@@ -265,7 +265,7 @@
     event::{AnimationFrame, Event},
     layout::{Padding, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{style, Styled, Styles},
+    style::{style, Style, Styles},
     transition::Transition,
     view::{BuildCx, DrawCx, EventCx, LayoutCx, Pod, RebuildCx, State, View},
 };
@@ -294,8 +294,8 @@
     </span><span class="kw">pub </span>border_color: Color,
 }
 
-<span class="kw">impl </span>Styled <span class="kw">for </span>ButtonStyle {
-    <span class="kw">fn </span>from_style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
+<span class="kw">impl </span>Style <span class="kw">for </span>ButtonStyle {
+    <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             padding: Padding::all(<span class="number">8.0</span>),
             fancy: <span class="number">0.0</span>,
