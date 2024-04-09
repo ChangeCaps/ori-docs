@@ -156,6 +156,10 @@
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::hash::{Hash, Hasher};
 
 <span class="kw">use crate</span>::{
@@ -164,6 +168,10 @@
 };
 
 <span class="kw">use </span><span class="kw">super</span>::Modifiers;
+
+<span class="doccomment">/// An event that is emitted when the hovered view changes.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>HoveredChanged;
 
 <span class="doccomment">/// A unique pointer id.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -184,7 +192,7 @@
 }
 
 <span class="doccomment">/// A pointer.
-</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
 </span><span class="kw">pub struct </span>Pointer {
     <span class="doccomment">/// The unique id of the pointer.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) id: PointerId,

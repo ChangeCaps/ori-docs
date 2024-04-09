@@ -355,7 +355,7 @@
 <span class="kw">use crate</span>::{
     canvas::Canvas,
     debug::{DebugDraw, DebugLayout, DebugTree},
-    event::{Event, PointerLeft, PointerMoved, SwitchFocus},
+    event::{Event, HoveredChanged, PointerLeft, PointerMoved, SwitchFocus},
     layout::{Size, Space},
 };
 
@@ -477,7 +477,7 @@
         }
 
         <span class="comment">// update the hot state
-        </span><span class="kw">if </span>event.is::&lt;PointerMoved&gt;() || event.is::&lt;PointerLeft&gt;() {
+        </span><span class="kw">if </span>event.is::&lt;PointerMoved&gt;() || event.is::&lt;PointerLeft&gt;() || event.is::&lt;HoveredChanged&gt;() {
             view_state.set_hot(cx.window().is_hovered(view_state.id()));
         }
 
