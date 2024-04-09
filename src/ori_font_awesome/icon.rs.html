@@ -140,6 +140,18 @@
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
 <a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::{Canvas, Color},
     event::Event,
@@ -149,8 +161,9 @@
     text::{FontStretch, FontStyle, TextAttributes, TextBuffer},
     view::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
 };
+<span class="kw">use </span>ori_macro::Build;
 
-<span class="kw">use </span><span class="kw">crate</span>::IconCode;
+<span class="kw">use crate</span>::{IconCode, IconFont};
 
 <span class="kw">const </span>REGULAR: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../font/Font Awesome 6 Free-Regular-400.otf"</span>);
 <span class="kw">const </span>SOLID: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../font/Font Awesome 6 Free-Solid-900.otf"</span>);
@@ -165,11 +178,16 @@
 ///
 /// By default, the icon is rendered using the `icon.font` font family.
 /// This uses the [Font Awesome 6 Regular Free](https://fontawesome.com/) font by default.
-</span><span class="attr">#[derive(Rebuild, PartialEq)]
+</span><span class="attr">#[derive(Build, Rebuild, PartialEq)]
 </span><span class="kw">pub struct </span>Icon {
     <span class="doccomment">/// The codepoint of the icon to display.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>icon: IconCode,
+    <span class="doccomment">/// Whether the icon is solid or regular.
+    ///
+    /// This only affects the rendering of the icon if the icon is available in both styles.
+    </span><span class="attr">#[rebuild(layout)]
+    </span><span class="kw">pub </span>solid: bool,
     <span class="doccomment">/// The size of the icon.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>size: f32,
@@ -183,22 +201,26 @@
     </span><span class="kw">pub fn </span>new(icon: <span class="kw">impl </span>Into&lt;IconCode&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             icon: icon.into(),
+            solid: <span class="bool-val">false</span>,
             size: <span class="number">16.0</span>,
             color: palette().text(),
         }
     }
 
-    <span class="doccomment">/// Set the size of the icon.
-    </span><span class="kw">pub fn </span>size(<span class="kw-2">mut </span><span class="self">self</span>, size: f32) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.size = size;
-        <span class="self">self
-    </span>}
+    <span class="doccomment">/// Get the font to use for the icon.
+    </span><span class="kw">pub fn </span>font(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IconFont {
+        <span class="kw">if </span><span class="self">self</span>.icon.fonts().contains(<span class="kw-2">&amp;</span>IconFont::Solid)
+            &amp;&amp; <span class="self">self</span>.icon.fonts().contains(<span class="kw-2">&amp;</span>IconFont::Regular)
+        {
+            <span class="kw">if </span><span class="self">self</span>.solid {
+                <span class="kw">return </span>IconFont::Solid;
+            } <span class="kw">else </span>{
+                <span class="kw">return </span>IconFont::Regular;
+            }
+        }
 
-    <span class="doccomment">/// Set the color of the icon.
-    </span><span class="kw">pub fn </span>color(<span class="kw-2">mut </span><span class="self">self</span>, color: <span class="kw">impl </span>Into&lt;Color&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.color = color.into();
-        <span class="self">self
-    </span>}
+        <span class="self">self</span>.icon.fonts()[<span class="number">0</span>]
+    }
 
     <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BaseCx, buffer: <span class="kw-2">&amp;mut </span>TextBuffer) {
         <span class="kw">struct </span>FontsLoaded;
@@ -212,14 +234,16 @@
             cx.insert_context(FontsLoaded);
         }
 
+        <span class="kw">let </span>font = <span class="self">self</span>.font();
+
         buffer.set_metrics(cx.fonts(), <span class="self">self</span>.size, <span class="number">1.0</span>);
         buffer.set_text(
             cx.fonts(),
             <span class="self">self</span>.icon.as_str(),
             TextAttributes {
-                family: <span class="self">self</span>.icon.font().family(),
+                family: font.family(),
                 stretch: FontStretch::Normal,
-                weight: <span class="self">self</span>.icon.font().weight(),
+                weight: font.weight(),
                 style: FontStyle::Normal,
                 color: <span class="self">self</span>.color,
             },
