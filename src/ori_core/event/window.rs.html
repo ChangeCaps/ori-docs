@@ -17,7 +17,25 @@
 <a href="#15" id="15">15</a>
 <a href="#16" id="16">16</a>
 <a href="#17" id="17">17</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::window::WindowId;
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
+<a href="#29" id="29">29</a>
+<a href="#30" id="30">30</a>
+<a href="#31" id="31">31</a>
+<a href="#32" id="32">32</a>
+<a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{layout::Size, window::WindowId};
 
 <span class="doccomment">/// Event emitted when a window wants to close.
 ///
@@ -32,6 +50,24 @@
     <span class="doccomment">/// Create a new close requested event.
     </span><span class="kw">pub fn </span>new(window: WindowId) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ window }
+    }
+}
+
+<span class="doccomment">/// Event emitted when a window is resized.
+</span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>WindowResized {
+    <span class="doccomment">/// The window that was resized.
+    </span><span class="kw">pub </span>window: WindowId,
+    <span class="doccomment">/// The new width of the window.
+    </span><span class="kw">pub </span>width: u32,
+    <span class="doccomment">/// The new height of the window.
+    </span><span class="kw">pub </span>height: u32,
+}
+
+<span class="kw">impl </span>WindowResized {
+    <span class="doccomment">/// Get the new size of the window.
+    </span><span class="kw">pub fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Size {
+        Size::new(<span class="self">self</span>.width <span class="kw">as </span>f32, <span class="self">self</span>.height <span class="kw">as </span>f32)
     }
 }
 </code></pre></div></section></main></body></html>

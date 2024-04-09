@@ -488,6 +488,12 @@
 <a href="#486" id="486">486</a>
 <a href="#487" id="487">487</a>
 <a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! User interface state.
 
 </span><span class="kw">use </span>std::collections::HashMap;
@@ -500,7 +506,7 @@
     event::{
         CloseRequested, Code, Event, KeyPressed, KeyReleased, Modifiers, PointerButton, PointerId,
         PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled, Quit,
-        RequestFocus, SwitchFocus,
+        RequestFocus, SwitchFocus, WindowResized,
     },
     layout::{Point, Vector},
     style::Styles,
@@ -702,18 +708,24 @@
         }
     }
 
-    <span class="doccomment">/// Tell the UI that the scale factor of a window has changed.
-    </span><span class="kw">pub fn </span>scale_factor_changed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, window_id: WindowId) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            window.request_layout();
-        }
-    }
-
     <span class="doccomment">/// Tell the UI that a window has been resized.
-    </span><span class="kw">pub fn </span>resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, window_id: WindowId) {
+    </span><span class="kw">pub fn </span>window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             window.request_layout();
         }
+
+        <span class="kw">let </span>(width, height) = <span class="kw">match </span><span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id) {
+            <span class="prelude-val">Some</span>(window_ui) =&gt; (window_ui.window().width(), window_ui.window().height()),
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return</span>,
+        };
+
+        <span class="kw">let </span>event = Event::new(WindowResized {
+            window: window_id,
+            width,
+            height,
+        });
+
+        <span class="self">self</span>.event_all(data, <span class="kw-2">&amp;</span>event);
     }
 
     <span class="doccomment">/// Tell the UI that a window wants to close.
