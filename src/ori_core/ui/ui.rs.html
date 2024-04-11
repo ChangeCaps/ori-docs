@@ -514,7 +514,6 @@
 <a href="#512" id="512">512</a>
 <a href="#513" id="513">513</a>
 <a href="#514" id="514">514</a>
-<a href="#515" id="515">515</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! User interface state.
 
 </span><span class="kw">use </span>std::collections::HashMap;
@@ -676,7 +675,6 @@
     /// This should be called after all initial windows have been added.
     </span><span class="kw">pub fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="self">self</span>.init_delegate(data);
-        <span class="self">self</span>.event_all(data, <span class="kw-2">&amp;</span>Event::new(()));
     }
 
     <span class="kw">fn </span>init_delegate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {

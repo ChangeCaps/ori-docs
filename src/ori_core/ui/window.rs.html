@@ -349,7 +349,7 @@
     view: Pod&lt;BoxedView&lt;T&gt;&gt;,
     state: State&lt;T, BoxedView&lt;T&gt;&gt;,
     scene: Scene,
-    theme: Styles,
+    style: Styles,
     view_state: ViewState,
     needs_rebuild: bool,
     animation_frame: <span class="prelude-ty">Option</span>&lt;Instant&gt;,
@@ -362,7 +362,7 @@
         <span class="kw-2">mut </span>builder: UiBuilder&lt;T&gt;,
         base: <span class="kw-2">&amp;mut </span>BaseCx,
         data: <span class="kw-2">&amp;mut </span>T,
-        <span class="kw-2">mut </span>theme: Styles,
+        <span class="kw-2">mut </span>style: Styles,
         <span class="kw-2">mut </span>window: Window,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
@@ -370,7 +370,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(base, <span class="kw-2">&amp;mut </span>view_state, <span class="kw-2">&amp;mut </span>window, <span class="kw-2">&amp;mut </span>animation_frame);
 
         <span class="comment">// we build the view tree and state tree, with the global theme
-        </span><span class="kw">let </span>(view, state) = theme.as_context(|| {
+        </span><span class="kw">let </span>(view, state) = style.as_context(|| {
             <span class="kw">let </span>start = Instant::now();
 
             <span class="kw">let </span><span class="kw-2">mut </span>view = Pod::new(builder(data));
@@ -388,7 +388,7 @@
             view,
             state,
             scene: Scene::new(),
-            theme,
+            style,
             view_state,
             needs_rebuild: <span class="bool-val">false</span>,
             animation_frame,
@@ -408,7 +408,7 @@
 
     <span class="doccomment">/// Get the theme.
     </span><span class="kw">pub fn </span>theme(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Styles {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.theme
+        <span class="kw-2">&amp;</span><span class="self">self</span>.style
     }
 
     <span class="doccomment">/// Set the theme.
@@ -416,7 +416,7 @@
     /// This will also request a rebuild of the view-tree, as the theme
     /// is _very_ likely to affect the view-tree.
     </span><span class="kw">pub fn </span>set_theme(<span class="kw-2">&amp;mut </span><span class="self">self</span>, theme: Styles) {
-        <span class="self">self</span>.theme = theme;
+        <span class="self">self</span>.style = theme;
         <span class="self">self</span>.request_rebuild();
     }
 
@@ -497,7 +497,7 @@
         );
 
         <span class="comment">// rebuild the new view tree (new_view) comparing it to the old one (self.view)
-        </span><span class="kw">let </span>new_view = <span class="self">self</span>.theme.as_context(|| {
+        </span><span class="kw">let </span>new_view = <span class="self">self</span>.style.as_context(|| {
             <span class="kw">let </span>start = Instant::now();
 
             <span class="kw">let </span><span class="kw-2">mut </span>new_view = Pod::new((<span class="self">self</span>.builder)(data));
@@ -547,7 +547,7 @@
         <span class="kw">let </span>start = Instant::now();
 
         <span class="comment">// handle the event, with the global theme
-        </span><span class="self">self</span>.theme.as_context(|| {
+        </span><span class="self">self</span>.style.as_context(|| {
             <span class="self">self</span>.view.event(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, event);
         });
 
@@ -576,7 +576,7 @@
         <span class="kw">let </span>start = Instant::now();
 
         <span class="comment">// layout the view tree, with the global theme
-        </span><span class="kw">let </span>size = <span class="self">self</span>.theme.as_context(|| {
+        </span><span class="kw">let </span>size = <span class="self">self</span>.style.as_context(|| {
             <span class="comment">// have a comment here to make rustfmt do what i want
             </span><span class="self">self</span>.view.layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, space)
         });
@@ -607,7 +607,7 @@
         <span class="kw">let </span>start = Instant::now();
 
         <span class="comment">// draw the view tree, with the global theme
-        </span><span class="self">self</span>.theme.as_context(|| {
+        </span><span class="self">self</span>.style.as_context(|| {
             <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;mut </span>canvas);
         });
 
