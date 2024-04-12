@@ -766,6 +766,10 @@
 <a href="#764" id="764">764</a>
 <a href="#765" id="765">765</a>
 <a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{type_name, Any},
     future::Future,
@@ -1329,7 +1333,7 @@
     }
 
     <span class="doccomment">/// Create a child context.
-    </span><span class="kw">pub fn </span>layer(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
+    </span><span class="kw">pub fn </span>child(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
         DrawCx {
             base: <span class="self">self</span>.base,
             view_state: <span class="self">self</span>.view_state,
@@ -1402,7 +1406,14 @@
     }
 }}
 
-<span class="macro">impl_context! </span>{BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, EventCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, LayoutCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
+<span class="macro">impl_context! </span>{BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, EventCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, LayoutCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
+    <span class="doccomment">/// Request a draw of the view tree.
+    </span><span class="kw">pub fn </span>request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.view_state.request_draw();
+    }
+}}
+
+<span class="macro">impl_context! </span>{BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, EventCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
     <span class="doccomment">/// Request an animation frame.
     </span><span class="kw">pub fn </span>request_animation_frame(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if </span><span class="self">self</span>.animation_frame.is_none() {
@@ -1410,6 +1421,55 @@
         }
     }
 
+    <span class="doccomment">/// Request a rebuild of the view tree.
+    </span><span class="kw">pub fn </span>request_rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.base.request_rebuild();
+    }
+
+    <span class="doccomment">/// Request a layout of the view tree.
+    </span><span class="kw">pub fn </span>request_layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.view_state.request_layout();
+    }
+
+    <span class="doccomment">/// Set whether the view is hot.
+    ///
+    /// Returns `true` if the hot state changed.
+    </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_hot() != hot;
+        <span class="self">self</span>.view_state.set_hot(hot);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is focused.
+    ///
+    /// Returns `true` if the focused state changed.
+    </span><span class="kw">pub fn </span>set_focused(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focused: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_focused() != focused;
+        <span class="self">self</span>.view_state.set_focused(focused);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is active.
+    ///
+    /// Returns `true` if the active state changed.
+    </span><span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_active() != active;
+        <span class="self">self</span>.view_state.set_active(active);
+        updated
+    }
+
+    <span class="doccomment">/// Set the flex of the view.
+    </span><span class="kw">pub fn </span>set_flex(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flex: f32) {
+        <span class="self">self</span>.view_state.set_flex(flex);
+    }
+
+    <span class="doccomment">/// Set whether the view is tight.
+    </span><span class="kw">pub fn </span>set_tight(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tight: bool) {
+        <span class="self">self</span>.view_state.set_tight(tight);
+    }
+}}
+
+<span class="macro">impl_context! </span>{BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, EventCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, LayoutCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
     <span class="doccomment">/// Get the window.
     </span><span class="kw">pub fn </span>window(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Window {
         <span class="self">self</span>.window
@@ -1445,41 +1505,14 @@
         <span class="self">self</span>.view_state.is_hot()
     }
 
-    <span class="doccomment">/// Set whether the view is hot.
-    ///
-    /// Returns `true` if the hot state changed.
-    </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) -&gt; bool {
-        <span class="kw">let </span>updated = <span class="self">self</span>.is_hot() != hot;
-        <span class="self">self</span>.view_state.set_hot(hot);
-        updated
-    }
-
     <span class="doccomment">/// Get whether the view is focused.
     </span><span class="kw">pub fn </span>is_focused(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.view_state.is_focused()
     }
 
-    <span class="doccomment">/// Set whether the view is focused.
-    ///
-    /// Returns `true` if the focused state changed.
-    </span><span class="kw">pub fn </span>set_focused(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focused: bool) -&gt; bool {
-        <span class="kw">let </span>updated = <span class="self">self</span>.is_focused() != focused;
-        <span class="self">self</span>.view_state.set_focused(focused);
-        updated
-    }
-
     <span class="doccomment">/// Get whether the view is active.
     </span><span class="kw">pub fn </span>is_active(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.view_state.is_active()
-    }
-
-    <span class="doccomment">/// Set whether the view is active.
-    ///
-    /// Returns `true` if the active state changed.
-    </span><span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) -&gt; bool {
-        <span class="kw">let </span>updated = <span class="self">self</span>.is_active() != active;
-        <span class="self">self</span>.view_state.set_active(active);
-        updated
     }
 
     <span class="doccomment">/// Get whether a child view is hot.
@@ -1502,34 +1535,9 @@
         <span class="self">self</span>.view_state.flex()
     }
 
-    <span class="doccomment">/// Set the flex of the view.
-    </span><span class="kw">pub fn </span>set_flex(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flex: f32) {
-        <span class="self">self</span>.view_state.set_flex(flex);
-    }
-
     <span class="doccomment">/// Get whether the view is tight.
     </span><span class="kw">pub fn </span>is_tight(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.view_state.is_tight()
-    }
-
-    <span class="doccomment">/// Set whether the view is tight.
-    </span><span class="kw">pub fn </span>set_tight(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tight: bool) {
-        <span class="self">self</span>.view_state.set_tight(tight);
-    }
-
-    <span class="doccomment">/// Request a rebuild of the view tree.
-    </span><span class="kw">pub fn </span>request_rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.base.request_rebuild();
-    }
-
-    <span class="doccomment">/// Request a layout of the view tree.
-    </span><span class="kw">pub fn </span>request_layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.view_state.request_layout();
-    }
-
-    <span class="doccomment">/// Request a draw of the view tree.
-    </span><span class="kw">pub fn </span>request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.view_state.request_draw();
     }
 }}
 </code></pre></div></section></main></body></html>

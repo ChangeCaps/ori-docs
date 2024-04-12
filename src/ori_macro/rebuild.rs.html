@@ -159,29 +159,16 @@
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-<a href="#168" id="168">168</a>
-<a href="#169" id="169">169</a>
-<a href="#170" id="170">170</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::{parse::ParseStream, punctuated::Punctuated};
 
 <span class="kw">use </span><span class="kw">crate</span>::find_core;
 
-<span class="macro">syn::custom_keyword!</span>(tree);
 <span class="macro">syn::custom_keyword!</span>(layout);
 <span class="macro">syn::custom_keyword!</span>(draw);
 
 <span class="kw">enum </span>Update {
-    Tree,
     Layout,
     Draw,
 }
@@ -190,10 +177,7 @@
     <span class="kw">fn </span>parse(input: ParseStream) -&gt; syn::Result&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>lookahead = input.lookahead1();
 
-        <span class="kw">if </span>lookahead.peek(tree) {
-            input.parse::&lt;tree&gt;()<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Tree)
-        } <span class="kw">else if </span>lookahead.peek(layout) {
+        <span class="kw">if </span>lookahead.peek(layout) {
             input.parse::&lt;layout&gt;()<span class="question-mark">?</span>;
             <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Layout)
         } <span class="kw">else if </span>lookahead.peek(draw) {
@@ -207,7 +191,6 @@
 
 <span class="attr">#[derive(Default)]
 </span><span class="kw">struct </span>FieldAttributes {
-    tree: bool,
     layout: bool,
     draw: bool,
 }
@@ -224,7 +207,6 @@
 
                 <span class="kw">for </span>update <span class="kw">in </span>updates {
                     <span class="kw">match </span>update {
-                        Update::Tree =&gt; this.tree = <span class="bool-val">true</span>,
                         Update::Layout =&gt; this.layout = <span class="bool-val">true</span>,
                         Update::Draw =&gt; this.draw = <span class="bool-val">true</span>,
                     }
@@ -236,15 +218,11 @@
     }
 
     <span class="kw">fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        !<span class="self">self</span>.tree &amp;&amp; !<span class="self">self</span>.layout &amp;&amp; !<span class="self">self</span>.draw
+        !<span class="self">self</span>.layout &amp;&amp; !<span class="self">self</span>.draw
     }
 
     <span class="kw">fn </span>updates(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; TokenStream {
         <span class="kw">let </span><span class="kw-2">mut </span>tokens = TokenStream::new();
-
-        <span class="kw">if </span><span class="self">self</span>.tree {
-            tokens.extend(<span class="macro">quote!</span>(cx.request_rebuild();));
-        }
 
         <span class="kw">if </span><span class="self">self</span>.layout {
             tokens.extend(<span class="macro">quote!</span>(cx.request_layout();));

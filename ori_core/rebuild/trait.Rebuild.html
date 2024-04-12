@@ -6,7 +6,7 @@
 <p>When derived this will detect changes in the fields of the struct and
 request a rebuild, layout or draw when necessary. This is done by
 specifying the <code>#[rebuild(...)]</code> attribute on the fields of the struct.
-Valid values are <code>tree</code>, <code>layout</code> and <code>draw</code>.</p>
+Valid values are <code>layout</code> and <code>draw</code>.</p>
 <h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
 <div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[derive(Rebuild)]
 </span><span class="kw">struct </span>MyView {
