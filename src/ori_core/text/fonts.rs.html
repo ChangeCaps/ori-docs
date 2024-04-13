@@ -250,6 +250,9 @@
 <a href="#248" id="248">248</a>
 <a href="#249" id="249">249</a>
 <a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, FontSystem, SwashCache};
@@ -321,6 +324,9 @@
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>font_system = FontSystem::new_with_fonts(fonts);
+
+        <span class="comment">// load the system fonts, IMPORTANT!
+        </span>font_system.db_mut().load_system_fonts();
 
         <span class="kw">let </span>db = font_system.db_mut();
 
