@@ -256,6 +256,10 @@
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -331,11 +335,13 @@
         <span class="self">self</span>.pointers.iter().find(|p| p.id() == id)
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pointer_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Pointer&gt; {
+    <span class="doccomment">/// Get the mutable pointer with `id`.
+    </span><span class="kw">pub fn </span>pointer_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Pointer&gt; {
         <span class="self">self</span>.pointers.iter_mut().find(|p| p.id() == id)
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pointer_moved(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, position: Point) {
+    <span class="doccomment">/// Move the pointer with `id` to `position`.
+    </span><span class="kw">pub fn </span>pointer_moved(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, position: Point) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.pointer_mut(id) {
             pointer.position = position;
         } <span class="kw">else </span>{
@@ -343,13 +349,15 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pointer_left(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) {
+    <span class="doccomment">/// Remove the pointer with `id`.
+    </span><span class="kw">pub fn </span>pointer_left(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = <span class="self">self</span>.pointers.iter().position(|p| p.id() == id) {
             <span class="self">self</span>.pointers.swap_remove(index);
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>pointer_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, hovered: <span class="prelude-ty">Option</span>&lt;ViewId&gt;) -&gt; bool {
+    <span class="doccomment">/// Set the hovered view of the pointer with `id`.
+    </span><span class="kw">pub fn </span>pointer_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, hovered: <span class="prelude-ty">Option</span>&lt;ViewId&gt;) -&gt; bool {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.pointer_mut(id) {
             <span class="kw">let </span>changed = pointer.hovered() != hovered;
             pointer.hovered = hovered;

@@ -339,6 +339,20 @@
 <a href="#337" id="337">337</a>
 <a href="#338" id="338">338</a>
 <a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::{Debug, Display},
     num::NonZeroU64,
@@ -356,9 +370,11 @@
     #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
     </span><span class="kw">pub struct </span>Update: u8 {
         <span class="doccomment">/// The view needs to be laid out.
-        </span><span class="kw">const </span>LAYOUT = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+        </span><span class="kw">const </span>LAYOUT = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
         <span class="doccomment">/// The view needs to be drawn.
-        </span><span class="kw">const </span>DRAW = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
+        </span><span class="kw">const </span>DRAW = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
+        <span class="doccomment">/// The view needs an animation frame.
+        </span><span class="kw">const </span>ANIMATE = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
     }
 }
 
@@ -484,29 +500,19 @@
 }
 
 <span class="kw">impl </span>ViewState {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    <span class="doccomment">/// Prepare the view.
+    </span><span class="kw">pub fn </span>prepare(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.flags.remove(ViewFlags::HAS);
         <span class="self">self</span>.inherited_cursor = <span class="self">self</span>.cursor;
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>prepare_layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.prepare();
-        <span class="self">self</span>.mark_layed_out();
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>prepare_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.prepare();
-        <span class="self">self</span>.mark_drawn();
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>propagate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, child: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
+    <span class="doccomment">/// Propagate the state of a child view.
+    </span><span class="kw">pub fn </span>propagate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, child: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
         <span class="self">self</span>.update |= child.update;
         <span class="self">self</span>.flags |= <span class="self">self</span>.flags.has() | child.flags.has();
         <span class="self">self</span>.inherited_cursor = <span class="self">self</span>.cursor().or(child.cursor());
     }
-}
 
-<span class="kw">impl </span>ViewState {
     <span class="doccomment">/// Get the id of the view.
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ViewId {
         <span class="self">self</span>.id
@@ -592,6 +598,11 @@
         <span class="self">self</span>.is_tight = tight;
     }
 
+    <span class="doccomment">/// Set the size of the view.
+    </span><span class="kw">pub fn </span>set_size(<span class="kw-2">&amp;mut </span><span class="self">self</span>, size: Size) {
+        <span class="self">self</span>.size = size;
+    }
+
     <span class="doccomment">/// Get the size of the view.
     </span><span class="kw">pub fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Size {
         <span class="self">self</span>.size
@@ -627,6 +638,11 @@
         <span class="self">self</span>.update |= Update::DRAW;
     }
 
+    <span class="doccomment">/// Request an animation frame of the view tree.
+    </span><span class="kw">pub fn </span>request_animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.update |= Update::ANIMATE;
+    }
+
     <span class="doccomment">/// Get whether the view needs to be laid out.
     </span><span class="kw">pub fn </span>needs_layout(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.update.contains(Update::LAYOUT)
@@ -635,6 +651,11 @@
     <span class="doccomment">/// Get whether the view needs to be drawn.
     </span><span class="kw">pub fn </span>needs_draw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.update.contains(Update::DRAW)
+    }
+
+    <span class="doccomment">/// Get whether the view needs an animation frame.
+    </span><span class="kw">pub fn </span>needs_animate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.update.contains(Update::ANIMATE)
     }
 
     <span class="doccomment">/// Mark the view as laid out.
@@ -649,6 +670,13 @@
     /// This will remove the [`Update::DRAW`] flag.
     </span><span class="kw">pub fn </span>mark_drawn(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.update.remove(Update::DRAW);
+    }
+
+    <span class="doccomment">/// Mark the view as animated.
+    ///
+    /// This will remove the [`Update::ANIMATE`] flag.
+    </span><span class="kw">pub fn </span>mark_animated(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.update.remove(Update::ANIMATE);
     }
 
     <span class="doccomment">/// Get the [`Update`] of the view.

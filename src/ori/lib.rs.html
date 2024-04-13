@@ -100,12 +100,13 @@
     </span><span class="kw">pub use </span>ori_winit::<span class="kw-2">*</span>;
 }
 
+<span class="attr">#[cfg(feature = <span class="string">"winit"</span>)]
+</span><span class="kw">pub use </span>ori_winit::launch;
+
 <span class="kw">pub mod </span>prelude {
     <span class="doccomment">//! Convenient imports for Ori.
 
-    /// Type alias for [`ori_core::launcher::Launcher`] with [`ori_winit::WinitShell`].
-    </span><span class="attr">#[cfg(feature = <span class="string">"winit"</span>)]
-    </span><span class="kw">pub type </span>Launcher&lt;T&gt; = ori_core::launcher::Launcher&lt;T, ori_winit::WinitShell&gt;;
+    </span><span class="kw">pub use </span>ori_app::{App, AppBuilder, Delegate, DelegateCx};
 
     <span class="attr">#[allow(unused_imports)]
     </span><span class="kw">pub use </span>ori_core::{
@@ -115,7 +116,6 @@
         },
         clipboard::Clipboard,
         command::CommandProxy,
-        delegate::Delegate,
         event::{
             AnimationFrame, CloseRequested, Code, Event, KeyPressed, Modifiers, Pointer,
             PointerButton, PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased,
@@ -135,8 +135,8 @@
         },
         transition::{ease, linear, Transition, TransitionCurve},
         view::{
-            any, pod, AnyView, BoxedView, BuildCx, DelegateCx, DrawCx, EventCx, LayoutCx, Pod,
-            PodSeq, RebuildCx, SeqState, State, View, ViewSeq, ViewState,
+            any, pod, AnyView, BoxedView, BuildCx, DrawCx, EventCx, LayoutCx, Pod, PodSeq,
+            RebuildCx, SeqState, State, View, ViewSeq, ViewState,
         },
         views::<span class="kw-2">*</span>,
         window::{Cursor, Window, WindowDescriptor, WindowId},

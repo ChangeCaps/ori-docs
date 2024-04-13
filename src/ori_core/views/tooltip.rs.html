@@ -640,7 +640,7 @@
 
             <span class="kw">if </span>cx.is_hot() || cx.has_hot() {
                 state.position = moved.position;
-                cx.request_animation_frame();
+                cx.animate();
                 event.handle();
             }
         }
@@ -648,7 +648,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>cx.is_hot() || cx.has_hot() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
                 state.timer += dt / <span class="self">self</span>.delay;
-                cx.request_animation_frame();
+                cx.animate();
             }
 
             state.timer = f32::clamp(state.timer, <span class="number">0.0</span>, <span class="number">1.0</span>);

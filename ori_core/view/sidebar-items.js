@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["any","pod"],"struct":["BaseCx","BuildCx","Contexts","DelegateCx","DrawCx","EventCx","LayoutCx","Pod","PodSeq","RebuildCx","SeqState","State","Update","ViewFlags","ViewId","ViewState"],"trait":["AnyView","View","ViewSeq"],"type":["AnyState","BoxedView"]};
+window.SIDEBAR_ITEMS = {"fn":["any","pod"],"struct":["BaseCx","BuildCx","Contexts","DrawCx","EventCx","LayoutCx","Pod","PodSeq","RebuildCx","SeqState","State","Update","ViewFlags","ViewId","ViewState"],"trait":["AnyView","View","ViewSeq"],"type":["AnyState","BoxedView"]};

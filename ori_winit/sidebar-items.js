@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error"],"struct":["WinitShell","WinitWindow"]};
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["launch"],"struct":["WinitWindow"]};

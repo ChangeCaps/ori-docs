@@ -420,16 +420,16 @@
         <span class="self">self</span>.content.event(content, cx, data, event);
 
         <span class="kw">if </span>cx.hot_changed() || cx.active_changed() {
-            cx.request_animation_frame();
+            cx.animate();
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.hot, cx.is_hot(), <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
             }
 
             <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.active, cx.is_active(), <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
             }
 
             cx.request_draw();

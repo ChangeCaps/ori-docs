@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["UiRequest"],"struct":["Ui","UiRequests","WindowUi"],"type":["UiBuilder"]};

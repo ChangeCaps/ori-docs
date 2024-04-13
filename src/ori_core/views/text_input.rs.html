@@ -1010,7 +1010,7 @@
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">if </span>event.is::&lt;RequestFocus&gt;() {
             cx.set_focused(<span class="bool-val">true</span>);
-            cx.request_animation_frame();
+            cx.animate();
             cx.request_draw();
             event.handle();
         }
@@ -1130,7 +1130,7 @@
             }
 
             cx.set_focused(<span class="bool-val">true</span>);
-            cx.request_animation_frame();
+            cx.animate();
 
             state.blink = <span class="number">0.0</span>;
             state.dragging = <span class="bool-val">true</span>;
@@ -1173,7 +1173,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>cx.is_focused() {
-                cx.request_animation_frame();
+                cx.animate();
                 cx.request_draw();
 
                 state.blink += <span class="kw-2">*</span>dt * <span class="number">10.0</span>;

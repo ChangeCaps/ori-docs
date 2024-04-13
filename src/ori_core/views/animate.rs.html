@@ -250,12 +250,12 @@
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
         <span class="kw">if </span>cx.is_hot() || cx.has_hot_changed() {
-            cx.request_animation_frame();
+            cx.animate();
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>transition.step(t, cx.is_hot() || cx.has_hot(), <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
             }
         }
@@ -278,12 +278,12 @@
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
         <span class="kw">if </span>cx.active_changed() || cx.has_active_changed() {
-            cx.request_animation_frame();
+            cx.animate();
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>transition.step(t, cx.is_active() || cx.has_active(), <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
             }
         }
@@ -306,12 +306,12 @@
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
         <span class="kw">if </span>cx.focused_changed() || cx.has_focused_changed() {
-            cx.request_animation_frame();
+            cx.animate();
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>transition.step(t, cx.is_focused() || cx.has_focused(), <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
             }
         }
@@ -336,7 +336,7 @@
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
             <span class="kw">if </span>transition.step(t, active, <span class="kw-2">*</span>dt) {
-                cx.request_animation_frame();
+                cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
             }
         }
@@ -384,7 +384,7 @@
     <span class="kw">type </span>State = AnimateState&lt;V, S, T&gt;;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        cx.request_animation_frame();
+        cx.animate();
 
         AnimateState {
             animate_state: S::default(),
@@ -399,7 +399,7 @@
         _data: <span class="kw-2">&amp;mut </span>T,
         _old: <span class="kw-2">&amp;</span><span class="self">Self</span>,
     ) {
-        cx.request_animation_frame();
+        cx.animate();
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {

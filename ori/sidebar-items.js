@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["main"],"mod":["core","prelude","winit"]};
+window.SIDEBAR_ITEMS = {"attr":["main"],"fn":["launch"],"mod":["core","prelude","winit"]};
