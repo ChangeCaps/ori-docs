@@ -298,6 +298,8 @@
 <a href="#296" id="296">296</a>
 <a href="#297" id="297">297</a>
 <a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -305,7 +307,7 @@
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Mesh, Vertex},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{AnimationFrame, Event, PointerPressed},
+    event::Event,
     layout::{Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
     style::{style, Style, Styles},
@@ -488,13 +490,15 @@
             cx.view_state.update = update &amp; !Update::DRAW;
         }
 
-        <span class="kw">if </span>event.is::&lt;PointerPressed&gt;() &amp;&amp; (state.header.is_hot() || state.header.has_hot()) {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>))
+            &amp;&amp; (state.header.is_hot() || state.header.has_hot())
+        {
             state.open = !state.open;
             cx.animate();
             cx.request_layout();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.t, state.open, <span class="kw-2">*</span>dt) {
                 cx.animate();
                 cx.request_layout();

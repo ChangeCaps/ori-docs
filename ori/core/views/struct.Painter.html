@@ -22,7 +22,7 @@
     _state: &amp;mut &lt;<a class="struct" href="../../prelude/struct.Painter.html" title="struct ori::prelude::Painter">Painter</a>&lt;T&gt; as <a class="trait" href="../../prelude/trait.View.html" title="trait ori::prelude::View">View</a>&lt;T&gt;&gt;::<a class="associatedtype" href="../../prelude/trait.View.html#associatedtype.State" title="type ori::prelude::View::State">State</a>,
     _cx: &amp;mut <a class="struct" href="../../prelude/struct.EventCx.html" title="struct ori::prelude::EventCx">EventCx</a>&lt;'_, '_&gt;,
     _data: <a class="primitive" href="https://doc.rust-lang.org/1.77.2/std/primitive.reference.html">&amp;mut T</a>,
-    _event: &amp;<a class="struct" href="../../prelude/struct.Event.html" title="struct ori::prelude::Event">Event</a>
+    _event: &amp;<a class="enum" href="../../prelude/enum.Event.html" title="enum ori::prelude::Event">Event</a>
 )</h4></section></summary><div class='docblock'>Handle an event, see top-level documentation for more information.</div></details><details class="toggle method-toggle" open><summary><section id="method.layout" class="method trait-impl"><a class="src rightside" href="../../../src/ori_core/views/painter.rs.html#58-64">source</a><a href="#method.layout" class="anchor">§</a><h4 class="code-header">fn <a href="../../prelude/trait.View.html#tymethod.layout" class="fn">layout</a>(
     &amp;mut self,
     _state: &amp;mut &lt;<a class="struct" href="../../prelude/struct.Painter.html" title="struct ori::prelude::Painter">Painter</a>&lt;T&gt; as <a class="trait" href="../../prelude/trait.View.html" title="trait ori::prelude::View">View</a>&lt;T&gt;&gt;::<a class="associatedtype" href="../../prelude/trait.View.html#associatedtype.State" title="type ori::prelude::View::State">State</a>,
@@ -49,7 +49,7 @@
     state: &amp;mut <a class="struct" href="https://doc.rust-lang.org/1.77.2/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;dyn <a class="trait" href="https://doc.rust-lang.org/1.77.2/core/any/trait.Any.html" title="trait core::any::Any">Any</a>&gt;,
     cx: &amp;mut <a class="struct" href="../../prelude/struct.EventCx.html" title="struct ori::prelude::EventCx">EventCx</a>&lt;'_, '_&gt;,
     data: <a class="primitive" href="https://doc.rust-lang.org/1.77.2/std/primitive.reference.html">&amp;mut T</a>,
-    event: &amp;<a class="struct" href="../../prelude/struct.Event.html" title="struct ori::prelude::Event">Event</a>
+    event: &amp;<a class="enum" href="../../prelude/enum.Event.html" title="enum ori::prelude::Event">Event</a>
 )</h4></section></summary><div class='docblock'>Handle an event.</div></details><details class="toggle method-toggle" open><summary><section id="method.dyn_layout" class="method trait-impl"><a class="src rightside" href="../../../src/ori_core/view/any.rs.html#128-134">source</a><a href="#method.dyn_layout" class="anchor">§</a><h4 class="code-header">fn <a href="../../prelude/trait.AnyView.html#tymethod.dyn_layout" class="fn">dyn_layout</a>(
     &amp;mut self,
     state: &amp;mut <a class="struct" href="https://doc.rust-lang.org/1.77.2/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;dyn <a class="trait" href="https://doc.rust-lang.org/1.77.2/core/any/trait.Any.html" title="trait core::any::Any">Any</a>&gt;,

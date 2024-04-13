@@ -634,16 +634,6 @@
 <a href="#632" id="632">632</a>
 <a href="#633" id="633">633</a>
 <a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
-<a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
-<a href="#643" id="643">643</a>
-<a href="#644" id="644">644</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
@@ -652,10 +642,7 @@
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Quad},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{
-        AnimationFrame, Code, Event, KeyPressed, PointerMoved, PointerPressed, PointerReleased,
-        RequestFocus,
-    },
+    event::{Code, Event, KeyPressed},
     layout::{Point, Rect, Size, Space},
     style::style,
     text::{
@@ -1010,14 +997,7 @@
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">if </span>event.is::&lt;RequestFocus&gt;() {
-            cx.set_focused(<span class="bool-val">true</span>);
-            cx.animate();
-            cx.request_draw();
-            event.handle();
-        }
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(e) = event.get::&lt;KeyPressed&gt;() {
+        <span class="kw">if let </span>Event::KeyPressed(e) = event {
             <span class="kw">if </span>!cx.is_focused() {
                 <span class="kw">return</span>;
             }
@@ -1120,7 +1100,7 @@
             }
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(e) = event.get::&lt;PointerPressed&gt;() {
+        <span class="kw">if let </span>Event::PointerPressed(e) = event {
             <span class="kw">if </span>!cx.is_hot() {
                 <span class="kw">if </span>cx.is_focused() {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
@@ -1147,11 +1127,11 @@
             );
         }
 
-        <span class="kw">if </span>event.is::&lt;PointerReleased&gt;() {
+        <span class="kw">if let </span>Event::PointerReleased(<span class="kw">_</span>) = event {
             state.dragging = <span class="bool-val">false</span>;
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(e) = event.get::&lt;PointerMoved&gt;() {
+        <span class="kw">if let </span>Event::PointerMoved(e) = event {
             <span class="kw">let </span>local = cx.local(e.position);
 
             <span class="kw">if </span>state.dragging {
@@ -1173,7 +1153,7 @@
             }
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>cx.is_focused() {
                 cx.animate();
                 cx.request_draw();

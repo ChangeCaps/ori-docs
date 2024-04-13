@@ -119,12 +119,6 @@
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{<span class="self">self</span>, Any},
     future::Future,
@@ -133,7 +127,6 @@
 <span class="kw">use crate</span>::{
     clipboard::{Clipboard, ClipboardContext},
     command::{Command, CommandProxy},
-    event::Quit,
     text::Fonts,
 };
 
@@ -243,11 +236,6 @@
     <span class="doccomment">/// Get a context or insert a `default`.
     </span><span class="kw">pub fn </span>context_or_default&lt;T: Any + Default&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
         <span class="self">self</span>.contexts.get_or_default::&lt;T&gt;()
-    }
-
-    <span class="doccomment">/// Quit the application.
-    </span><span class="kw">pub fn </span>quit(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.cmd(Quit);
     }
 }
 </code></pre></div></section></main></body></html>

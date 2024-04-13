@@ -212,7 +212,7 @@
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Code, Event, KeyPressed},
+    event::{Code, Event},
     layout::{Size, Space, Vector},
     view::{Pod, State, View},
 };
@@ -317,8 +317,8 @@
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = event.get::&lt;KeyPressed&gt;() {
-            <span class="kw">if </span>event.is(Code::I) &amp;&amp; event.modifiers.ctrl &amp;&amp; event.modifiers.shift {
+        <span class="kw">if let </span>Event::KeyPressed(e) = event {
+            <span class="kw">if </span>e.is(Code::I) &amp;&amp; e.modifiers.ctrl &amp;&amp; e.modifiers.shift {
                 state.is_open = !state.is_open;
                 cx.request_rebuild();
                 cx.request_layout();

@@ -71,6 +71,11 @@
 <a href="#69" id="69">69</a>
 <a href="#70" id="70">70</a>
 <a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use </span>ori_core::{
@@ -119,6 +124,11 @@
     <span class="doccomment">/// Request a rebuild of the view tree.
     </span><span class="kw">pub fn </span>request_rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw-2">*</span><span class="self">self</span>.rebuild = <span class="bool-val">true</span>;
+    }
+
+    <span class="doccomment">/// Quit the application.
+    </span><span class="kw">pub fn </span>quit(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.requests.push(AppRequest::Quit);
     }
 
     <span class="doccomment">/// Add a window to the application.

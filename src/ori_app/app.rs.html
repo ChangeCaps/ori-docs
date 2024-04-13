@@ -505,6 +505,12 @@
 <a href="#503" id="503">503</a>
 <a href="#504" id="504">504</a>
 <a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -514,9 +520,8 @@
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
-        AnimationFrame, Code, Event, HoveredChanged, KeyPressed, KeyReleased, Modifiers,
-        PointerButton, PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased,
-        PointerScrolled, WindowResized,
+        Code, Event, KeyPressed, KeyReleased, Modifiers, PointerButton, PointerId, PointerMoved,
+        PointerPressed, PointerReleased, PointerScrolled, WindowResized,
     },
     layout::{Point, Size, Space, Vector},
     style::Styles,
@@ -634,7 +639,7 @@
             window.view_state.request_layout();
         }
 
-        <span class="kw">let </span>event = Event::new(WindowResized {
+        <span class="kw">let </span>event = Event::WindowResized(WindowResized {
             window: window_id,
             width,
             height,
@@ -663,14 +668,14 @@
         window_state.window.pointer_moved(pointer_id, position);
         <span class="self">self</span>.update_hovered(window_id);
 
-        <span class="kw">let </span>event = PointerMoved {
+        <span class="kw">let </span>event = Event::PointerMoved(PointerMoved {
             id: pointer_id,
             modifiers: <span class="self">self</span>.modifiers,
             position,
             delta,
-        };
+        });
 
-        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
     }
 
     <span class="doccomment">/// A pointer left the window.
@@ -681,9 +686,9 @@
 
         window_state.window.pointer_left(pointer_id);
 
-        <span class="kw">let </span>event = PointerLeft { id: pointer_id };
+        <span class="kw">let </span>event = Event::PointerLeft(pointer_id);
 
-        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
     }
 
     <span class="kw">fn </span>pointer_position(<span class="kw-2">&amp;</span><span class="self">self</span>, window_id: WindowId, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;Point&gt; {
@@ -702,14 +707,14 @@
             </span>.pointer_position(window_id, pointer_id)
             .unwrap_or(Point::ZERO);
 
-        <span class="kw">let </span>event = PointerScrolled {
+        <span class="kw">let </span>event = Event::PointerScrolled(PointerScrolled {
             id: pointer_id,
             modifiers: <span class="self">self</span>.modifiers,
             position,
             delta,
-        };
+        });
 
-        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
     }
 
     <span class="doccomment">/// A pointer button was pressed or released.
@@ -726,23 +731,23 @@
             .unwrap_or(Point::ZERO);
 
         <span class="kw">if </span>pressed {
-            <span class="kw">let </span>event = PointerPressed {
+            <span class="kw">let </span>event = Event::PointerPressed(PointerPressed {
                 id: pointer_id,
                 modifiers: <span class="self">self</span>.modifiers,
                 position,
                 button,
-            };
+            });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         } <span class="kw">else </span>{
-            <span class="kw">let </span>event = PointerReleased {
+            <span class="kw">let </span>event = Event::PointerReleased(PointerReleased {
                 id: pointer_id,
                 modifiers: <span class="self">self</span>.modifiers,
                 position,
                 button,
-            };
+            });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         }
     }
 
@@ -756,20 +761,20 @@
         pressed: bool,
     ) {
         <span class="kw">if </span>pressed {
-            <span class="kw">let </span>event = KeyPressed {
+            <span class="kw">let </span>event = Event::KeyPressed(KeyPressed {
                 code,
                 text,
                 modifiers: <span class="self">self</span>.modifiers,
-            };
+            });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         } <span class="kw">else </span>{
-            <span class="kw">let </span>event = KeyReleased {
+            <span class="kw">let </span>event = Event::KeyReleased(KeyReleased {
                 code,
                 modifiers: <span class="self">self</span>.modifiers,
-            };
+            });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         }
     }
 
@@ -832,8 +837,7 @@
     <span class="doccomment">/// Handle all pending commands.
     </span><span class="kw">pub fn </span>handle_commands(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">while let </span><span class="prelude-val">Some</span>(command) = <span class="self">self</span>.receiver.try_recv() {
-            <span class="kw">let </span>event = Event::from(command);
-            <span class="self">self</span>.event(data, <span class="kw-2">&amp;</span>event);
+            <span class="self">self</span>.event(data, <span class="kw-2">&amp;</span>Event::Command(command));
         }
     }
 
@@ -884,7 +888,9 @@
     </span>}
 
     <span class="doccomment">/// Handle an event for the entire application.
-    </span><span class="kw">pub fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    ///
+    /// Returns true if the event was handled by a delegate.
+    </span><span class="kw">pub fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) -&gt; bool {
         <span class="kw">let </span>animate = Instant::now();
 
         <span class="kw">let </span>event_handled = <span class="self">self</span>.delegate_event(data, event);
@@ -920,10 +926,14 @@
         }
 
         <span class="self">self</span>.handle_commands(data);
+
+        event_handled
     }
 
     <span class="doccomment">/// Handle an event for a single window.
-    </span><span class="kw">pub fn </span>window_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, event: <span class="kw-2">&amp;</span>Event) {
+    ///
+    /// Returns true if the event was handled by a delegate.
+    </span><span class="kw">pub fn </span>window_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, event: <span class="kw-2">&amp;</span>Event) -&gt; bool {
         <span class="kw">let </span>animate = Instant::now();
 
         <span class="kw">let </span>event_handled = <span class="self">self</span>.delegate_event(data, event);
@@ -959,6 +969,8 @@
         }
 
         <span class="self">self</span>.handle_commands(data);
+
+        event_handled
     }
 
     <span class="doccomment">/// Draw a single window, returning the scene if it needs to be rendered.
@@ -971,8 +983,8 @@
             <span class="kw">if </span>window_state.view_state.needs_animate() {
                 window_state.view_state.mark_animated();
 
-                <span class="kw">let </span>event = AnimationFrame(window_state.animate());
-                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(event));
+                <span class="kw">let </span>event = Event::Animate(window_state.animate());
+                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
             }
         }
 
@@ -988,7 +1000,7 @@
             <span class="self">self</span>.style.as_context(|| window.draw(data, <span class="kw-2">&amp;mut </span>base));
 
             <span class="kw">if </span><span class="self">self</span>.update_hovered(window_id) {
-                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::new(HoveredChanged));
+                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::UpdateHovered);
             }
         }
 

@@ -140,7 +140,7 @@
 <span class="kw">use crate</span>::{
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Event, PointerPressed},
+    event::{Event},
     layout::{Size, Space, Vector},
     view::{Pod, State, View},
 };
@@ -215,7 +215,7 @@
             cx.request_draw();
         }
 
-        <span class="kw">if </span>event.is::&lt;PointerPressed&gt;() {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) {
             <span class="kw">if </span>!<span class="self">self</span>.toggle &amp;&amp; cx.is_focused() &amp;&amp; !cx.has_hot() {
                 cx.set_focused(<span class="bool-val">false</span>);
                 cx.request_draw();

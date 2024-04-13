@@ -264,7 +264,7 @@
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{AnimationFrame, Event},
+    event::Event,
     layout::{Padding, Size, Space, Vector},
     rebuild::Rebuild,
     style::{style, Style, Styles},
@@ -425,7 +425,7 @@
             cx.animate();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.hot, cx.is_hot(), <span class="kw-2">*</span>dt) {
                 cx.animate();
             }

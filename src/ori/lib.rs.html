@@ -74,7 +74,6 @@
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(missing_docs)]
 #![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
 
@@ -118,9 +117,8 @@
         command::CommandProxy,
         context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
         event::{
-            AnimationFrame, CloseRequested, Code, Event, KeyPressed, Modifiers, Pointer,
-            PointerButton, PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased,
-            PointerScrolled, Quit, RequestFocus,
+            CloseRequested, Code, Event, KeyPressed, Modifiers, Pointer, PointerButton, PointerId,
+            PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
         },
         image::{gradient, Image, ImageData, ImageId},
         layout::{

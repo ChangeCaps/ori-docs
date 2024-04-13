@@ -229,7 +229,7 @@
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{AnimationFrame, Event},
+    event::Event,
     layout::{Size, Space},
     style::Styles,
     transition::Transition,
@@ -255,7 +255,7 @@
             cx.animate();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>transition.step(t, cx.is_hot() || cx.has_hot(), <span class="kw-2">*</span>dt) {
                 cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
@@ -283,7 +283,7 @@
             cx.animate();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>transition.step(t, cx.is_active() || cx.has_active(), <span class="kw-2">*</span>dt) {
                 cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
@@ -311,7 +311,7 @@
             cx.animate();
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>transition.step(t, cx.is_focused() || cx.has_focused(), <span class="kw-2">*</span>dt) {
                 cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
@@ -336,7 +336,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(AnimationFrame(dt)) = event.get() {
+        <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>transition.step(t, active, <span class="kw-2">*</span>dt) {
                 cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));

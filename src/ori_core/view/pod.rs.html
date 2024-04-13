@@ -344,6 +344,10 @@
 <a href="#342" id="342">342</a>
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use </span>instant::Instant;
@@ -352,7 +356,7 @@
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     debug::{DebugDraw, DebugLayout, DebugTree},
-    event::{AnimationFrame, Event},
+    event::Event,
     layout::{Size, Space},
 };
 
@@ -466,7 +470,11 @@
         event: <span class="kw-2">&amp;</span>Event,
         <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;</span>Event),
     ) {
-        <span class="kw">if </span>event.is::&lt;AnimationFrame&gt;() {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::Animate(<span class="kw">_</span>)) {
+            <span class="kw">if </span>!view_state.needs_animate() {
+                <span class="kw">return</span>;
+            }
+
             view_state.mark_animated();
         }
 

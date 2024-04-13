@@ -189,7 +189,7 @@
 <span class="kw">use crate</span>::{
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Event, PointerPressed, PointerReleased},
+    event::{Event},
     layout::{Point, Size, Space},
     rebuild::Rebuild,
     view::View,
@@ -312,8 +312,8 @@
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
     ) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(pressed) = event.get::&lt;PointerPressed&gt;() {
-            state.click_start = pressed.position;
+        <span class="kw">if let </span>Event::PointerPressed(e) = event {
+            state.click_start = e.position;
 
             <span class="kw">if </span>cx.is_hot() || (cx.had_hot() &amp;&amp; <span class="self">self</span>.descendants) {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_press) = <span class="self">self</span>.on_press {
@@ -325,7 +325,7 @@
             }
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(released) = event.get::&lt;PointerReleased&gt;() {
+        <span class="kw">if let </span>Event::PointerReleased(e) = event {
             <span class="kw">if </span>cx.is_active() {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_release) = <span class="self">self</span>.on_release {
                     on_release(cx, data);
@@ -334,7 +334,7 @@
 
                 cx.set_active(<span class="bool-val">false</span>);
 
-                <span class="kw">let </span>click_distance = (released.position - state.click_start).length();
+                <span class="kw">let </span>click_distance = (e.position - state.click_start).length();
                 <span class="kw">if </span>click_distance &lt;= <span class="self">Self</span>::MAX_CLICK_DISTANCE {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_click) = <span class="self">self</span>.on_click {
                         on_click(cx, data);
