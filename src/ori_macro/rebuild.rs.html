@@ -250,7 +250,7 @@
         <span class="attr">#[automatically_derived]
         </span><span class="kw">impl </span>#impl_generics #ori_core::rebuild::Rebuild <span class="kw">for </span>#name #ty_generics #where_clause {
             <span class="attr">#[allow(unused)]
-            </span><span class="kw">fn </span>rebuild(<span class="kw-2">&amp;</span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>#ori_core::view::RebuildCx, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+            </span><span class="kw">fn </span>rebuild(<span class="kw-2">&amp;</span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>#ori_core::context::RebuildCx, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
                 #rebuild_impl
             }
         }

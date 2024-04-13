@@ -128,14 +128,16 @@
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Alignment, Size, Space},
     rebuild::Rebuild,
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, Pod, RebuildCx, State, View},
+    view::{Pod, State, View},
 };
 
 <span class="doccomment">/// A view that aligns its content.

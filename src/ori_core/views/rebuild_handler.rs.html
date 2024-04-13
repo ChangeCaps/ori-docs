@@ -72,11 +72,13 @@
 <a href="#70" id="70">70</a>
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     canvas::Canvas,
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="doccomment">/// Create a new [`RebuildHandler`].

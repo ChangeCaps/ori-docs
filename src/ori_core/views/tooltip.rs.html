@@ -360,11 +360,13 @@
 <a href="#358" id="358">358</a>
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
     canvas::{BorderRadius, BorderWidth, Canvas, Color},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{AnimationFrame, Event, PointerMoved, WindowResized},
     layout::{Affine, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
@@ -373,7 +375,7 @@
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
     },
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="doccomment">/// Create a new [`Tooltip`] view.

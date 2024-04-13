@@ -643,6 +643,7 @@
 <a href="#641" id="641">641</a>
 <a href="#642" id="642">642</a>
 <a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
@@ -650,6 +651,7 @@
 
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Quad},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
         AnimationFrame, Code, Event, KeyPressed, PointerMoved, PointerPressed, PointerReleased,
         RequestFocus,
@@ -660,7 +662,7 @@
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
     },
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
     window::Cursor,
 };
 

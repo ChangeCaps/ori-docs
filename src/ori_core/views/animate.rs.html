@@ -225,13 +225,15 @@
 <a href="#223" id="223">223</a>
 <a href="#224" id="224">224</a>
 <a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     canvas::Canvas,
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{AnimationFrame, Event},
     layout::{Size, Space},
     style::Styles,
     transition::Transition,
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="doccomment">/// Create a new [`Animate`].

@@ -302,17 +302,15 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Align, Axis, Justify, Size, Space},
     rebuild::Rebuild,
-    view::{
-        AnyView, BuildCx, DrawCx, EventCx, LayoutCx, PodSeq, RebuildCx, SeqState, View, ViewSeq,
-    },
+    view::{AnyView, PodSeq, SeqState, View, ViewSeq},
 };
 
 <span class="kw">pub use crate</span>::{hstack, vstack};

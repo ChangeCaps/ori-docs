@@ -246,6 +246,7 @@
 <a href="#244" id="244">244</a>
 <a href="#245" id="245">245</a>
 <a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -253,6 +254,7 @@
 
 <span class="kw">use crate</span>::{
     canvas::{Canvas, Color, Mesh},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
     style::{style, Style, Styles},
@@ -260,7 +262,7 @@
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
     },
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="kw">use </span>smol_str;

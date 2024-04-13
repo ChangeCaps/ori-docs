@@ -505,11 +505,6 @@
 <a href="#503" id="503">503</a>
 <a href="#504" id="504">504</a>
 <a href="#505" id="505">505</a>
-<a href="#506" id="506">506</a>
-<a href="#507" id="507">507</a>
-<a href="#508" id="508">508</a>
-<a href="#509" id="509">509</a>
-<a href="#510" id="510">510</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -517,6 +512,7 @@
     canvas::{Canvas, Color, Scene},
     clipboard::{Clipboard, ClipboardContext},
     command::{CommandProxy, CommandReceiver},
+    context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
         AnimationFrame, Code, Event, HoveredChanged, KeyPressed, KeyReleased, Modifiers,
         PointerButton, PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased,
@@ -524,10 +520,7 @@
     },
     layout::{Point, Size, Space, Vector},
     style::Styles,
-    view::{
-        AnyState, BaseCx, BoxedView, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx, View,
-        ViewState,
-    },
+    view::{AnyState, BoxedView, View, ViewState},
     window::{Window, WindowId},
 };
 
@@ -564,6 +557,15 @@
         <span class="kw">let </span><span class="kw-2">mut </span>new_view = (<span class="self">self</span>.ui)(data);
         new_view.rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;</span><span class="self">self</span>.view);
         <span class="self">self</span>.view = new_view;
+    }
+
+    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx, rebuild: <span class="kw-2">&amp;mut </span>bool, event: <span class="kw-2">&amp;</span>Event) {
+        <span class="kw">let </span>hot = <span class="self">self</span>.window.is_hovered(<span class="self">self</span>.view_state.id());
+        <span class="self">self</span>.view_state.set_hot(hot);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
+
+        <span class="self">self</span>.view.event(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, event);
     }
 
     <span class="kw">fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
@@ -892,15 +894,9 @@
         <span class="kw">if </span>!event_handled {
             <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
-                <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(
-                    <span class="kw-2">&amp;mut </span>base,
-                    <span class="kw-2">&amp;mut </span>window_state.view_state,
-                    <span class="kw-2">&amp;mut </span>rebuild,
-                    <span class="kw-2">&amp;mut </span>window_state.window,
-                );
 
                 <span class="self">self</span>.style.as_context(|| {
-                    (window_state.view).event(<span class="kw-2">&amp;mut </span>window_state.state, <span class="kw-2">&amp;mut </span>cx, data, event);
+                    window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
             }
         }
@@ -937,15 +933,9 @@
         <span class="kw">if </span>!event_handled {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
-                <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(
-                    <span class="kw-2">&amp;mut </span>base,
-                    <span class="kw-2">&amp;mut </span>window_state.view_state,
-                    <span class="kw-2">&amp;mut </span>rebuild,
-                    <span class="kw-2">&amp;mut </span>window_state.window,
-                );
 
                 <span class="self">self</span>.style.as_context(|| {
-                    (window_state.view).event(<span class="kw-2">&amp;mut </span>window_state.state, <span class="kw-2">&amp;mut </span>cx, data, event);
+                    window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
             }
         }

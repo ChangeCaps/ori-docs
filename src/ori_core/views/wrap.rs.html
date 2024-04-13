@@ -285,19 +285,17 @@
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Range;
 
 <span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Align, Axis, Justify, Size, Space},
     rebuild::Rebuild,
-    view::{
-        AnyView, BuildCx, DrawCx, EventCx, LayoutCx, PodSeq, RebuildCx, SeqState, View, ViewSeq,
-    },
+    view::{AnyView, PodSeq, SeqState, View, ViewSeq},
 };
 
 <span class="kw">pub use crate</span>::{hwrap, vwrap};

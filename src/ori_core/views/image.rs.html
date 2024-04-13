@@ -82,12 +82,14 @@
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     canvas::{Canvas, Color, Mesh, Vertex},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     image::{Image, Texture},
     layout::{Point, Size, Space},
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="kw">impl</span>&lt;T&gt; View&lt;T&gt; <span class="kw">for </span>Image {

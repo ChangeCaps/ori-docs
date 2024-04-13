@@ -210,16 +210,18 @@
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
 <a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
     canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Curve},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{AnimationFrame, Event},
     layout::{Point, Size, Space},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     transition::Transition,
-    view::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx, View},
+    view::View,
 };
 
 <span class="doccomment">/// Create a new [`Checkbox`].
