@@ -41,11 +41,11 @@ a winit based shell, and supports both a wgpu, and glow based renderer.</p>
     tooltip(counter, <span class="string">"Click to increment the counter!"</span>)
 }
 
-<span class="comment">// We create our app function that creates the UI of our app.
+<span class="comment">// We create our ui function that creates the UI of our app.
 //
 // This will be called every time the UI needs to be rebuilt,
 // eg. when the a button is clicked.
-</span><span class="kw">fn </span>app(data: <span class="kw-2">&amp;mut </span>Data) -&gt; <span class="kw">impl </span>View&lt;Data&gt; {
+</span><span class="kw">fn </span>ui(data: <span class="kw-2">&amp;mut </span>Data) -&gt; <span class="kw">impl </span>View&lt;Data&gt; {
     <span class="comment">// We use the `vstack!` macro to create a vertical stack of views.
     </span><span class="kw">let </span>content = <span class="macro">vstack!</span>[counter_button(), <span class="macro">text!</span>(<span class="string">"Clicked {} time(s)"</span>, data.counter)];
 
@@ -56,8 +56,11 @@ a winit based shell, and supports both a wgpu, and glow based renderer.</p>
 <span class="kw">fn </span>main() {
     <span class="kw">let </span>window = WindowDescriptor::new().title(<span class="string">"Counter (examples/counter.rs)"</span>);
 
-    <span class="comment">// We create a new app with our `app` function and initial `Data` struct.
+    <span class="comment">// We create a new app with our `ui` function.
     // Then we set the title of the window and run the app.
-    </span>Launcher::new(Data::default()).window(window, app).launch();
+    </span><span class="kw">let </span>app = App::build().window(window, ui);
+
+    <span class="comment">// Finally we launch the app.
+    </span>ori::launch(app, Data::default());
 }</code></pre></div>
 </div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="core/index.html" title="mod ori::core">core</a></div><div class="desc docblock-short">Ori <a href="../ori_core/index.html" title="mod ori_core"><code>core</code></a> module.</div></li><li><div class="item-name"><a class="mod" href="prelude/index.html" title="mod ori::prelude">prelude</a></div><div class="desc docblock-short">Convenient imports for Ori.</div></li><li><div class="item-name"><a class="mod" href="winit/index.html" title="mod ori::winit">winit</a></div><div class="desc docblock-short">Ori <a href="../ori_winit/index.html" title="mod ori_winit"><code>winit</code></a> integration.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.launch.html" title="fn ori::launch">launch</a></div><div class="desc docblock-short">Launch an application.</div></li></ul><h2 id="attributes" class="section-header">Attribute Macros<a href="#attributes" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.main.html" title="attr ori::main">main</a></div><div class="desc docblock-short">A macro to generate boilerplate for the <code>main</code> function.</div></li></ul></section></div></main></body></html>
