@@ -846,7 +846,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
         <span class="kw">for </span>window <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            window.rebuild(data, <span class="kw-2">&amp;mut </span>base);
+            <span class="self">self</span>.style.as_context(|| window.rebuild(data, <span class="kw-2">&amp;mut </span>base));
         }
     }
 
