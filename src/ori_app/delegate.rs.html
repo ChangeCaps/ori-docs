@@ -76,6 +76,12 @@
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
 <a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use </span>ori_core::{
@@ -149,6 +155,12 @@
 
 <span class="doccomment">/// A delegate for handling events in an application.
 </span><span class="kw">pub trait </span>Delegate&lt;T&gt; {
+    <span class="doccomment">/// Called when the application is initialized.
+    </span><span class="kw">fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _cx: <span class="kw-2">&amp;mut </span>DelegateCx&lt;T&gt;, _data: <span class="kw-2">&amp;mut </span>T) {}
+
+    <span class="doccomment">/// Called when the application is idle.
+    </span><span class="kw">fn </span>idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _cx: <span class="kw-2">&amp;mut </span>DelegateCx&lt;T&gt;, _data: <span class="kw-2">&amp;mut </span>T) {}
+
     <span class="doccomment">/// Handle an event.
     </span><span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>DelegateCx&lt;T&gt;, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) -&gt; bool;
 }

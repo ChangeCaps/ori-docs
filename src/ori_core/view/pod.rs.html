@@ -348,6 +348,8 @@
 <a href="#346" id="346">346</a>
 <a href="#347" id="347">347</a>
 <a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use </span>instant::Instant;
@@ -472,6 +474,8 @@
     ) {
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::Animate(<span class="kw">_</span>)) {
             <span class="kw">if </span>!view_state.needs_animate() {
+                cx.view_state.propagate(view_state);
+
                 <span class="kw">return</span>;
             }
 

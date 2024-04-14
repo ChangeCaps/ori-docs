@@ -677,7 +677,7 @@
         canvas: <span class="kw-2">&amp;mut </span>Canvas,
     ) {
         <span class="comment">// we need to set the view to be enable hit testing
-        </span>canvas.set_view(cx.id());
+        </span>canvas.set_hoverable(cx.id());
         <span class="self">self</span>.content.draw(content, cx, data, canvas);
 
         <span class="kw">let </span>alpha = f32::clamp(state.timer * <span class="number">10.0 </span>- <span class="number">9.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);

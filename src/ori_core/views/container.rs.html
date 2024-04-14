@@ -458,7 +458,7 @@
     ) {
         canvas.draw(<span class="self">self</span>.shadow.mesh(cx.rect(), <span class="self">self</span>.border_radius));
 
-        canvas.set_view(cx.id());
+        canvas.set_hoverable(cx.id());
         canvas.draw_quad(
             cx.rect(),
             <span class="self">self</span>.background.clone(),

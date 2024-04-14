@@ -254,12 +254,12 @@
     <span class="doccomment">/// Set the view that the canvas is being drawn for.
     ///
     /// This will enable hit testing for the view.
-    </span><span class="kw">pub fn </span>set_view(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId) {
+    </span><span class="kw">pub fn </span>set_hoverable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId) {
         <span class="self">self</span>.view = <span class="prelude-val">Some</span>(view);
     }
 
     <span class="doccomment">/// Temporarily set the view, see [`Canvas::set_view`].
-    </span><span class="kw">pub fn </span>with_view&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+    </span><span class="kw">pub fn </span>with_hoverable&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
         <span class="kw">let </span>t = <span class="self">self</span>.view;
         <span class="self">self</span>.view = <span class="prelude-val">Some</span>(view);
         <span class="kw">let </span>result = f(<span class="self">self</span>);
@@ -271,7 +271,7 @@
     ///
     /// This will enable hit testing without drawing anything.
     </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, rect: Rect) {
-        <span class="self">self</span>.with_view(view, |canvas| {
+        <span class="self">self</span>.with_hoverable(view, |canvas| {
             canvas.draw(Primitive::Trigger(rect));
         });
     }

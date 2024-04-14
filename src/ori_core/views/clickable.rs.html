@@ -364,7 +364,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         canvas: <span class="kw-2">&amp;mut </span>Canvas,
     ) {
-        canvas.set_view(cx.id());
+        canvas.set_hoverable(cx.id());
         <span class="self">self</span>.content.draw(content, cx, data, canvas);
     }
 }

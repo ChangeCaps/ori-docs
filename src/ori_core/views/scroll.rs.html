@@ -264,9 +264,6 @@
 <a href="#262" id="262">262</a>
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -413,8 +410,6 @@
             <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(cx.rect());
             state.scrollbar_hot = scrollbar_rect.contains(local);
 
-            cx.animate();
-
             <span class="kw">if </span>cx.is_active() {
                 <span class="kw">let </span>scroll_start = <span class="self">self</span>.axis.major(scrollbar_rect.min);
                 <span class="kw">let </span>scroll_end = <span class="self">self</span>.axis.major(scrollbar_rect.max);
@@ -443,14 +438,13 @@
         <span class="comment">// propagate event
         </span><span class="self">self</span>.content.event(content, cx, data, event);
 
-        <span class="comment">// animate the scrollbar
-        </span><span class="kw">if </span>cx.hot_changed() {
+        <span class="kw">let </span>on = cx.has_hot() || cx.is_active() || state.scrollbar_hot;
+
+        <span class="kw">if </span>!<span class="self">self</span>.transition.complete(state.t, on) {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">let </span>on = cx.has_hot() || cx.is_active() || state.scrollbar_hot;
-
             <span class="kw">if </span>(<span class="self">self</span>.transition).step(<span class="kw-2">&amp;mut </span>state.t, on, <span class="kw-2">*</span>dt) {
                 cx.animate();
                 cx.request_draw();
@@ -515,7 +509,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>scrollbar_layer = canvas.layer();
         scrollbar_layer.depth += <span class="number">100.0</span>;
-        scrollbar_layer.set_view(cx.id());
+        scrollbar_layer.set_hoverable(cx.id());
 
         scrollbar_layer.draw_quad(
             <span class="self">self</span>.scrollbar_rect(cx.rect()),
