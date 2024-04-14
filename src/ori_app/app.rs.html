@@ -511,6 +511,12 @@
 <a href="#509" id="509">509</a>
 <a href="#510" id="510">510</a>
 <a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -891,6 +897,8 @@
     ///
     /// Returns true if the event was handled by a delegate.
     </span><span class="kw">pub fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) -&gt; bool {
+        <span class="macro">ori_core::log::trace!</span>(event = <span class="question-mark">?</span>event, <span class="string">"Event"</span>);
+
         <span class="kw">let </span>animate = Instant::now();
 
         <span class="kw">let </span>event_handled = <span class="self">self</span>.delegate_event(data, event);
@@ -934,6 +942,8 @@
     ///
     /// Returns true if the event was handled by a delegate.
     </span><span class="kw">pub fn </span>window_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, event: <span class="kw-2">&amp;</span>Event) -&gt; bool {
+        <span class="macro">ori_core::log::trace!</span>(event = <span class="question-mark">?</span>event, window = <span class="question-mark">?</span>window_id, <span class="string">"Window event"</span>);
+
         <span class="kw">let </span>animate = Instant::now();
 
         <span class="kw">let </span>event_handled = <span class="self">self</span>.delegate_event(data, event);
@@ -979,6 +989,8 @@
         data: <span class="kw-2">&amp;mut </span>T,
         window_id: WindowId,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;WindowRenderScene&lt;<span class="lifetime">'_</span>&gt;&gt; {
+        <span class="macro">ori_core::log::trace!</span>(window = <span class="question-mark">?</span>window_id, <span class="string">"Draw window"</span>);
+
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">if </span>window_state.view_state.needs_animate() {
                 window_state.view_state.mark_animated();
