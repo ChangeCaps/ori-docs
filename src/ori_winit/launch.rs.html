@@ -468,13 +468,27 @@
 <a href="#466" id="466">466</a>
 <a href="#467" id="467">467</a>
 <a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
 <span class="kw">use </span>ori_core::{
     command::CommandWaker,
     event::{Modifiers, PointerButton, PointerId},
-    layout::{Point, Vector},
+    layout::{Point, Size, Vector},
     window::{Window, WindowDescriptor},
 };
 <span class="kw">use </span>winit::{
@@ -774,6 +788,12 @@
         <span class="comment">/* glow */
         </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>((render, context)) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
+            <span class="comment">// resize the context if necessary
+            </span>context.resize(
+                scene.physical_size.width <span class="kw">as </span>u32,
+                scene.physical_size.height <span class="kw">as </span>u32,
+            );
+
             context.make_current()<span class="question-mark">?</span>;
             render.render_scene(
                 scene.scene,
@@ -817,6 +837,14 @@
             }
             WindowEvent::Resized(inner_size) =&gt; {
                 (<span class="self">self</span>.app).window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, inner_size.width, inner_size.height);
+            }
+            WindowEvent::ScaleFactorChanged { .. } =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = <span class="self">self</span>.app.get_window(id) {
+                    <span class="kw">let </span>width = window.width();
+                    <span class="kw">let </span>height = window.height();
+
+                    <span class="self">self</span>.app.window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, width, height);
+                }
             }
             WindowEvent::CursorMoved {
                 device_id,
