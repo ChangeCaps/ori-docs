@@ -137,7 +137,6 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     ffi::{c_void, CString},
     num::NonZeroU32,
@@ -160,8 +159,7 @@
 
 <span class="doccomment">/// A context for rendering using [`glutin`].
 </span><span class="kw">pub struct </span>GlutinContext {
-    <span class="attr">#[allow(dead_code)]
-    </span>display: Display,
+    display: Display,
     surface: Surface&lt;WindowSurface&gt;,
     context: PossiblyCurrentContext,
     width: u32,
