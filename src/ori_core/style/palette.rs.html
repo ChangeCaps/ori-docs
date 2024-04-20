@@ -172,6 +172,74 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="kw">use </span><span class="kw">super</span>::style;
@@ -233,7 +301,7 @@
     </span><span class="kw">pub </span>blue: Color,
 
     <span class="doccomment">/// The saphire color.
-    </span><span class="kw">pub </span>saphire: Color,
+    </span><span class="kw">pub </span>sapphire: Color,
 
     <span class="doccomment">/// The sky color.
     </span><span class="kw">pub </span>sky: Color,
@@ -271,13 +339,13 @@
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Palette {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::light()
+        <span class="self">Self</span>::catppuccin_latte()
     }
 }
 
 <span class="kw">impl </span>Palette {
     <span class="doccomment">/// Get the light palette.
-    </span><span class="kw">pub fn </span>light() -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>catppuccin_latte() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             crust: Color::hex(<span class="string">"#dce0e8"</span>),
             mantle: Color::hex(<span class="string">"#e6e9ef"</span>),
@@ -295,7 +363,7 @@
             accent: Color::hex(<span class="string">"#df8e1d"</span>),
             lavender: Color::hex(<span class="string">"#7287fd"</span>),
             blue: Color::hex(<span class="string">"#1e66f5"</span>),
-            saphire: Color::hex(<span class="string">"#209fb5"</span>),
+            sapphire: Color::hex(<span class="string">"#209fb5"</span>),
             sky: Color::hex(<span class="string">"#04a5e5"</span>),
             teal: Color::hex(<span class="string">"#179299"</span>),
             green: Color::hex(<span class="string">"#40a02b"</span>),
@@ -310,8 +378,42 @@
         }
     }
 
+    <span class="doccomment">/// Get the medium palette.
+    </span><span class="kw">pub fn </span>catppuccin_frappe() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            crust: Color::hex(<span class="string">"#232634"</span>),
+            mantle: Color::hex(<span class="string">"#292c3c"</span>),
+            base: Color::hex(<span class="string">"#303446"</span>),
+            surface: Color::hex(<span class="string">"#414559"</span>),
+            surface_secondary: Color::hex(<span class="string">"#51576d"</span>),
+            surface_tertiary: Color::hex(<span class="string">"#626880"</span>),
+            overlay: Color::hex(<span class="string">"#737994"</span>),
+            overlay_secondary: Color::hex(<span class="string">"#838ba7"</span>),
+            overlay_tertiary: Color::hex(<span class="string">"#949cbb"</span>),
+            subtext: Color::hex(<span class="string">"#a5adce"</span>),
+            subtext_secondary: Color::hex(<span class="string">"#b5bfe2"</span>),
+            text: Color::hex(<span class="string">"#c6d0f5"</span>),
+            primary: Color::hex(<span class="string">"#8caaee"</span>),
+            accent: Color::hex(<span class="string">"#e5c890"</span>),
+            lavender: Color::hex(<span class="string">"#babbf1"</span>),
+            blue: Color::hex(<span class="string">"#8caaee"</span>),
+            sapphire: Color::hex(<span class="string">"#85c1dc"</span>),
+            sky: Color::hex(<span class="string">"#99d1db"</span>),
+            teal: Color::hex(<span class="string">"#81c8be"</span>),
+            green: Color::hex(<span class="string">"#a6d189"</span>),
+            yellow: Color::hex(<span class="string">"#e5c890"</span>),
+            peach: Color::hex(<span class="string">"#ef9f76"</span>),
+            maroon: Color::hex(<span class="string">"#ea999c"</span>),
+            red: Color::hex(<span class="string">"#e78284"</span>),
+            mauve: Color::hex(<span class="string">"#ca9ee6"</span>),
+            pink: Color::hex(<span class="string">"#f4b8e4"</span>),
+            flamingo: Color::hex(<span class="string">"#eebebe"</span>),
+            rosewater: Color::hex(<span class="string">"#f2d5cf"</span>),
+        }
+    }
+
     <span class="doccomment">/// Get the dark palette.
-    </span><span class="kw">pub fn </span>dark() -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>catppuccin_macchiato() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             crust: Color::hex(<span class="string">"#181926"</span>),
             mantle: Color::hex(<span class="string">"#1e2030"</span>),
@@ -329,7 +431,7 @@
             accent: Color::hex(<span class="string">"#eed49f"</span>),
             lavender: Color::hex(<span class="string">"#b7bdf8"</span>),
             blue: Color::hex(<span class="string">"#8aadf4"</span>),
-            saphire: Color::hex(<span class="string">"#7dc4e4"</span>),
+            sapphire: Color::hex(<span class="string">"#7dc4e4"</span>),
             sky: Color::hex(<span class="string">"#91d7e3"</span>),
             teal: Color::hex(<span class="string">"#8bd5ca"</span>),
             green: Color::hex(<span class="string">"#a6da95"</span>),
@@ -341,6 +443,40 @@
             pink: Color::hex(<span class="string">"#f5bde6"</span>),
             flamingo: Color::hex(<span class="string">"#f0c6c6"</span>),
             rosewater: Color::hex(<span class="string">"#f4dbd6"</span>),
+        }
+    }
+
+    <span class="doccomment">/// Get the darkest palette.
+    </span><span class="kw">pub fn </span>catppuccin_mocha() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            crust: Color::hex(<span class="string">"#11111b"</span>),
+            mantle: Color::hex(<span class="string">"#181825"</span>),
+            base: Color::hex(<span class="string">"#1e1e2e"</span>),
+            surface: Color::hex(<span class="string">"#313244"</span>),
+            surface_secondary: Color::hex(<span class="string">"#45475a"</span>),
+            surface_tertiary: Color::hex(<span class="string">"#585b70"</span>),
+            overlay: Color::hex(<span class="string">"#6c7086"</span>),
+            overlay_secondary: Color::hex(<span class="string">"#7f849c"</span>),
+            overlay_tertiary: Color::hex(<span class="string">"#9399b2"</span>),
+            subtext: Color::hex(<span class="string">"#a6adc8"</span>),
+            subtext_secondary: Color::hex(<span class="string">"#bac2de"</span>),
+            text: Color::hex(<span class="string">"#cdd6f4"</span>),
+            primary: Color::hex(<span class="string">"#89b4fa"</span>),
+            accent: Color::hex(<span class="string">"#f9e2af"</span>),
+            lavender: Color::hex(<span class="string">"#b4befe"</span>),
+            blue: Color::hex(<span class="string">"#89b4fa"</span>),
+            sapphire: Color::hex(<span class="string">"#74c7ec"</span>),
+            sky: Color::hex(<span class="string">"#89dceb"</span>),
+            teal: Color::hex(<span class="string">"#94e2d5"</span>),
+            green: Color::hex(<span class="string">"#a6e3a1"</span>),
+            yellow: Color::hex(<span class="string">"#f9e2af"</span>),
+            peach: Color::hex(<span class="string">"#fab387"</span>),
+            maroon: Color::hex(<span class="string">"#eba0ac"</span>),
+            red: Color::hex(<span class="string">"#f38ba8"</span>),
+            mauve: Color::hex(<span class="string">"#cba6f7"</span>),
+            pink: Color::hex(<span class="string">"#f5c2e7"</span>),
+            flamingo: Color::hex(<span class="string">"#f2cdcd"</span>),
+            rosewater: Color::hex(<span class="string">"#f5e0dc"</span>),
         }
     }
 }
