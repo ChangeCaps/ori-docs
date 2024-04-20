@@ -131,7 +131,6 @@
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::{parse::ParseStream, punctuated::Punctuated, DeriveInput};
@@ -207,12 +206,11 @@
                 build_fields(names, fields.named.iter())
             }
             syn::Fields::Unnamed(<span class="kw">_</span>) =&gt; {
-                <span class="macro">manyhow::bail!</span>(<span class="string">"`Build` cannot be derived for tuple structs"</span>)
+                <span class="macro">manyhow::bail!</span>(<span class="string">"`Build` can only be derived for named structs"</span>)
             }
             syn::Fields::Unit =&gt; <span class="prelude-val">Ok</span>(Vec::new()),
         },
-        syn::Data::Enum(<span class="kw">_</span>) =&gt; <span class="macro">manyhow::bail!</span>(<span class="string">"`Build` cannot be derived for enums"</span>),
-        syn::Data::Union(<span class="kw">_</span>) =&gt; <span class="macro">manyhow::bail!</span>(<span class="string">"`Build` cannot be derived for unions"</span>),
+        <span class="kw">_ </span>=&gt; <span class="macro">manyhow::bail!</span>(<span class="string">"`Build` can only be derived for structs"</span>),
     }
 }
 

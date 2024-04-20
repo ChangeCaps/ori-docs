@@ -93,10 +93,14 @@
 <a href="#91" id="91">91</a>
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
+
+<span class="kw">use </span>ori_core::{
     command::{CommandProxy, CommandWaker},
     context::Contexts,
-    style::{IntoStyles, Styles},
+    style::Styles,
     text::{FontSource, Fonts},
     view::{any, AnyView},
     window::WindowDescriptor,
@@ -136,7 +140,7 @@
     </span>}
 
     <span class="doccomment">/// Add a style to the application.
-    </span><span class="kw">pub fn </span>style(<span class="kw-2">mut </span><span class="self">self</span>, style: <span class="kw">impl </span>IntoStyles) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>style(<span class="kw-2">mut </span><span class="self">self</span>, style: <span class="kw">impl </span>Any) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.style.set(style);
         <span class="self">self
     </span>}

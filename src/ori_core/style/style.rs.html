@@ -176,6 +176,19 @@
 <a href="#174" id="174">174</a>
 <a href="#175" id="175">175</a>
 <a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     cell::RefCell,
@@ -203,18 +216,34 @@
 }
 
 <span class="doccomment">/// Run a closure with the given style.
-</span><span class="kw">pub fn </span>styled&lt;T&gt;(style: <span class="kw">impl </span>IntoStyles, f: <span class="kw">impl </span>FnOnce() -&gt; T) -&gt; T {
+</span><span class="kw">pub fn </span>styled&lt;T&gt;(style: <span class="kw">impl </span>Any, f: <span class="kw">impl </span>FnOnce() -&gt; T) -&gt; T {
     <span class="kw">let </span><span class="kw-2">mut </span>new_style = Styles::snapshot();
-    new_style.extend(style.into_styles());
+    new_style.set(style);
     new_style.as_context(f)
 }
 
 <span class="kw">type </span>Builder&lt;T&gt; = Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Styles) -&gt; T + <span class="lifetime">'static</span>&gt;;
 
+<span class="attr">#[derive(Clone)]
+</span><span class="kw">struct </span>Entry {
+    value: Arc&lt;<span class="kw">dyn </span>Any&gt;,
+    is_builder: bool,
+}
+
+<span class="kw">impl </span>Entry {
+    <span class="kw">unsafe fn </span>value&lt;T: Any&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>T {
+        <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>Arc::as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>.value).cast::&lt;T&gt;() }
+    }
+
+    <span class="kw">unsafe fn </span>builder&lt;T: Any&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Builder&lt;T&gt; {
+        <span class="kw">unsafe </span>{ <span class="kw-2">&amp;*</span>Arc::as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>.value).cast::&lt;Builder&lt;T&gt;&gt;() }
+    }
+}
+
 <span class="doccomment">/// A map of style values.
 </span><span class="attr">#[derive(Clone, Default)]
 </span><span class="kw">pub struct </span>Styles {
-    items: Arc&lt;HashMap&lt;TypeId, Arc&lt;<span class="kw">dyn </span>Any&gt;, StyleHasher&gt;&gt;,
+    items: Arc&lt;HashMap&lt;TypeId, Entry, StyleHasher&gt;&gt;,
 }
 
 <span class="kw">impl </span>Styles {
@@ -233,8 +262,25 @@
     }
 
     <span class="doccomment">/// Set a value in a style.
-    </span><span class="kw">pub fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: <span class="kw">impl </span>IntoStyles) {
-        <span class="self">self</span>.extend(item.into_styles());
+    </span><span class="kw">pub fn </span>set&lt;T: Any&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) {
+        <span class="comment">// now this is all sorts of cursed but this is the only way to do this
+        </span><span class="kw">if </span>TypeId::of::&lt;T&gt;() == TypeId::of::&lt;<span class="self">Self</span>&gt;() {
+            <span class="kw">let </span>styles = ManuallyDrop::new(item);
+
+            <span class="kw">unsafe </span>{
+                <span class="comment">// SAFETY: we know that the type is Style
+                </span><span class="self">self</span>.extend(mem::transmute_copy(<span class="kw-2">&amp;</span>styles));
+            }
+
+            <span class="kw">return</span>;
+        }
+
+        <span class="kw">let </span>entry = Entry {
+            value: Arc::new(item),
+            is_builder: <span class="bool-val">false</span>,
+        };
+
+        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.items).insert(TypeId::of::&lt;T&gt;(), entry);
     }
 
     <span class="doccomment">/// Build a value in a style.
@@ -242,11 +288,17 @@
     /// This is useful for when the value is dependent on other values in the style, like a [`Palette`].
     </span><span class="kw">pub fn </span>builder&lt;T: Any&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, builder: <span class="kw">impl </span>Fn(<span class="kw-2">&amp;</span>Styles) -&gt; T + <span class="lifetime">'static</span>) {
         <span class="kw">let </span>builder: Builder&lt;T&gt; = Box::new(builder);
-        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.items).insert(TypeId::of::&lt;T&gt;(), Arc::new(builder));
+
+        <span class="kw">let </span>entry = Entry {
+            value: Arc::new(builder),
+            is_builder: <span class="bool-val">true</span>,
+        };
+
+        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.items).insert(TypeId::of::&lt;T&gt;(), entry);
     }
 
     <span class="doccomment">/// Set a value in a style returning the style.
-    </span><span class="kw">pub fn </span>with(<span class="kw-2">mut </span><span class="self">self</span>, item: <span class="kw">impl </span>IntoStyles) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>with(<span class="kw-2">mut </span><span class="self">self</span>, item: <span class="kw">impl </span>Any) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.set(item);
         <span class="self">self
     </span>}
@@ -271,11 +323,11 @@
     </span><span class="kw">pub fn </span>try_get&lt;T: Clone + Any&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
         <span class="kw">let </span>value = <span class="self">self</span>.items.get(<span class="kw-2">&amp;</span>TypeId::of::&lt;T&gt;())<span class="question-mark">?</span>;
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(builder) = value.downcast_ref::&lt;Builder&lt;T&gt;&gt;() {
-            <span class="kw">return </span><span class="prelude-val">Some</span>(builder(<span class="self">self</span>));
+        <span class="kw">if </span>value.is_builder {
+            <span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(value.builder::&lt;T&gt;()(<span class="self">self</span>)) }
+        } <span class="kw">else </span>{
+            <span class="kw">unsafe </span>{ <span class="prelude-val">Some</span>(value.value::&lt;T&gt;().clone()) }
         }
-
-        value.downcast_ref::&lt;T&gt;().cloned()
     }
 
     <span class="doccomment">/// Extend the style with another style.
@@ -313,32 +365,6 @@
 <span class="kw">impl</span>&lt;T: Default&gt; Style <span class="kw">for </span>T {
     <span class="kw">fn </span>style(<span class="kw">_</span>: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         T::default()
-    }
-}
-
-<span class="doccomment">/// A trait for converting a value into a style.
-///
-/// Turns a value into a style by wrapping it in a `Styles` instance, if it isn't already a `Styles`.
-///
-/// This trait should not be implemented manually.
-</span><span class="kw">pub trait </span>IntoStyles {
-    <span class="doccomment">/// Convert a value into a style.
-    </span><span class="kw">fn </span>into_styles(<span class="self">self</span>) -&gt; Styles;
-}
-
-<span class="kw">impl</span>&lt;T: Any&gt; IntoStyles <span class="kw">for </span>T {
-    <span class="kw">fn </span>into_styles(<span class="self">self</span>) -&gt; Styles {
-        <span class="comment">// now this is all sorts of cursed but this is the only way to do this
-        </span><span class="kw">if </span>TypeId::of::&lt;<span class="self">Self</span>&gt;() == TypeId::of::&lt;Styles&gt;() {
-            <span class="kw">let </span>style = ManuallyDrop::new(<span class="self">self</span>);
-
-            <span class="comment">// SAFETY: we know that the type is Style
-            </span><span class="kw">return unsafe </span>{ mem::transmute_copy(<span class="kw-2">&amp;</span>style) };
-        }
-
-        <span class="kw">let </span><span class="kw-2">mut </span>style = Styles::new();
-        Arc::make_mut(<span class="kw-2">&amp;mut </span>style.items).insert(TypeId::of::&lt;<span class="self">Self</span>&gt;(), Arc::new(<span class="self">self</span>));
-        style
     }
 }
 

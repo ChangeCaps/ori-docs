@@ -168,12 +168,12 @@
 <span class="macro">syn::custom_keyword!</span>(layout);
 <span class="macro">syn::custom_keyword!</span>(draw);
 
-<span class="kw">enum </span>Update {
+<span class="kw">enum </span>FieldAttribute {
     Layout,
     Draw,
 }
 
-<span class="kw">impl </span>syn::parse::Parse <span class="kw">for </span>Update {
+<span class="kw">impl </span>syn::parse::Parse <span class="kw">for </span>FieldAttribute {
     <span class="kw">fn </span>parse(input: ParseStream) -&gt; syn::Result&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>lookahead = input.lookahead1();
 
@@ -202,13 +202,13 @@
         <span class="kw">for </span>attr <span class="kw">in </span>attrs {
             <span class="kw">if </span>attr.path().is_ident(<span class="string">"rebuild"</span>) {
                 <span class="kw">let </span>updates = attr.parse_args_with(|input: ParseStream| {
-                    Punctuated::&lt;Update, <span class="macro">syn::Token!</span>[,]&gt;::parse_terminated(input)
+                    Punctuated::&lt;FieldAttribute, <span class="macro">syn::Token!</span>[,]&gt;::parse_terminated(input)
                 })<span class="question-mark">?</span>;
 
                 <span class="kw">for </span>update <span class="kw">in </span>updates {
                     <span class="kw">match </span>update {
-                        Update::Layout =&gt; this.layout = <span class="bool-val">true</span>,
-                        Update::Draw =&gt; this.draw = <span class="bool-val">true</span>,
+                        FieldAttribute::Layout =&gt; this.layout = <span class="bool-val">true</span>,
+                        FieldAttribute::Draw =&gt; this.draw = <span class="bool-val">true</span>,
                     }
                 }
             }
