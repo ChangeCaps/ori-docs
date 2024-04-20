@@ -522,7 +522,7 @@
                     background: Background::new(Color::TRANSPARENT),
                     border_radius: BorderRadius::all(<span class="number">0.0</span>),
                     border_width: BorderWidth::all(<span class="number">2.0</span>),
-                    border_color: palette().accent(),
+                    border_color: palette().accent,
                 }),
                 transform,
                 depth: f32::MAX,
@@ -550,9 +550,9 @@
         .gap(<span class="number">4.0</span>);
 
     <span class="kw">let </span>color = <span class="kw">if </span><span class="prelude-val">Some</span>(path) == selected {
-        palette().primary_light()
+        palette().primary
     } <span class="kw">else </span>{
-        palette().secondary()
+        palette().surface
     };
 
     <span class="kw">let </span><span class="kw-2">mut </span>header = button(pad_left(path.len() <span class="kw">as </span>f32 * <span class="number">10.0 </span>+ <span class="number">20.0</span>, stack))
@@ -561,7 +561,7 @@
         .padding(<span class="number">0.0</span>);
 
     <span class="kw">if </span><span class="prelude-val">Some</span>(path) == selected {
-        header = header.border_bottom(<span class="number">2.0</span>).border_color(palette().primary());
+        header = header.border_bottom(<span class="number">2.0</span>).border_color(palette().primary);
     }
 
     <span class="kw">let </span>path = path.to_owned();
@@ -739,7 +739,7 @@
 <span class="comment">// a button in the top bar
 </span><span class="kw">fn </span>debug_bar_button&lt;T&gt;(content: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Button&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
     button(content)
-        .color(palette().secondary())
+        .color(palette().surface)
         .border_radius(<span class="number">0.0</span>)
         .padding(<span class="number">0.0</span>)
 }
@@ -749,7 +749,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>button = debug_bar_button(pad(<span class="number">4.0</span>, <span class="macro">debug_text!</span>(<span class="string">"{:?}"</span>, tab)));
 
     <span class="kw">if </span>tab == state.tab {
-        button = button.border_bottom(<span class="number">4.0</span>).border_color(palette().primary());
+        button = button.border_bottom(<span class="number">4.0</span>).border_color(palette().primary);
     }
 
     <span class="kw">let </span>button = height(<span class="number">24.0</span>, button);
@@ -806,7 +806,7 @@
             .gap(<span class="number">1.0</span>);
 
             <span class="comment">// fill the background with a dark color to have clear sepration between panels
-            </span><span class="kw">let </span>container = container(pad_top(<span class="number">1.0</span>, stack)).background(palette().secondary_dark());
+            </span><span class="kw">let </span>container = container(pad_top(<span class="number">1.0</span>, stack)).background(palette().surface_secondary);
 
             <span class="comment">// fill the bottom third of the window
             </span>size([FILL, space.max.height / <span class="number">3.0</span>], container)

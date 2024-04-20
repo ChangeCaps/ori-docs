@@ -296,10 +296,10 @@
 <span class="kw">impl </span>Style <span class="kw">for </span>ContainerStyle {
     <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            background: style.palette().secondary().into(),
+            background: style.palette().crust.into(),
             border_radius: BorderRadius::all(<span class="number">0.0</span>),
             border_width: BorderWidth::all(<span class="number">0.0</span>),
-            border_color: style.palette().secondary_dark(),
+            border_color: style.palette().surface,
             shadow: BoxShadow::default(),
         }
     }

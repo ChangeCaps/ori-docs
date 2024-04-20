@@ -172,14 +172,6 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
-<a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a>
-<a href="#179" id="179">179</a>
-<a href="#180" id="180">180</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="kw">use </span><span class="kw">super</span>::style;
@@ -189,19 +181,92 @@
     style()
 }
 
-<span class="doccomment">/// A color palette.
+<span class="doccomment">/// A color palette, based on catppuccin [https://catppuccin.com/palette].
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
 </span><span class="kw">pub struct </span>Palette {
+    <span class="doccomment">/// The crust color.
+    </span><span class="kw">pub </span>crust: Color,
+
+    <span class="doccomment">/// The mantle color.
+    </span><span class="kw">pub </span>mantle: Color,
+
+    <span class="doccomment">/// The base color.
+    </span><span class="kw">pub </span>base: Color,
+
+    <span class="doccomment">/// The surface color.
+    </span><span class="kw">pub </span>surface: Color,
+
+    <span class="doccomment">/// The secondary surface color.
+    </span><span class="kw">pub </span>surface_secondary: Color,
+
+    <span class="doccomment">/// The tertiary surface color.
+    </span><span class="kw">pub </span>surface_tertiary: Color,
+
+    <span class="doccomment">/// The overlay color.
+    </span><span class="kw">pub </span>overlay: Color,
+
+    <span class="doccomment">/// The secondary overlay color.
+    </span><span class="kw">pub </span>overlay_secondary: Color,
+
+    <span class="doccomment">/// The tertiary overlay color.
+    </span><span class="kw">pub </span>overlay_tertiary: Color,
+
+    <span class="doccomment">/// The subtext color.
+    </span><span class="kw">pub </span>subtext: Color,
+
+    <span class="doccomment">/// The secondary subtext color.
+    </span><span class="kw">pub </span>subtext_secondary: Color,
+
     <span class="doccomment">/// The text color.
     </span><span class="kw">pub </span>text: Color,
-    <span class="doccomment">/// The background color.
-    </span><span class="kw">pub </span>background: Color,
+
     <span class="doccomment">/// The primary color.
     </span><span class="kw">pub </span>primary: Color,
-    <span class="doccomment">/// The secondary color.
-    </span><span class="kw">pub </span>secondary: Color,
+
     <span class="doccomment">/// The accent color.
     </span><span class="kw">pub </span>accent: Color,
+
+    <span class="doccomment">/// The lavender color.
+    </span><span class="kw">pub </span>lavender: Color,
+
+    <span class="doccomment">/// The blue color.
+    </span><span class="kw">pub </span>blue: Color,
+
+    <span class="doccomment">/// The saphire color.
+    </span><span class="kw">pub </span>saphire: Color,
+
+    <span class="doccomment">/// The sky color.
+    </span><span class="kw">pub </span>sky: Color,
+
+    <span class="doccomment">/// The teal color.
+    </span><span class="kw">pub </span>teal: Color,
+
+    <span class="doccomment">/// The green color.
+    </span><span class="kw">pub </span>green: Color,
+
+    <span class="doccomment">/// The yellow color.
+    </span><span class="kw">pub </span>yellow: Color,
+
+    <span class="doccomment">/// The peach color.
+    </span><span class="kw">pub </span>peach: Color,
+
+    <span class="doccomment">/// The maroon color.
+    </span><span class="kw">pub </span>maroon: Color,
+
+    <span class="doccomment">/// The red color.
+    </span><span class="kw">pub </span>red: Color,
+
+    <span class="doccomment">/// The mauve color.
+    </span><span class="kw">pub </span>mauve: Color,
+
+    <span class="doccomment">/// The pink color.
+    </span><span class="kw">pub </span>pink: Color,
+
+    <span class="doccomment">/// The flamingo color.
+    </span><span class="kw">pub </span>flamingo: Color,
+
+    <span class="doccomment">/// The rosewater color.
+    </span><span class="kw">pub </span>rosewater: Color,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Palette {
@@ -211,153 +276,72 @@
 }
 
 <span class="kw">impl </span>Palette {
-    <span class="kw">const </span>MODIFIER: f32 = <span class="number">0.05</span>;
-
-    <span class="doccomment">/// The default light theme.
+    <span class="doccomment">/// Get the light palette.
     </span><span class="kw">pub fn </span>light() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            text: Color::hsl(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.2</span>),
-            background: Color::hsl(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.9</span>),
-            primary: Color::hsl(<span class="number">221.0</span>, <span class="number">1.0</span>, <span class="number">0.78</span>),
-            secondary: Color::hsl(<span class="number">100.0</span>, <span class="number">0.03</span>, <span class="number">0.85</span>),
-            accent: Color::hsl(<span class="number">150.0</span>, <span class="number">0.82</span>, <span class="number">0.47</span>),
+            crust: Color::hex(<span class="string">"#dce0e8"</span>),
+            mantle: Color::hex(<span class="string">"#e6e9ef"</span>),
+            base: Color::hex(<span class="string">"#eff1f5"</span>),
+            surface: Color::hex(<span class="string">"#ccd0da"</span>),
+            surface_secondary: Color::hex(<span class="string">"#bcc0cc"</span>),
+            surface_tertiary: Color::hex(<span class="string">"#acb0be"</span>),
+            overlay: Color::hex(<span class="string">"#9ca0b0"</span>),
+            overlay_secondary: Color::hex(<span class="string">"#8c8fa1"</span>),
+            overlay_tertiary: Color::hex(<span class="string">"#7c7f93"</span>),
+            subtext: Color::hex(<span class="string">"#6c6f85"</span>),
+            subtext_secondary: Color::hex(<span class="string">"#5c5f77"</span>),
+            text: Color::hex(<span class="string">"#4c4f69"</span>),
+            primary: Color::hex(<span class="string">"#1e66f5"</span>),
+            accent: Color::hex(<span class="string">"#df8e1d"</span>),
+            lavender: Color::hex(<span class="string">"#7287fd"</span>),
+            blue: Color::hex(<span class="string">"#1e66f5"</span>),
+            saphire: Color::hex(<span class="string">"#209fb5"</span>),
+            sky: Color::hex(<span class="string">"#04a5e5"</span>),
+            teal: Color::hex(<span class="string">"#179299"</span>),
+            green: Color::hex(<span class="string">"#40a02b"</span>),
+            yellow: Color::hex(<span class="string">"#df8e1d"</span>),
+            peach: Color::hex(<span class="string">"#fe640b"</span>),
+            maroon: Color::hex(<span class="string">"#e64553"</span>),
+            red: Color::hex(<span class="string">"#d20f39"</span>),
+            mauve: Color::hex(<span class="string">"#8839ef"</span>),
+            pink: Color::hex(<span class="string">"#ea76cb"</span>),
+            flamingo: Color::hex(<span class="string">"#dd7878"</span>),
+            rosewater: Color::hex(<span class="string">"#dc8a78"</span>),
         }
     }
 
-    <span class="doccomment">/// The default dark theme.
+    <span class="doccomment">/// Get the dark palette.
     </span><span class="kw">pub fn </span>dark() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            text: Color::hsl(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.8</span>),
-            background: Color::hsl(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.1</span>),
-            primary: Color::hsl(<span class="number">221.0</span>, <span class="number">0.7</span>, <span class="number">0.52</span>),
-            secondary: Color::hsl(<span class="number">237.0</span>, <span class="number">0.05</span>, <span class="number">0.17</span>),
-            accent: Color::hsl(<span class="number">334.0</span>, <span class="number">0.76</span>, <span class="number">0.47</span>),
+            crust: Color::hex(<span class="string">"#181926"</span>),
+            mantle: Color::hex(<span class="string">"#1e2030"</span>),
+            base: Color::hex(<span class="string">"#24273a"</span>),
+            surface: Color::hex(<span class="string">"#363a4f"</span>),
+            surface_secondary: Color::hex(<span class="string">"#494d64"</span>),
+            surface_tertiary: Color::hex(<span class="string">"#5b6078"</span>),
+            overlay: Color::hex(<span class="string">"#6e738d"</span>),
+            overlay_secondary: Color::hex(<span class="string">"#8087a2"</span>),
+            overlay_tertiary: Color::hex(<span class="string">"#939ab7"</span>),
+            subtext: Color::hex(<span class="string">"#a5adcb"</span>),
+            subtext_secondary: Color::hex(<span class="string">"#b8c0e0"</span>),
+            text: Color::hex(<span class="string">"#cad3f5"</span>),
+            primary: Color::hex(<span class="string">"#8aadf4"</span>),
+            accent: Color::hex(<span class="string">"#eed49f"</span>),
+            lavender: Color::hex(<span class="string">"#b7bdf8"</span>),
+            blue: Color::hex(<span class="string">"#8aadf4"</span>),
+            saphire: Color::hex(<span class="string">"#7dc4e4"</span>),
+            sky: Color::hex(<span class="string">"#91d7e3"</span>),
+            teal: Color::hex(<span class="string">"#8bd5ca"</span>),
+            green: Color::hex(<span class="string">"#a6da95"</span>),
+            yellow: Color::hex(<span class="string">"#eed49f"</span>),
+            peach: Color::hex(<span class="string">"#f5a97f"</span>),
+            maroon: Color::hex(<span class="string">"#ee99a0"</span>),
+            red: Color::hex(<span class="string">"#ed8796"</span>),
+            mauve: Color::hex(<span class="string">"#c6a0f6"</span>),
+            pink: Color::hex(<span class="string">"#f5bde6"</span>),
+            flamingo: Color::hex(<span class="string">"#f0c6c6"</span>),
+            rosewater: Color::hex(<span class="string">"#f4dbd6"</span>),
         }
-    }
-
-    <span class="doccomment">/// Get the text color.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.text
-    }
-
-    <span class="doccomment">/// Get the light text color.
-    </span><span class="kw">pub fn </span>text_light(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.text.lighten(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the lighter text color.
-    </span><span class="kw">pub fn </span>text_lighter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.text.lighten(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the dark text color.
-    </span><span class="kw">pub fn </span>text_dark(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.text.darken(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the darker text color.
-    </span><span class="kw">pub fn </span>text_darker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.text.darken(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the background color.
-    </span><span class="kw">pub fn </span>background(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.background
-    }
-
-    <span class="doccomment">/// Get the light background color.
-    </span><span class="kw">pub fn </span>background_light(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.background.lighten(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the lighter background color.
-    </span><span class="kw">pub fn </span>background_lighter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.background.lighten(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the dark background color.
-    </span><span class="kw">pub fn </span>background_dark(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.background.darken(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the darker background color.
-    </span><span class="kw">pub fn </span>background_darker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.background.darken(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the primary color.
-    </span><span class="kw">pub fn </span>primary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.primary
-    }
-
-    <span class="doccomment">/// Get the light primary color.
-    </span><span class="kw">pub fn </span>primary_light(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.primary.lighten(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the lighter primary color.
-    </span><span class="kw">pub fn </span>primary_lighter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.primary.lighten(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the dark primary color.
-    </span><span class="kw">pub fn </span>primary_dark(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.primary.darken(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the darker primary color.
-    </span><span class="kw">pub fn </span>primary_darker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.primary.darken(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the secondary color.
-    </span><span class="kw">pub fn </span>secondary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.secondary
-    }
-
-    <span class="doccomment">/// Get the light secondary color.
-    </span><span class="kw">pub fn </span>secondary_light(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.secondary.lighten(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the lighter secondary color.
-    </span><span class="kw">pub fn </span>secondary_lighter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.secondary.lighten(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the dark secondary color.
-    </span><span class="kw">pub fn </span>secondary_dark(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.secondary.darken(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the darker secondary color.
-    </span><span class="kw">pub fn </span>secondary_darker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.secondary.darken(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the accent color.
-    </span><span class="kw">pub fn </span>accent(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.accent
-    }
-
-    <span class="doccomment">/// Get the light accent color.
-    </span><span class="kw">pub fn </span>accent_light(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.accent.lighten(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the lighter accent color.
-    </span><span class="kw">pub fn </span>accent_lighter(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.accent.lighten(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
-    }
-
-    <span class="doccomment">/// Get the dark accent color.
-    </span><span class="kw">pub fn </span>accent_dark(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.accent.darken(<span class="self">Self</span>::MODIFIER)
-    }
-
-    <span class="doccomment">/// Get the darker accent color.
-    </span><span class="kw">pub fn </span>accent_darker(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Color {
-        <span class="self">self</span>.accent.darken(<span class="self">Self</span>::MODIFIER * <span class="number">2.0</span>)
     }
 }
 </code></pre></div></section></main></body></html>
