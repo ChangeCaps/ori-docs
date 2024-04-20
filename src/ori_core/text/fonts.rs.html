@@ -252,6 +252,8 @@
 <a href="#250" id="250">250</a>
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, FontSystem, SwashCache};
@@ -268,6 +270,9 @@
 <span class="kw">const </span>ROBOTO_REGULAR: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Regular.ttf"</span>);
 <span class="kw">const </span>ROBOTO_THIN: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Thin.ttf"</span>);
 <span class="kw">const </span>ROBOTO_THIN_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-ThinItalic.ttf"</span>);
+
+<span class="kw">const </span>ROBOTO_MONO: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/RobotoMono.ttf"</span>);
+<span class="kw">const </span>ROBOTO_MONO_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/RobotoMono-Italic.ttf"</span>);
 
 <span class="kw">use crate</span>::{
     canvas::{Color, Mesh, Vertex},
@@ -318,6 +323,8 @@
             ROBOTO_REGULAR,
             ROBOTO_THIN,
             ROBOTO_THIN_ITALIC,
+            ROBOTO_MONO,
+            ROBOTO_MONO_ITALIC,
         ] {
             fonts.push(Source::Binary(Arc::new(font.to_vec())));
         }
@@ -330,9 +337,6 @@
         db.set_monospace_family(<span class="string">"Roboto Mono"</span>);
         db.set_cursive_family(<span class="string">"Roboto"</span>);
         db.set_fantasy_family(<span class="string">"Roboto"</span>);
-
-        <span class="comment">// load the system fonts, IMPORTANT!
-        </span>db.load_system_fonts();
 
         <span class="self">Self </span>{
             swash_cache,
