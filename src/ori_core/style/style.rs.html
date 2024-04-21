@@ -189,6 +189,21 @@
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
 <a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     cell::RefCell,
@@ -201,16 +216,19 @@
 <span class="kw">use </span><span class="kw">super</span>::Palette;
 
 <span class="doccomment">/// Get a value from the current style.
+</span><span class="attr">#[track_caller]
 </span><span class="kw">pub fn </span>style&lt;T: Clone + Style + Any&gt;() -&gt; T {
     Styles::context(|style| style.get())
 }
 
 <span class="doccomment">/// Get a value from the current style or a default value.
+</span><span class="attr">#[track_caller]
 </span><span class="kw">pub fn </span>style_or&lt;T: Clone + Any&gt;(default: T) -&gt; T {
     try_style().unwrap_or(default)
 }
 
 <span class="doccomment">/// Try getting a value from the current style.
+</span><span class="attr">#[track_caller]
 </span><span class="kw">pub fn </span>try_style&lt;T: Clone + Any&gt;() -&gt; <span class="prelude-ty">Option</span>&lt;T&gt; {
     Styles::context(|style| style.try_get())
 }
@@ -344,11 +362,23 @@
     }
 
     <span class="doccomment">/// Get the current style.
+    </span><span class="attr">#[track_caller]
     </span><span class="kw">pub fn </span>context&lt;T&gt;(f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
-        <span class="self">Self</span>::CONTEXT.with_borrow_mut(f)
+        <span class="kw">let </span>result = <span class="self">Self</span>::CONTEXT.with(|styles| {
+            <span class="comment">// call the function with the current style
+            </span>styles.try_borrow_mut().map(|<span class="kw-2">mut </span>styles| f(<span class="kw-2">&amp;mut </span>styles))
+        });
+
+        <span class="kw">match </span>result {
+            <span class="prelude-val">Ok</span>(result) =&gt; result,
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(
+                <span class="string">"Styles context not accessable. Are you perhaps calling `style`, `style_or`, `try_style` or `palette` in a `Style` impl?"
+            </span>),
+        }
     }
 
     <span class="doccomment">/// Get a snapshot of the current style.
+    </span><span class="attr">#[track_caller]
     </span><span class="kw">pub fn </span>snapshot() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::context(|style| style.clone())
     }

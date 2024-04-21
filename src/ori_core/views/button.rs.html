@@ -277,6 +277,8 @@
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
@@ -322,14 +324,16 @@
 
 <span class="kw">impl </span>Style <span class="kw">for </span>ButtonStyle {
     <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>palette = style.palette();
+
         <span class="self">Self </span>{
             padding: Padding::all(<span class="number">8.0</span>),
             fancy: <span class="number">0.0</span>,
             transition: Transition::ease(<span class="number">0.1</span>),
-            color: Background::new(style.palette().primary),
+            color: Background::new(palette.primary),
             border_radius: BorderRadius::all(<span class="number">4.0</span>),
             border_width: BorderWidth::all(<span class="number">0.0</span>),
-            border_color: style.palette().outline_variant,
+            border_color: palette.outline_variant,
         }
     }
 }
