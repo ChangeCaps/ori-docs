@@ -285,7 +285,61 @@
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Range;
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, Range};
 
 <span class="kw">use </span>ori_macro::{example, Build};
 
@@ -326,14 +380,24 @@
     Wrap::new(Axis::Vertical, content)
 }
 
+<span class="doccomment">/// Create a horizontal [`Wrap`], with a vector of content.
+</span><span class="kw">pub fn </span>hwrap_vec&lt;V&gt;() -&gt; Wrap&lt;Vec&lt;V&gt;&gt; {
+    Wrap::horizontal_vec()
+}
+
+<span class="doccomment">/// Create a vertical [`Wrap`], with a vector of content.
+</span><span class="kw">pub fn </span>vwrap_vec&lt;V&gt;() -&gt; Wrap&lt;Vec&lt;V&gt;&gt; {
+    Wrap::vertical_vec()
+}
+
 <span class="doccomment">/// Create a horizontal [`Wrap`], with dynamic content.
 </span><span class="kw">pub fn </span>hwrap_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
-    Wrap::hwrap_any()
+    Wrap::horizontal_any()
 }
 
 <span class="doccomment">/// Create a vertical [`Wrap`], with dynamic content.
 </span><span class="kw">pub fn </span>vwrap_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
-    Wrap::vwrap_any()
+    Wrap::vertical_any()
 }
 
 <span class="doccomment">/// A view that lays out it's content in a line wrapping if it doesn't fit.
@@ -345,21 +409,27 @@
     <span class="doccomment">/// The content.
     </span><span class="attr">#[build(ignore)]
     </span><span class="kw">pub </span>content: PodSeq&lt;V&gt;,
+
     <span class="doccomment">/// The axis.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>axis: Axis,
+
     <span class="doccomment">/// How to justify the content along the main axis.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>justify: Justify,
+
     <span class="doccomment">/// How to align the content along the cross axis.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>align: Align,
+
     <span class="doccomment">/// How to justify the content along the cross axis.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>justify_cross: Justify,
+
     <span class="doccomment">/// The gap between each row.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>row_gap: f32,
+
     <span class="doccomment">/// The gap between each column.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>column_gap: f32,
@@ -380,12 +450,12 @@
     }
 
     <span class="doccomment">/// Create a new horizontal [`Wrap`].
-    </span><span class="kw">pub fn </span>hwrap(content: V) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>horizontal(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(Axis::Horizontal, content)
     }
 
     <span class="doccomment">/// Create a new vertical [`Wrap`].
-    </span><span class="kw">pub fn </span>vwrap(content: V) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>vertical(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(Axis::Vertical, content)
     }
 
@@ -397,20 +467,58 @@
     </span>}
 }
 
+<span class="kw">impl</span>&lt;T&gt; Wrap&lt;Vec&lt;T&gt;&gt; {
+    <span class="doccomment">/// Create a new [`Wrap`], with a vector of content.
+    </span><span class="kw">pub fn </span>vec(axis: Axis) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(axis, Vec::new())
+    }
+
+    <span class="doccomment">/// Create a new horizontal [`Wrap`], with a vector of content.
+    </span><span class="kw">pub fn </span>horizontal_vec() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::horizontal(Vec::new())
+    }
+
+    <span class="doccomment">/// Create a new vertical [`Wrap`], with a vector of content.
+    </span><span class="kw">pub fn </span>vertical_vec() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::vertical(Vec::new())
+    }
+
+    <span class="doccomment">/// Push a view to the wrap.
+    </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: T) {
+        <span class="self">self</span>.content.push(view);
+    }
+
+    <span class="doccomment">/// Push a view to the wrap.
+    </span><span class="kw">pub fn </span>with(<span class="kw-2">mut </span><span class="self">self</span>, view: T) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.push(view);
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Get whether the wrap is empty.
+    </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.content.deref().is_empty()
+    }
+
+    <span class="doccomment">/// Get the number of views in the wrap.
+    </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.content.deref().len()
+    }
+}
+
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+    <span class="doccomment">/// Create a new [`Wrap`], with dynamic content.
+    </span><span class="kw">pub fn </span>any(axis: Axis) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(axis, Vec::new())
+    }
+
     <span class="doccomment">/// Create a new horizontal [`Wrap`], with dynamic content.
-    </span><span class="kw">pub fn </span>hwrap_any() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::hwrap(Vec::new())
+    </span><span class="kw">pub fn </span>horizontal_any() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::horizontal(Vec::new())
     }
 
     <span class="doccomment">/// Create a new vertical [`Wrap`], with dynamic content.
-    </span><span class="kw">pub fn </span>vwrap_any() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::vwrap(Vec::new())
-    }
-
-    <span class="doccomment">/// Push a view to the stack.
-    </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: <span class="kw">impl </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>) {
-        <span class="self">self</span>.content.push(Box::new(view));
+    </span><span class="kw">pub fn </span>vertical_any() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::vertical(Vec::new())
     }
 }
 

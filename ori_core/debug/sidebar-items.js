@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["HistoryItem"],"fn":["debug_ui"],"struct":["BuildItem","DebugDraw","DebugLayout","DebugTree","DrawItem","EventItem","History","LayoutItem","RebuildItem"]};

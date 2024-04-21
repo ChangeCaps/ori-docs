@@ -302,7 +302,63 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
+
+<span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
@@ -333,22 +389,32 @@
 
 <span class="doccomment">/// Create a horizontal [`Stack`].
 </span><span class="kw">pub fn </span>hstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
-    Stack::hstack(content)
+    Stack::horizontal(content)
 }
 
 <span class="doccomment">/// Create a vertical [`Stack`].
 </span><span class="kw">pub fn </span>vstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
-    Stack::vstack(content)
+    Stack::vertical(content)
+}
+
+<span class="doccomment">/// Create a horizontal [`Stack`], with vector content.
+</span><span class="kw">pub fn </span>hstack_vec&lt;V&gt;() -&gt; Stack&lt;Vec&lt;V&gt;&gt; {
+    Stack::vec_horizontal()
+}
+
+<span class="doccomment">/// Create a vertical [`Stack`], with vector content.
+</span><span class="kw">pub fn </span>vstack_vec&lt;V&gt;() -&gt; Stack&lt;Vec&lt;V&gt;&gt; {
+    Stack::vec_vertical()
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`], with dynamic content.
 </span><span class="kw">pub fn </span>hstack_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
-    Stack::hstack_any()
+    Stack::any_horizontal()
 }
 
 <span class="doccomment">/// Create a vertical [`Stack`], with dynamic content.
 </span><span class="kw">pub fn </span>vstack_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
-    Stack::vstack_any()
+    Stack::any_vertical()
 }
 
 <span class="doccomment">/// A view that stacks it's content in a line.
@@ -358,15 +424,19 @@
     <span class="doccomment">/// The content of the stack.
     </span><span class="attr">#[build(ignore)]
     </span><span class="kw">pub </span>content: PodSeq&lt;V&gt;,
+
     <span class="doccomment">/// The axis of the stack.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>axis: Axis,
+
     <span class="doccomment">/// How to justify the content along the main axis.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>justify: Justify,
+
     <span class="doccomment">/// How to align the content along the cross axis, within each line.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>align: Align,
+
     <span class="doccomment">/// The gap between children.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>gap: f32,
@@ -385,30 +455,68 @@
     }
 
     <span class="doccomment">/// Create a new horizontal [`Stack`].
-    </span><span class="kw">pub fn </span>hstack(content: V) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>horizontal(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(Axis::Horizontal, content)
     }
 
     <span class="doccomment">/// Create a new vertical [`Stack`].
-    </span><span class="kw">pub fn </span>vstack(content: V) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>vertical(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(Axis::Vertical, content)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
-    <span class="doccomment">/// Create a new horizontal [`Stack`], with dynamic content.
-    </span><span class="kw">pub fn </span>hstack_any() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::hstack(Vec::new())
+<span class="kw">impl</span>&lt;T&gt; Stack&lt;Vec&lt;T&gt;&gt; {
+    <span class="doccomment">/// Create a new [`Stack`], with vector content.
+    </span><span class="kw">pub fn </span>vec(axis: Axis) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(axis, Vec::new())
     }
 
-    <span class="doccomment">/// Create a new vertical [`Stack`], with dynamic content.
-    </span><span class="kw">pub fn </span>vstack_any() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::vstack(Vec::new())
+    <span class="doccomment">/// Create a new horizontal [`Stack`], with vector content.
+    </span><span class="kw">pub fn </span>vec_horizontal() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::horizontal(Vec::new())
+    }
+
+    <span class="doccomment">/// Create a new vertical [`Stack`], with vector content.
+    </span><span class="kw">pub fn </span>vec_vertical() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::vertical(Vec::new())
     }
 
     <span class="doccomment">/// Push a view to the stack.
-    </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: <span class="kw">impl </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>) {
-        <span class="self">self</span>.content.push(Box::new(view));
+    </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: T) {
+        <span class="self">self</span>.content.push(view);
+    }
+
+    <span class="doccomment">/// Push a view to the stack.
+    </span><span class="kw">pub fn </span>with(<span class="kw-2">mut </span><span class="self">self</span>, view: T) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.push(view);
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Get whether the stack is empty.
+    </span><span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.content.deref().is_empty()
+    }
+
+    <span class="doccomment">/// Get the number of views in the stack.
+    </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.content.deref().len()
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+    <span class="doccomment">/// Create a new [`Stack`], with dynamic content.
+    </span><span class="kw">pub fn </span>any(axis: Axis) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(axis, Vec::new())
+    }
+
+    <span class="doccomment">/// Create a new horizontal [`Stack`], with dynamic content.
+    </span><span class="kw">pub fn </span>any_horizontal() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::horizontal(Vec::new())
+    }
+
+    <span class="doccomment">/// Create a new vertical [`Stack`], with dynamic content.
+    </span><span class="kw">pub fn </span>any_vertical() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::vertical(Vec::new())
     }
 }
 
