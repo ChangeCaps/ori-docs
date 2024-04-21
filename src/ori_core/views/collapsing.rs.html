@@ -300,6 +300,9 @@
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
 <a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -354,6 +357,8 @@
 }
 
 <span class="doccomment">/// A collapsing view.
+///
+/// Can be styled using the [`CollapsingStyle`].
 </span><span class="attr">#[example(name = <span class="string">"collapsing"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
 #[derive(Build, Rebuild)]
 </span><span class="kw">pub struct </span>Collapsing&lt;T, H, V&gt; {
@@ -406,10 +411,13 @@
 }
 
 <span class="kw">impl</span>&lt;T, H, V&gt; Collapsing&lt;T, H, V&gt; {
-    <span class="doccomment">/// Create a new collapsing view.
+    <span class="doccomment">/// Create a new [`Collapsing`] view.
     </span><span class="kw">pub fn </span>new(header: H, content: V) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>style = style::&lt;CollapsingStyle&gt;();
+        <span class="self">Self</span>::styled(header, content, style())
+    }
 
+    <span class="doccomment">/// Create a new [`Collapsing`] view with a style.
+    </span><span class="kw">pub fn </span>styled(header: H, content: V, style: CollapsingStyle) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             header: Pod::new(header),
             content: Pod::new(content),
@@ -490,9 +498,7 @@
             cx.view_state.update = update &amp; !Update::DRAW;
         }
 
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>))
-            &amp;&amp; (state.header.is_hot() || state.header.has_hot())
-        {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.header.has_hot() {
             state.open = !state.open;
             cx.animate();
             cx.request_layout();

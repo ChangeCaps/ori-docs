@@ -135,6 +135,8 @@
 <a href="#133" id="133">133</a>
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::Rebuild;
 
 <span class="kw">use crate</span>::{
@@ -156,8 +158,10 @@
     <span class="doccomment">/// Whether the dropdown is toggled.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>toggle: bool,
+
     <span class="doccomment">/// The header of the dropdown.
     </span><span class="kw">pub </span>header: H,
+
     <span class="doccomment">/// The content of the dropdown.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
 }

@@ -247,6 +247,17 @@
 <a href="#245" id="245">245</a>
 <a href="#246" id="246">246</a>
 <a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -324,39 +335,50 @@
 }
 
 <span class="doccomment">/// A view that displays text.
+///
+/// Can be styled using the [`TextStyle`].
 </span><span class="attr">#[example(name = <span class="string">"text"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
 #[derive(Build)]
 </span><span class="kw">pub struct </span>Text {
     <span class="doccomment">/// The text.
     </span><span class="kw">pub </span>text: SmolStr,
+
     <span class="doccomment">/// The font size of the text.
     </span><span class="kw">pub </span>font_size: f32,
+
     <span class="doccomment">/// The font family of the text.
     </span><span class="kw">pub </span>font_family: FontFamily,
+
     <span class="doccomment">/// The font weight of the text.
     </span><span class="kw">pub </span>font_weight: FontWeight,
+
     <span class="doccomment">/// The font stretch of the text.
     </span><span class="kw">pub </span>font_stretch: FontStretch,
+
     <span class="doccomment">/// The font.into of the text.
     </span><span class="kw">pub </span>font_style: FontStyle,
+
     <span class="doccomment">/// The color of the text.
     </span><span class="kw">pub </span>color: Color,
+
     <span class="doccomment">/// The horizontal alignment of the text.
     </span><span class="kw">pub </span>align: TextAlign,
+
     <span class="doccomment">/// The line height of the text.
     </span><span class="kw">pub </span>line_height: f32,
+
     <span class="doccomment">/// The text wrap of the text.
     </span><span class="kw">pub </span>wrap: TextWrap,
 }
 
 <span class="kw">impl </span>Text {
     <span class="doccomment">/// Create a new text.
-    </span><span class="kw">pub fn </span>new(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Text {
+    </span><span class="kw">pub fn </span>new(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::styled(text, style())
     }
 
     <span class="doccomment">/// Create a new text with a style.
-    </span><span class="kw">pub fn </span>styled(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;, style: TextStyle) -&gt; Text {
+    </span><span class="kw">pub fn </span>styled(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;, style: TextStyle) -&gt; <span class="self">Self </span>{
         Text {
             text: text.into(),
             font_size: style.font_size,
