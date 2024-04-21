@@ -231,6 +231,7 @@
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::fontdb;
 
 <span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
@@ -260,7 +261,8 @@
             <span class="self">Self</span>::Name(name) =&gt; fontdb::Family::Name(name),
             <span class="self">Self</span>::Serif =&gt; fontdb::Family::Serif,
             <span class="self">Self</span>::SansSerif =&gt; fontdb::Family::SansSerif,
-            <span class="self">Self</span>::Monospace =&gt; fontdb::Family::Monospace,
+            <span class="comment">// FIXME: this is a hack because performance is in the shitter otherwise.
+            </span><span class="self">Self</span>::Monospace =&gt; fontdb::Family::Name(<span class="string">"Roboto Mono"</span>),
             <span class="self">Self</span>::Cursive =&gt; fontdb::Family::Cursive,
             <span class="self">Self</span>::Fantasy =&gt; fontdb::Family::Fantasy,
         }
