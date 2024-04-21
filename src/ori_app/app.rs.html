@@ -586,6 +586,15 @@
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
 <a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -820,6 +829,10 @@
             .unwrap_or(Point::ZERO);
 
         <span class="kw">if </span>pressed {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
+                window_state.window.pointer_pressed(pointer_id, button);
+            }
+
             <span class="kw">let </span>event = Event::PointerPressed(PointerPressed {
                 id: pointer_id,
                 modifiers: <span class="self">self</span>.modifiers,
@@ -829,9 +842,14 @@
 
             <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         } <span class="kw">else </span>{
+            <span class="kw">let </span>clicked = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id).map_or(<span class="bool-val">false</span>, <span class="kw">move </span>|w| {
+                w.window.pointer_released(pointer_id, button)
+            });
+
             <span class="kw">let </span>event = Event::PointerReleased(PointerReleased {
                 id: pointer_id,
                 modifiers: <span class="self">self</span>.modifiers,
+                clicked,
                 position,
                 button,
             });
@@ -945,7 +963,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..window_state.window.pointers().len() {
-                <span class="kw">let </span>pointer = window_state.window.pointers()[i];
+                <span class="kw">let </span>pointer = <span class="kw-2">&amp;</span>window_state.window.pointers()[i];
                 <span class="kw">let </span>position = pointer.position();
                 <span class="kw">let </span>hovered = window_state.scene.view_at(position);
 

@@ -117,7 +117,7 @@
         command::CommandProxy,
         context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
         event::{
-            CloseRequested, Code, Event, KeyPressed, Modifiers, Pointer, PointerButton, PointerId,
+            CloseRequested, Code, Event, KeyPressed, Modifiers, PointerButton, PointerId,
             PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
         },
         image::{gradient, Image, ImageData, ImageId},
@@ -137,7 +137,7 @@
             any, pod, AnyView, BoxedView, Pod, PodSeq, SeqState, State, View, ViewSeq, ViewState,
         },
         views::<span class="kw-2">*</span>,
-        window::{Cursor, Window, WindowDescriptor, WindowId},
+        window::{Cursor, Pointer, Window, WindowDescriptor, WindowId},
     };
 
     <span class="kw">pub use </span>ori_macro::Build;
