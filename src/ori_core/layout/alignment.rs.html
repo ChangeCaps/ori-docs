@@ -57,11 +57,13 @@
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
 <a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{Size, Vector};
 
 <span class="doccomment">/// Alignment of content inside a container.
 </span><span class="attr">#[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Alignment {
     <span class="doccomment">/// The horizontal alignment.
     </span><span class="kw">pub </span>x: f32,

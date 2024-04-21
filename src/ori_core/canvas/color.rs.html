@@ -565,6 +565,7 @@
 <a href="#563" id="563">563</a>
 <a href="#564" id="564">564</a>
 <a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::{Debug, Display},
     ops::{Add, AddAssign, Deref, Mul},
@@ -618,6 +619,7 @@
 <span class="doccomment">/// A color with red, green, blue and alpha components.
 </span><span class="attr">#[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Color {
     <span class="doccomment">/// The red component of the color.
     </span><span class="kw">pub </span>r: f32,

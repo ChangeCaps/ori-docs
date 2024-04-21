@@ -132,6 +132,7 @@
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="kw">use </span><span class="kw">super</span>::style;
@@ -143,6 +144,7 @@
 
 <span class="doccomment">/// A color palette.
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Palette {
     <span class="doccomment">/// The background color.
     </span><span class="kw">pub </span>background: Color,

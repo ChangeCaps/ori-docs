@@ -289,12 +289,14 @@
 <a href="#287" id="287">287</a>
 <a href="#288" id="288">288</a>
 <a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Add, AddAssign, BitAnd, BitAndAssign, Sub, SubAssign};
 
 <span class="kw">use super</span>::{Affine, Point, Size, Vector};
 
 <span class="doccomment">/// A rectangle defined by its minimum and maximum points.
 </span><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq, Hash)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Rect {
     <span class="doccomment">/// The minimum point of the rectangle.
     </span><span class="kw">pub </span>min: Point,

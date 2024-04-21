@@ -102,12 +102,14 @@
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Mul, MulAssign};
 
 <span class="kw">use super</span>::{Matrix, Point, Vector};
 
 <span class="doccomment">/// An affine transformation in 2 dimensional space.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Hash)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Affine {
     <span class="doccomment">/// The translation of the affine transformation.
     </span><span class="kw">pub </span>translation: Vector,

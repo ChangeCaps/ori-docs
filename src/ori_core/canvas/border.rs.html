@@ -140,8 +140,11 @@
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
 <a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Radi of the corners on a [`Quad`](super::Quad).
 </span><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>BorderRadius {
     <span class="doccomment">/// The top left corner radius.
     </span><span class="kw">pub </span>top_left: f32,
@@ -209,6 +212,7 @@
 
 <span class="doccomment">/// The border width of a [`Quad`](super::Quad).
 </span><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>BorderWidth {
     <span class="doccomment">/// The top border width.
     </span><span class="kw">pub </span>top: f32,

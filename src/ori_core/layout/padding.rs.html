@@ -71,10 +71,12 @@
 <a href="#69" id="69">69</a>
 <a href="#70" id="70">70</a>
 <a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::{Size, Vector};
 
 <span class="doccomment">/// A padding of a rectangle.
 </span><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Padding {
     <span class="doccomment">/// The top padding.
     </span><span class="kw">pub </span>top: f32,

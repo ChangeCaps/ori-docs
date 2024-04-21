@@ -93,6 +93,9 @@
 <a href="#91" id="91">91</a>
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Transition utilities.
 
 /// Create a linear transition with the given `duration`.
@@ -107,10 +110,12 @@
 
 <span class="doccomment">/// A transition curve.
 </span><span class="attr">#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub enum </span>TransitionCurve {
     <span class="doccomment">/// A linear transition curve.
     </span><span class="attr">#[default]
     </span>Linear,
+
     <span class="doccomment">/// An ease transition curve.
     </span>Ease,
 }
@@ -127,6 +132,7 @@
 
 <span class="doccomment">/// A transition.
 </span><span class="attr">#[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Transition {
     <span class="doccomment">/// The duration of the transition.
     </span><span class="kw">pub </span>duration: f32,

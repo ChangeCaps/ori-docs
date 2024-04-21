@@ -257,6 +257,7 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
@@ -268,6 +269,7 @@
 <span class="doccomment">/// A 2D vector.
 </span><span class="attr">#[repr(C)]
 #[derive(Copy, Clone, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Vector {
     <span class="doccomment">/// The x coordinate.
     </span><span class="kw">pub </span>x: f32,

@@ -220,6 +220,7 @@
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
@@ -231,6 +232,7 @@
 <span class="doccomment">/// A point in 2D space.
 </span><span class="attr">#[repr(C)]
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
+#[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>Point {
     <span class="doccomment">/// The x coordinate.
     </span><span class="kw">pub </span>x: f32,
