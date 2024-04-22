@@ -288,21 +288,6 @@
 <a href="#286" id="286">286</a>
 <a href="#287" id="287">287</a>
 <a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -315,7 +300,7 @@
     rebuild::Rebuild,
     style::{style, Style, Styles},
     transition::Transition,
-    view::{Pod, State, Update, View},
+    view::{Pod, State, View},
 };
 
 <span class="doccomment">/// Create a new [`Collapsing`].
@@ -474,41 +459,30 @@
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
 
         (<span class="self">self</span>.header).rebuild(<span class="kw-2">&amp;mut </span>state.header, cx, data, <span class="kw-2">&amp;</span>old.header);
-
-        <span class="comment">// if we can't see the content, we still need to rebuild it
-        // but we don't need to request either a layout or a draw
-        //
-        // FIXME: this is a bit of a hack, we should have a better way to do this
-        </span><span class="kw">let </span>update = cx.view_state.update;
         (<span class="self">self</span>.content).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.content);
-
-        <span class="kw">if </span><span class="self">self</span>.transition.get(state.t) == <span class="number">0.0 </span>{
-            cx.view_state.update = update &amp; !Update::DRAW;
-        }
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
         <span class="self">self</span>.header.event(<span class="kw-2">&amp;mut </span>state.header, cx, data, event);
-
-        <span class="comment">// same deal as in rebuild
-        </span><span class="kw">let </span>update = cx.view_state.update;
         <span class="self">self</span>.content.event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
 
-        <span class="kw">if </span><span class="self">self</span>.transition.get(state.t) != <span class="number">0.0 </span>{
-            cx.view_state.update = update &amp; !Update::DRAW;
-        }
-
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.header.has_hot() {
-            state.open = !state.open;
-            cx.animate();
-            cx.request_layout();
-        }
-
-        <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.t, state.open, <span class="kw-2">*</span>dt) {
+        <span class="kw">match </span>event {
+            Event::PointerPressed(<span class="kw">_</span>) <span class="kw">if </span>state.header.has_hot() =&gt; {
+                state.open = !state.open;
                 cx.animate();
                 cx.request_layout();
+
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_open) = <span class="self">self</span>.on_open {
+                    on_open(cx, data, state.open);
+                }
             }
+            Event::Animate(dt) =&gt; {
+                <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.t, state.open, <span class="kw-2">*</span>dt) {
+                    cx.animate();
+                    cx.request_layout();
+                }
+            }
+            <span class="kw">_ </span>=&gt; {}
         }
     }
 
@@ -578,10 +552,6 @@
         <span class="kw">let </span>content_offset = Vector::new(<span class="number">0.0</span>, state.header.size().height);
         <span class="kw">let </span>content_height = Vector::new(<span class="number">0.0</span>, state.content.size().height) * (<span class="number">1.0 </span>- t);
         state.content.translate(content_offset - content_height);
-
-        <span class="kw">if </span>t == <span class="number">0.0 </span>{
-            <span class="kw">return</span>;
-        }
 
         <span class="kw">let </span>content_min = cx.rect().top_left() + content_offset;
         <span class="kw">let </span>content_rect = Rect::min_size(content_min, state.content.size());
