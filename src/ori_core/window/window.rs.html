@@ -370,6 +370,50 @@
 <a href="#368" id="368">368</a>
 <a href="#369" id="369">369</a>
 <a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -412,6 +456,23 @@
     }
 }
 
+<span class="doccomment">/// The sizing of a window.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+</span><span class="kw">pub enum </span>WindowSizing {
+    <span class="doccomment">/// The window will have a fixed size equal to [`Window::size`].
+    </span>Fixed,
+
+    <span class="doccomment">/// The root [`View`] will have [`Space::UNBOUNDED`], and the window will
+    /// resize to fit the content.
+    </span>Content,
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>WindowSizing {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Fixed
+    }
+}
+
 <span class="doccomment">/// A window.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Window {
@@ -426,6 +487,9 @@
 
     <span class="doccomment">/// The size of the window.
     </span><span class="kw">pub </span>size: Size,
+
+    <span class="doccomment">/// The sizing of the window.
+    </span><span class="kw">pub </span>sizing: WindowSizing,
 
     <span class="doccomment">/// The scale of the window.
     </span><span class="kw">pub </span>scale: f32,
@@ -461,6 +525,7 @@
             title: String::from(<span class="string">"Ori window"</span>),
             icon: <span class="prelude-val">None</span>,
             size: Size::new(<span class="number">800.0</span>, <span class="number">600.0</span>),
+            sizing: WindowSizing::Fixed,
             scale: <span class="number">1.0</span>,
             resizable: <span class="bool-val">true</span>,
             decorated: <span class="bool-val">true</span>,
@@ -490,6 +555,12 @@
     <span class="doccomment">/// Set the size of the window.
     </span><span class="kw">pub fn </span>size(<span class="kw-2">mut </span><span class="self">self</span>, width: u32, height: u32) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.size = Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32);
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set the sizing of the window.
+    </span><span class="kw">pub fn </span>sizing(<span class="kw-2">mut </span><span class="self">self</span>, sizing: WindowSizing) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.sizing = sizing;
         <span class="self">self
     </span>}
 
@@ -632,9 +703,9 @@
         ]
     }
 
-    <span class="doccomment">/// Get the [`WindowState`] of the window.
-    </span><span class="kw">pub fn </span>state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WindowState {
-        WindowState {
+    <span class="doccomment">/// Get the [`WindowSnapshot`] of the window.
+    </span><span class="kw">pub fn </span>snapshot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WindowSnapshot {
+        WindowSnapshot {
             title: <span class="self">self</span>.title.clone(),
             icon: <span class="self">self</span>.icon.clone(),
             size: <span class="self">self</span>.size,
@@ -684,19 +755,36 @@
 
 <span class="doccomment">/// The state of a window.
 </span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>WindowState {
-    title: String,
-    icon: <span class="prelude-ty">Option</span>&lt;Image&gt;,
-    size: Size,
-    scale: f32,
-    resizable: bool,
-    decorated: bool,
-    maximized: bool,
-    visible: bool,
-    color: <span class="prelude-ty">Option</span>&lt;Color&gt;,
+</span><span class="kw">pub struct </span>WindowSnapshot {
+    <span class="doccomment">/// The title of the window.
+    </span><span class="kw">pub </span>title: String,
+
+    <span class="doccomment">/// The icon of the window.
+    </span><span class="kw">pub </span>icon: <span class="prelude-ty">Option</span>&lt;Image&gt;,
+
+    <span class="doccomment">/// The size of the window.
+    </span><span class="kw">pub </span>size: Size,
+
+    <span class="doccomment">/// The scale of the window.
+    </span><span class="kw">pub </span>scale: f32,
+
+    <span class="doccomment">/// Whether the window is resizable.
+    </span><span class="kw">pub </span>resizable: bool,
+
+    <span class="doccomment">/// Whether the window is decorated.
+    </span><span class="kw">pub </span>decorated: bool,
+
+    <span class="doccomment">/// Whether the window is maximized.
+    </span><span class="kw">pub </span>maximized: bool,
+
+    <span class="doccomment">/// Whether the window is visible.
+    </span><span class="kw">pub </span>visible: bool,
+
+    <span class="doccomment">/// The color of the window.
+    </span><span class="kw">pub </span>color: <span class="prelude-ty">Option</span>&lt;Color&gt;,
 }
 
-<span class="kw">impl </span>WindowState {
+<span class="kw">impl </span>WindowSnapshot {
     <span class="doccomment">/// Get the difference between a window and a previous state.
     </span><span class="kw">pub fn </span>difference(<span class="kw-2">&amp;</span><span class="self">self</span>, window: <span class="kw-2">&amp;</span>Window) -&gt; Vec&lt;WindowUpdate&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>updates = Vec::new();

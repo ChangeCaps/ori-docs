@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Cursor","WindowUpdate"],"struct":["Pointer","Window","WindowId","WindowState"]};
+window.SIDEBAR_ITEMS = {"enum":["Cursor","WindowSizing","WindowUpdate"],"struct":["Pointer","Window","WindowId","WindowSnapshot"]};

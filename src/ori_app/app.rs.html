@@ -648,6 +648,8 @@
 <a href="#646" id="646">646</a>
 <a href="#647" id="647">647</a>
 <a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -663,7 +665,7 @@
     layout::{Point, Size, Space, Vector},
     style::Styles,
     view::{AnyState, BoxedView, View, ViewState},
-    window::{Cursor, Window, WindowId, WindowUpdate},
+    window::{Cursor, Window, WindowId, WindowSizing, WindowSnapshot, WindowUpdate},
 };
 
 <span class="kw">use crate</span>::{AppBuilder, AppRequest, Delegate, DelegateCx, UiBuilder};
@@ -686,6 +688,7 @@
     scene: Scene,
     view_state: ViewState,
     window: Window,
+    snapshot: WindowSnapshot,
     animate: <span class="prelude-ty">Option</span>&lt;Instant&gt;,
 }
 
@@ -711,11 +714,24 @@
         <span class="self">self</span>.view_state.prepare();
         <span class="self">self</span>.view_state.mark_layed_out();
 
-        <span class="kw">let </span>space = Space::new(Size::ZERO, <span class="self">self</span>.window.size);
+        <span class="comment">// we need to calculate the max size of the window
+        // depending on the sizing of the window
+        </span><span class="kw">let </span>max_size = <span class="kw">match </span><span class="self">self</span>.window.sizing {
+            WindowSizing::Fixed =&gt; <span class="self">self</span>.window.size,
+            WindowSizing::Content =&gt; Size::INFINITY,
+        };
+
+        <span class="kw">let </span>space = Space::new(Size::ZERO, max_size);
         <span class="kw">let </span><span class="kw-2">mut </span>cx = LayoutCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
         <span class="kw">let </span>size = <span class="self">self</span>.view.layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, space);
         <span class="self">self</span>.view_state.set_size(size);
+
+        <span class="comment">// if the window is content sized we set the
+        // window size to the content size
+        </span><span class="kw">if let </span>WindowSizing::Content = <span class="self">self</span>.window.sizing {
+            <span class="self">self</span>.window.size = size;
+        }
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
@@ -805,6 +821,7 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             window_state.view_state.request_layout();
             window_state.window.size = Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32);
+            window_state.snapshot.size = Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32);
         }
 
         <span class="kw">let </span>event = Event::WindowResized(WindowResized {
@@ -966,14 +983,10 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
-        <span class="kw">let </span>window_state = window.state();
+        <span class="kw">let </span>snapshot = window.snapshot();
 
         <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(<span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>view_state, <span class="kw-2">&amp;mut </span>window);
         <span class="kw">let </span>state = <span class="self">self</span>.style.as_context(|| view.build(<span class="kw-2">&amp;mut </span>cx, data));
-
-        <span class="kw">for </span>update <span class="kw">in </span>window_state.difference(<span class="kw-2">&amp;</span>window) {
-            (<span class="self">self</span>.requests).push(AppRequest::UpdateWindow(window.id(), update));
-        }
 
         <span class="kw">let </span>window_id = window.id();
         <span class="kw">let </span>window_state = WindowState {
@@ -984,6 +997,7 @@
             scene: Scene::new(),
             view_state,
             window,
+            snapshot,
             animate: <span class="prelude-val">None</span>,
         };
 
@@ -1020,24 +1034,6 @@
         <span class="kw">while let </span><span class="prelude-val">Some</span>(command) = <span class="self">self</span>.receiver.try_recv() {
             <span class="self">self</span>.event(data, <span class="kw-2">&amp;</span>Event::Command(command));
         }
-    }
-
-    <span class="doccomment">/// Rebuild all windows.
-    </span><span class="kw">pub fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
-        <span class="kw">let </span><span class="kw-2">mut </span>requests = Vec::new();
-
-        <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            <span class="kw">let </span>state = window_state.window.state();
-
-            (<span class="self">self</span>.style).as_context(|| window_state.rebuild(data, <span class="kw-2">&amp;mut </span>base));
-
-            <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
-                requests.push(AppRequest::UpdateWindow(window_state.window.id(), update));
-            }
-        }
-
-        <span class="self">self</span>.requests.extend(requests);
     }
 
     <span class="doccomment">/// Update the hovered state of a window.
@@ -1112,6 +1108,29 @@
         <span class="bool-val">false
     </span>}
 
+    <span class="kw">fn </span>request_window_updates(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values() {
+            <span class="kw">let </span>updates = window_state
+                .window
+                .snapshot()
+                .difference(<span class="kw-2">&amp;</span>window_state.window);
+
+            <span class="kw">for </span>update <span class="kw">in </span>updates {
+                <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
+                <span class="self">self</span>.requests.push(request);
+            }
+        }
+    }
+
+    <span class="doccomment">/// Rebuild all windows.
+    </span><span class="kw">pub fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
+
+        <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
+            (<span class="self">self</span>.style).as_context(|| window_state.rebuild(data, <span class="kw-2">&amp;mut </span>base));
+        }
+    }
+
     <span class="doccomment">/// Handle an event for the entire application.
     ///
     /// Returns true if the event was handled by a delegate.
@@ -1131,16 +1150,9 @@
             <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
-                <span class="kw">let </span>state = window_state.window.state();
-
                 <span class="self">self</span>.style.as_context(|| {
                     window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
-
-                <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
-                    <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
-                    <span class="self">self</span>.requests.push(request);
-                }
             }
         }
 
@@ -1157,6 +1169,7 @@
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
+        <span class="self">self</span>.request_window_updates();
 
         event_handled
     }
@@ -1180,17 +1193,10 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
-                <span class="kw">let </span>state = window_state.window.state();
-
                 <span class="comment">// we send the event to the window, remembering to set the style context
                 </span><span class="self">self</span>.style.as_context(|| {
                     window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
-
-                <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
-                    <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
-                    <span class="self">self</span>.requests.push(request);
-                }
             }
         }
 
@@ -1207,11 +1213,13 @@
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
+        <span class="self">self</span>.request_window_updates();
 
         event_handled
     }
 
-    <span class="kw">fn </span>animate_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId) {
+    <span class="comment">// animate the window if needed
+    </span><span class="kw">fn </span>animate_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="comment">// if the window needs to animate, we send an Animate event
             </span><span class="kw">if </span>window_state.view_state.needs_animate() {
@@ -1246,7 +1254,6 @@
         // and is set here so the time is as accurate as possible
         </span><span class="kw">let </span>animate = Instant::now();
         <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
-        <span class="kw">let </span>state = window_state.window.state();
 
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
@@ -1266,20 +1273,17 @@
             }
         }
 
+        <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
+
         <span class="comment">// we need to update the window state after layout and draw
         //
         // if somehow the a layout or draw has been requested we must tell the window to redraw
-        </span><span class="kw">let </span>window_state = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
-        <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+        </span><span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
         <span class="self">self</span>.requests.extend(requests);
-
-        <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
-            <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
-            <span class="self">self</span>.requests.push(request);
-        }
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
+        <span class="self">self</span>.request_window_updates();
 
         <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
 
