@@ -708,7 +708,6 @@
 <a href="#706" id="706">706</a>
 <a href="#707" id="707">707</a>
 <a href="#708" id="708">708</a>
-<a href="#709" id="709">709</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
@@ -1147,169 +1146,168 @@
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">if let </span>Event::KeyPressed(e) = event {
-            <span class="kw">if </span>!cx.is_focused() {
-                <span class="kw">return</span>;
-            }
+        <span class="kw">if </span>cx.is_hot() {
+            cx.view_state.set_cursor(<span class="prelude-val">Some</span>(Cursor::Text));
+        } <span class="kw">else </span>{
+            cx.view_state.set_cursor(<span class="prelude-val">None</span>);
+        }
 
-            <span class="kw">let </span><span class="kw-2">mut </span>changed = <span class="bool-val">false</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>submit = <span class="bool-val">false</span>;
+        <span class="kw">match </span>event {
+            Event::KeyPressed(e) =&gt; {
+                <span class="kw">if </span>!cx.is_focused() {
+                    <span class="kw">return</span>;
+                }
 
-            <span class="kw">if </span>!e.modifiers.ctrl &amp;&amp; !e.modifiers.alt &amp;&amp; !e.modifiers.meta {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>text) = e.text {
-                    <span class="kw">for </span>c <span class="kw">in </span>text.chars() {
-                        (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Insert(c));
+                <span class="kw">let </span><span class="kw-2">mut </span>changed = <span class="bool-val">false</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>submit = <span class="bool-val">false</span>;
+
+                <span class="kw">if </span>!e.modifiers.ctrl &amp;&amp; !e.modifiers.alt &amp;&amp; !e.modifiers.meta {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>text) = e.text {
+                        <span class="kw">for </span>c <span class="kw">in </span>text.chars() {
+                            (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Insert(c));
+                        }
+
+                        <span class="self">self</span>.set_attrs_list(state.buffer_mut());
+
+                        cx.request_layout();
+                        state.blink = <span class="number">0.0</span>;
+                        changed = <span class="bool-val">true</span>;
                     }
+                }
 
-                    <span class="self">self</span>.set_attrs_list(state.buffer_mut());
-
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(action) = delete_key(e) {
+                    state.editor.action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, action);
                     cx.request_layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
                 }
-            }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(action) = delete_key(e) {
-                state.editor.action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, action);
-                cx.request_layout();
-                state.blink = <span class="number">0.0</span>;
-                changed = <span class="bool-val">true</span>;
-            }
-
-            <span class="kw">if </span>e.is(Code::Escape) {
-                (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
-                cx.set_focused(<span class="bool-val">false</span>);
-                cx.request_draw();
-            }
-
-            <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; <span class="self">self</span>.multiline {
-                (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
-                cx.request_layout();
-                state.blink = <span class="number">0.0</span>;
-                changed = <span class="bool-val">true</span>;
-            }
-
-            <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
-                cx.set_focused(<span class="bool-val">false</span>);
-                submit = <span class="bool-val">true</span>;
-            }
-
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(motion) = move_key(e) {
-                (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Motion(motion));
-                cx.request_draw();
-                state.blink = <span class="number">0.0</span>;
-            }
-
-            <span class="kw">if </span>e.is(Code::C) &amp;&amp; e.modifiers.ctrl {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
-                    cx.clipboard().set(selection);
-                }
-            }
-
-            <span class="kw">if </span>e.is(Code::X) &amp;&amp; e.modifiers.ctrl {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
-                    cx.clipboard().set(selection);
-                    cx.request_layout();
-                }
-
-                state.editor.delete_selection();
-                changed = <span class="bool-val">true</span>;
-            }
-
-            <span class="kw">if </span>e.is(Code::V) &amp;&amp; e.modifiers.ctrl {
-                <span class="kw">let </span>text = cx.clipboard().get();
-                state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
-
-                cx.request_layout();
-                changed = <span class="bool-val">true</span>;
-            }
-
-            <span class="kw">if </span>!(changed || submit) {
-                <span class="kw">return</span>;
-            }
-
-            <span class="kw">let </span>text = state.text();
-
-            <span class="kw">if </span>changed {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_change) = <span class="self">self</span>.on_change {
-                    on_change(cx, data, text.clone());
-                }
-            }
-
-            <span class="kw">if </span>submit {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_submit) = <span class="self">self</span>.on_submit {
-                    on_submit(cx, data, text);
-                    cx.request_rebuild();
-
-                    <span class="kw">if </span><span class="self">self</span>.text.is_none() {
-                        state.clear_text();
-                    }
-
-                    state.editor.set_cursor(cosmic_text::Cursor::default());
-                }
-            }
-        }
-
-        <span class="kw">if let </span>Event::PointerPressed(e) = event {
-            <span class="kw">if </span>!cx.is_hot() {
-                <span class="kw">if </span>cx.is_focused() {
+                <span class="kw">if </span>e.is(Code::Escape) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                     cx.set_focused(<span class="bool-val">false</span>);
                     cx.request_draw();
                 }
 
-                <span class="kw">return</span>;
+                <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; <span class="self">self</span>.multiline {
+                    (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
+                    cx.request_layout();
+                    state.blink = <span class="number">0.0</span>;
+                    changed = <span class="bool-val">true</span>;
+                }
+
+                <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
+                    cx.set_focused(<span class="bool-val">false</span>);
+                    submit = <span class="bool-val">true</span>;
+                }
+
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(motion) = move_key(e) {
+                    (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Motion(motion));
+                    cx.request_draw();
+                    state.blink = <span class="number">0.0</span>;
+                }
+
+                <span class="kw">if </span>e.is(Code::C) &amp;&amp; e.modifiers.ctrl {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
+                        cx.clipboard().set(selection);
+                    }
+                }
+
+                <span class="kw">if </span>e.is(Code::X) &amp;&amp; e.modifiers.ctrl {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
+                        cx.clipboard().set(selection);
+                        cx.request_layout();
+                    }
+
+                    state.editor.delete_selection();
+                    changed = <span class="bool-val">true</span>;
+                }
+
+                <span class="kw">if </span>e.is(Code::V) &amp;&amp; e.modifiers.ctrl {
+                    <span class="kw">let </span>text = cx.clipboard().get();
+                    state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
+
+                    cx.request_layout();
+                    changed = <span class="bool-val">true</span>;
+                }
+
+                <span class="kw">if </span>!(changed || submit) {
+                    <span class="kw">return</span>;
+                }
+
+                <span class="kw">let </span>text = state.text();
+
+                <span class="kw">if </span>changed {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_change) = <span class="self">self</span>.on_change {
+                        on_change(cx, data, text.clone());
+                    }
+                }
+
+                <span class="kw">if </span>submit {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_submit) = <span class="self">self</span>.on_submit {
+                        on_submit(cx, data, text);
+                        cx.request_rebuild();
+
+                        <span class="kw">if </span><span class="self">self</span>.text.is_none() {
+                            state.clear_text();
+                        }
+
+                        state.editor.set_cursor(cosmic_text::Cursor::default());
+                    }
+                }
             }
+            Event::PointerPressed(e) =&gt; {
+                <span class="kw">if </span>!cx.is_hot() {
+                    <span class="kw">if </span>cx.is_focused() {
+                        (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
+                        cx.set_focused(<span class="bool-val">false</span>);
+                        cx.request_draw();
+                    }
 
-            cx.set_focused(<span class="bool-val">true</span>);
-            cx.animate();
+                    <span class="kw">return</span>;
+                }
 
-            state.blink = <span class="number">0.0</span>;
-            state.dragging = <span class="bool-val">true</span>;
+                cx.set_focused(<span class="bool-val">true</span>);
+                cx.animate();
 
-            <span class="kw">let </span>local = cx.local(e.position);
-            state.editor.action(
-                <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
-                Action::Click {
-                    x: local.x <span class="kw">as </span>i32,
-                    y: local.y <span class="kw">as </span>i32,
-                },
-            );
-        }
+                state.blink = <span class="number">0.0</span>;
+                state.dragging = <span class="bool-val">true</span>;
 
-        <span class="kw">if let </span>Event::PointerReleased(<span class="kw">_</span>) = event {
-            state.dragging = <span class="bool-val">false</span>;
-        }
-
-        <span class="kw">if let </span>Event::PointerMoved(e) = event {
-            <span class="kw">let </span>local = cx.local(e.position);
-
-            <span class="kw">if </span>state.dragging {
+                <span class="kw">let </span>local = cx.local(e.position);
                 state.editor.action(
                     <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
-                    Action::Drag {
+                    Action::Click {
                         x: local.x <span class="kw">as </span>i32,
                         y: local.y <span class="kw">as </span>i32,
                     },
                 );
-
-                cx.request_draw();
             }
-
-            <span class="kw">if </span>cx.is_hot() {
-                cx.view_state.set_cursor(<span class="prelude-val">Some</span>(Cursor::Text));
-            } <span class="kw">else </span>{
-                cx.view_state.set_cursor(<span class="prelude-val">None</span>);
+            Event::PointerReleased(<span class="kw">_</span>) =&gt; {
+                state.dragging = <span class="bool-val">false</span>;
             }
-        }
+            Event::PointerMoved(e) =&gt; {
+                <span class="kw">let </span>local = cx.local(e.position);
 
-        <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>cx.is_focused() {
-                cx.animate();
-                cx.request_draw();
+                <span class="kw">if </span>state.dragging {
+                    state.editor.action(
+                        <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
+                        Action::Drag {
+                            x: local.x <span class="kw">as </span>i32,
+                            y: local.y <span class="kw">as </span>i32,
+                        },
+                    );
 
-                state.blink += <span class="kw-2">*</span>dt * <span class="number">10.0</span>;
+                    cx.request_draw();
+                }
             }
+            Event::Animate(dt) =&gt; {
+                <span class="kw">if </span>cx.is_focused() {
+                    cx.animate();
+                    cx.request_draw();
+
+                    state.blink += <span class="kw-2">*</span>dt * <span class="number">10.0</span>;
+                }
+            }
+            <span class="kw">_ </span>=&gt; {}
         }
     }
 

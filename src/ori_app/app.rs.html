@@ -595,6 +595,59 @@
 <a href="#593" id="593">593</a>
 <a href="#594" id="594">594</a>
 <a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -610,7 +663,7 @@
     layout::{Point, Size, Space, Vector},
     style::Styles,
     view::{AnyState, BoxedView, View, ViewState},
-    window::{Window, WindowId},
+    window::{Cursor, Window, WindowId, WindowUpdate},
 };
 
 <span class="kw">use crate</span>::{AppBuilder, AppRequest, Delegate, DelegateCx, UiBuilder};
@@ -621,10 +674,6 @@
     </span><span class="kw">pub </span>scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Scene,
     <span class="doccomment">/// The size of the window.
     </span><span class="kw">pub </span>logical_size: Size,
-    <span class="doccomment">/// The physical size of the window.
-    </span><span class="kw">pub </span>physical_size: Size,
-    <span class="doccomment">/// The scale factor of the window.
-    </span><span class="kw">pub </span>scale_factor: f32,
     <span class="doccomment">/// The clear color of the window.
     </span><span class="kw">pub </span>clear_color: Color,
 }
@@ -632,6 +681,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>WindowState&lt;T&gt; {
     ui: UiBuilder&lt;T&gt;,
     view: BoxedView&lt;T&gt;,
+    cursor: Cursor,
     state: AnyState,
     scene: Scene,
     view_state: ViewState,
@@ -661,7 +711,7 @@
         <span class="self">self</span>.view_state.prepare();
         <span class="self">self</span>.view_state.mark_layed_out();
 
-        <span class="kw">let </span>space = Space::new(Size::ZERO, <span class="self">self</span>.window.size());
+        <span class="kw">let </span>space = Space::new(Size::ZERO, <span class="self">self</span>.window.size);
         <span class="kw">let </span><span class="kw-2">mut </span>cx = LayoutCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
         <span class="kw">let </span>size = <span class="self">self</span>.view.layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, space);
@@ -674,7 +724,7 @@
 
         <span class="self">self</span>.scene.clear();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scene, <span class="self">self</span>.window.size());
+        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scene, <span class="self">self</span>.window.size);
         <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
         <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;mut </span>canvas);
@@ -689,18 +739,37 @@
         }
     }
 
-    <span class="kw">fn </span>update_and_request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) {
+    <span class="kw">fn </span>update_and_request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) -&gt; Vec&lt;AppRequest&lt;T&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>redraw = <span class="bool-val">false</span>;
+
         <span class="kw">if </span><span class="self">self</span>.view_state.needs_draw() {
-            <span class="self">self</span>.window.request_draw();
+            redraw = <span class="bool-val">true</span>;
         }
 
         <span class="kw">if </span><span class="self">self</span>.view_state.needs_animate() &amp;&amp; <span class="self">self</span>.animate.is_none() {
-            <span class="self">self</span>.window.request_draw();
             <span class="self">self</span>.animate = <span class="prelude-val">Some</span>(animate);
+
+            redraw = <span class="bool-val">true</span>;
         }
 
         <span class="kw">let </span>cursor = <span class="self">self</span>.view_state.cursor().unwrap_or_default();
-        <span class="self">self</span>.window.set_cursor(cursor);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>requests = Vec::new();
+
+        <span class="kw">if </span>redraw {
+            requests.push(AppRequest::RequestRedraw(<span class="self">self</span>.window.id()));
+        }
+
+        <span class="kw">if </span>cursor != <span class="self">self</span>.cursor {
+            requests.push(AppRequest::UpdateWindow(
+                <span class="self">self</span>.window.id(),
+                WindowUpdate::Cursor(cursor),
+            ));
+
+            <span class="self">self</span>.cursor = cursor;
+        }
+
+        requests
     }
 }
 
@@ -733,8 +802,9 @@
 
     <span class="doccomment">/// A window was resized.
     </span><span class="kw">pub fn </span>window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, width: u32, height: u32) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            window.view_state.request_layout();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
+            window_state.view_state.request_layout();
+            window_state.window.size = Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32);
         }
 
         <span class="kw">let </span>event = Event::WindowResized(WindowResized {
@@ -758,12 +828,7 @@
             <span class="kw">return</span>;
         };
 
-        <span class="kw">let </span>delta = <span class="kw">match </span>window_state.window.pointer(pointer_id) {
-            <span class="prelude-val">Some</span>(pointer) =&gt; position - pointer.position(),
-            <span class="prelude-val">None </span>=&gt; Vector::ZERO,
-        };
-
-        window_state.window.pointer_moved(pointer_id, position);
+        <span class="kw">let </span>delta = window_state.window.move_pointer(pointer_id, position);
         <span class="self">self</span>.update_hovered(window_id);
 
         <span class="kw">let </span>event = Event::PointerMoved(PointerMoved {
@@ -782,7 +847,7 @@
             <span class="kw">return</span>;
         };
 
-        window_state.window.pointer_left(pointer_id);
+        window_state.window.remove_pointer(pointer_id);
 
         <span class="kw">let </span>event = Event::PointerLeft(pointer_id);
 
@@ -790,7 +855,9 @@
     }
 
     <span class="kw">fn </span>pointer_position(<span class="kw-2">&amp;</span><span class="self">self</span>, window_id: WindowId, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;Point&gt; {
-        <span class="prelude-val">Some</span>(<span class="self">self</span>.get_window(window_id)<span class="question-mark">?</span>.pointer(pointer_id)<span class="question-mark">?</span>.position())
+        <span class="kw">let </span>window = <span class="self">self</span>.get_window(window_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>pointer = window.get_pointer(pointer_id)<span class="question-mark">?</span>;
+        <span class="prelude-val">Some</span>(pointer.position)
     }
 
     <span class="doccomment">/// A pointer scrolled.
@@ -830,7 +897,7 @@
 
         <span class="kw">if </span>pressed {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-                window_state.window.pointer_pressed(pointer_id, button);
+                window_state.window.press_pointer(pointer_id, button);
             }
 
             <span class="kw">let </span>event = Event::PointerPressed(PointerPressed {
@@ -842,8 +909,8 @@
 
             <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         } <span class="kw">else </span>{
-            <span class="kw">let </span>clicked = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id).map_or(<span class="bool-val">false</span>, <span class="kw">move </span>|w| {
-                w.window.pointer_released(pointer_id, button)
+            <span class="kw">let </span>clicked = (<span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)).map_or(<span class="bool-val">false</span>, <span class="kw">move </span>|window_state| {
+                window_state.window.release_pointer(pointer_id, button)
             });
 
             <span class="kw">let </span>event = Event::PointerReleased(PointerReleased {
@@ -899,13 +966,20 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
+        <span class="kw">let </span>window_state = window.state();
+
         <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(<span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>view_state, <span class="kw-2">&amp;mut </span>window);
         <span class="kw">let </span>state = <span class="self">self</span>.style.as_context(|| view.build(<span class="kw-2">&amp;mut </span>cx, data));
+
+        <span class="kw">for </span>update <span class="kw">in </span>window_state.difference(<span class="kw-2">&amp;</span>window) {
+            (<span class="self">self</span>.requests).push(AppRequest::UpdateWindow(window.id(), update));
+        }
 
         <span class="kw">let </span>window_id = window.id();
         <span class="kw">let </span>window_state = WindowState {
             ui,
             view,
+            cursor: Cursor::Default,
             state,
             scene: Scene::new(),
             view_state,
@@ -951,10 +1025,19 @@
     <span class="doccomment">/// Rebuild all windows.
     </span><span class="kw">pub fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
+        <span class="kw">let </span><span class="kw-2">mut </span>requests = Vec::new();
 
-        <span class="kw">for </span>window <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            <span class="self">self</span>.style.as_context(|| window.rebuild(data, <span class="kw-2">&amp;mut </span>base));
+        <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
+            <span class="kw">let </span>state = window_state.window.state();
+
+            (<span class="self">self</span>.style).as_context(|| window_state.rebuild(data, <span class="kw-2">&amp;mut </span>base));
+
+            <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
+                requests.push(AppRequest::UpdateWindow(window_state.window.id(), update));
+            }
         }
+
+        <span class="self">self</span>.requests.extend(requests);
     }
 
     <span class="doccomment">/// Update the hovered state of a window.
@@ -964,10 +1047,13 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..window_state.window.pointers().len() {
                 <span class="kw">let </span>pointer = <span class="kw-2">&amp;</span>window_state.window.pointers()[i];
-                <span class="kw">let </span>position = pointer.position();
+                <span class="kw">let </span>position = pointer.position;
                 <span class="kw">let </span>hovered = window_state.scene.view_at(position);
 
-                changed |= window_state.window.pointer_hovered(pointer.id(), hovered);
+                <span class="kw">let </span>pointer = <span class="kw-2">&amp;mut </span>window_state.window.pointers_mut()[i];
+                changed |= pointer.hovering != hovered;
+
+                pointer.hovering = hovered;
             }
         }
 
@@ -1045,9 +1131,16 @@
             <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
+                <span class="kw">let </span>state = window_state.window.state();
+
                 <span class="self">self</span>.style.as_context(|| {
                     window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
+
+                <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
+                    <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
+                    <span class="self">self</span>.requests.push(request);
+                }
             }
         }
 
@@ -1058,7 +1151,8 @@
 
         <span class="comment">// update the window state after handling the event
         </span><span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            window_state.update_and_request_draw(animate);
+            <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+            <span class="self">self</span>.requests.extend(requests);
         }
 
         <span class="comment">// handle any pending commands
@@ -1086,10 +1180,17 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
+                <span class="kw">let </span>state = window_state.window.state();
+
                 <span class="comment">// we send the event to the window, remembering to set the style context
                 </span><span class="self">self</span>.style.as_context(|| {
                     window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
                 });
+
+                <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
+                    <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
+                    <span class="self">self</span>.requests.push(request);
+                }
             }
         }
 
@@ -1100,7 +1201,8 @@
 
         <span class="comment">// update the window state after handling the event
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            window_state.update_and_request_draw(animate);
+            <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+            <span class="self">self</span>.requests.extend(requests);
         }
 
         <span class="comment">// handle any pending commands
@@ -1143,18 +1245,19 @@
         // animate is used to calculate the time since the last frame
         // and is set here so the time is as accurate as possible
         </span><span class="kw">let </span>animate = Instant::now();
-        <span class="kw">let </span>window = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>state = window_state.window.state();
 
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
         <span class="comment">// layout if needed
-        </span><span class="kw">if </span>window.view_state.needs_layout() {
-            <span class="self">self</span>.style.as_context(|| window.layout(data, <span class="kw-2">&amp;mut </span>base));
+        </span><span class="kw">if </span>window_state.view_state.needs_layout() {
+            (<span class="self">self</span>.style).as_context(|| window_state.layout(data, <span class="kw-2">&amp;mut </span>base));
         }
 
         <span class="comment">// draw if needed
-        </span><span class="kw">if </span>window.view_state.needs_draw() {
-            <span class="self">self</span>.style.as_context(|| window.draw(data, <span class="kw-2">&amp;mut </span>base));
+        </span><span class="kw">if </span>window_state.view_state.needs_draw() {
+            <span class="self">self</span>.style.as_context(|| window_state.draw(data, <span class="kw-2">&amp;mut </span>base));
 
             <span class="comment">// since hover state is determined by the scene, and since draw modifies the scene,
             // we must update the hover state, and send an UpdateHovered event if needed
@@ -1166,26 +1269,29 @@
         <span class="comment">// we need to update the window state after layout and draw
         //
         // if somehow the a layout or draw has been requested we must tell the window to redraw
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            window_state.update_and_request_draw(animate);
+        </span><span class="kw">let </span>window_state = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+        <span class="self">self</span>.requests.extend(requests);
+
+        <span class="kw">for </span>update <span class="kw">in </span>state.difference(<span class="kw-2">&amp;</span>window_state.window) {
+            <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
+            <span class="self">self</span>.requests.push(request);
         }
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
 
-        <span class="kw">let </span>window = <span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
 
         <span class="comment">// the clear color is the palette background color, but can be overridden by the window
-        </span><span class="kw">let </span>clear_color = <span class="kw">match </span>window.window.color() {
+        </span><span class="kw">let </span>clear_color = <span class="kw">match </span>window_state.window.color {
             <span class="prelude-val">Some</span>(color) =&gt; color,
             <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.style.palette().background,
         };
 
         <span class="prelude-val">Some</span>(WindowRenderScene {
-            scene: <span class="kw-2">&amp;</span>window.scene,
-            logical_size: window.window.size(),
-            physical_size: window.window.physical_size(),
-            scale_factor: window.window.scale_factor(),
+            scene: <span class="kw-2">&amp;</span>window_state.scene,
+            logical_size: window_state.window.size,
             clear_color,
         })
     }

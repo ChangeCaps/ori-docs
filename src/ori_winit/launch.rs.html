@@ -484,21 +484,15 @@
 <a href="#482" id="482">482</a>
 <a href="#483" id="483">483</a>
 <a href="#484" id="484">484</a>
-<a href="#485" id="485">485</a>
-<a href="#486" id="486">486</a>
-<a href="#487" id="487">487</a>
-<a href="#488" id="488">488</a>
-<a href="#489" id="489">489</a>
-<a href="#490" id="490">490</a>
-<a href="#491" id="491">491</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
 <span class="kw">use </span>ori_core::{
+    canvas::Color,
     command::CommandWaker,
     event::{Modifiers, PointerButton, PointerId},
-    layout::{Point, Vector},
-    window::{Window, WindowDescriptor},
+    layout::{Point, Size, Vector},
+    window::{Window, WindowUpdate},
 };
 <span class="kw">use </span>winit::{
     dpi::LogicalSize,
@@ -510,8 +504,7 @@
 
 <span class="kw">use crate</span>::{
     clipboard::WinitClipboard,
-    convert::{convert_key, convert_mouse_button, is_pressed},
-    window::WinitWindow,
+    convert::{convert_cursor_icon, convert_key, convert_mouse_button, is_pressed},
     Error,
 };
 
@@ -568,6 +561,12 @@
     <span class="prelude-val">Ok</span>(())
 }
 
+<span class="kw">struct </span>WindowState {
+    window: winit::window::Window,
+    context: ori_glow::GlutinContext,
+    render: ori_glow::GlowRender,
+}
+
 <span class="kw">struct </span>WinitState&lt;T&gt; {
     init: bool,
     app: App&lt;T&gt;,
@@ -576,15 +575,9 @@
 
     <span class="comment">/* glow */
     </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
-    </span>renders: HashMap&lt;ori_core::window::WindowId, (ori_glow::GlowRender, ori_glow::GlutinContext)&gt;,
+    </span>renders: HashMap&lt;ori_core::window::WindowId, WindowState&gt;,
     <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
     </span>renders: HashMap&lt;ori_core::window::WindowId, ori_glow::GlowRender&gt;,
-
-    <span class="comment">/* wgpu */
-    </span><span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-    </span>renders: HashMap&lt;ori_core::window::WindowId, ori_wgpu::WgpuRender&gt;,
-    <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-    </span>instance: <span class="prelude-ty">Option</span>&lt;ori_wgpu::WgpuRenderInstance&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; WinitState&lt;T&gt; {
@@ -598,12 +591,6 @@
             <span class="comment">/* glow */
             </span><span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
             </span>renders: HashMap::new(),
-
-            <span class="comment">/* wgpu */
-            </span><span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-            </span>renders: HashMap::new(),
-            <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-            </span>instance: <span class="prelude-val">None</span>,
         }
     }
 
@@ -641,76 +628,81 @@
 
                 <span class="self">self</span>.app.remove_window(id);
             }
+            AppRequest::RequestRedraw(id) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>id) {
+                    state.window.request_redraw();
+                }
+            }
+            AppRequest::UpdateWindow(id, update) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>id) {
+                    <span class="kw">match </span>update {
+                        WindowUpdate::Title(title) =&gt; state.window.set_title(<span class="kw-2">&amp;</span>title),
+                        WindowUpdate::Icon(icon) =&gt; <span class="kw">match </span>icon {
+                            <span class="prelude-val">Some</span>(icon) =&gt; {
+                                <span class="kw">let </span>icon = winit::window::Icon::from_rgba(
+                                    icon.pixels().to_vec(),
+                                    icon.width(),
+                                    icon.height(),
+                                )
+                                .expect(<span class="string">"Failed to create icon"</span>);
+
+                                state.window.set_window_icon(<span class="prelude-val">Some</span>(icon));
+                            }
+                            <span class="prelude-val">None </span>=&gt; {
+                                state.window.set_window_icon(<span class="prelude-val">None</span>);
+                            }
+                        },
+                        WindowUpdate::Size(size) =&gt; {
+                            <span class="kw">let </span>inner = LogicalSize::new(size.width, size.height);
+
+                            state.window.set_min_inner_size(<span class="prelude-val">Some</span>(inner));
+                            state.window.set_max_inner_size(<span class="prelude-val">Some</span>(inner));
+                        }
+                        WindowUpdate::Scale(<span class="kw">_</span>) =&gt; {}
+                        WindowUpdate::Resizable(resizable) =&gt; {
+                            state.window.set_resizable(resizable);
+                        }
+                        WindowUpdate::Decorated(decorated) =&gt; {
+                            state.window.set_decorations(decorated);
+                        }
+                        WindowUpdate::Maximized(maximized) =&gt; {
+                            state.window.set_maximized(maximized);
+                        }
+                        WindowUpdate::Visible(visible) =&gt; {
+                            state.window.set_visible(visible);
+                        }
+                        WindowUpdate::Color(color) =&gt; {
+                            <span class="kw">let </span>transparent = color.map_or(<span class="bool-val">false</span>, Color::is_translucent);
+                            state.window.set_transparent(transparent);
+                        }
+                        WindowUpdate::Cursor(cursor) =&gt; {
+                            state.window.set_cursor_icon(convert_cursor_icon(cursor));
+                        }
+                    }
+                }
+            }
             AppRequest::Quit =&gt; target.exit(),
         }
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-    </span><span class="kw">fn </span>init_wgpu(
+    <span class="kw">fn </span>create_glow_render(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         window: <span class="kw-2">&amp;</span>winit::window::Window,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(ori_wgpu::WgpuRenderInstance, ori_wgpu::Surface), Error&gt; {
-        <span class="kw">use </span>ori_wgpu::WgpuContext;
-
-        <span class="kw">let </span>(instance, surface) = <span class="kw">unsafe </span>{ ori_wgpu::WgpuRenderInstance::new(window)<span class="question-mark">? </span>};
-
-        <span class="kw">let </span>context = WgpuContext {
-            device: instance.device.clone(),
-            queue: instance.queue.clone(),
-            textures: Default::default(),
-        };
-        <span class="self">self</span>.ui.contexts.insert(context);
-
-        <span class="prelude-val">Ok</span>((instance, surface))
-    }
-
-    <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-    </span><span class="kw">fn </span>create_wgpu_render(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        window: <span class="kw-2">&amp;</span>winit::window::Window,
-        desc: <span class="kw-2">&amp;</span>WindowDescriptor,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">use </span>ori_wgpu::WgpuRender;
-
-        <span class="kw">let </span>(instance, surface) = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>instance) = <span class="self">self</span>.instance {
-            <span class="kw">let </span>surface = <span class="kw">unsafe </span>{ instance.create_surface(window)<span class="question-mark">? </span>};
-            (instance, surface)
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>(instance, surface) = <span class="self">self</span>.init_wgpu(window)<span class="question-mark">?</span>;
-            (<span class="self">self</span>.instance.insert(instance) <span class="kw">as _</span>, surface)
-        };
-
-        <span class="kw">let </span>samples = <span class="kw">if </span>desc.anti_aliasing { <span class="number">4 </span>} <span class="kw">else </span>{ <span class="number">1 </span>};
-        <span class="kw">let </span>size = window.inner_size();
-        <span class="kw">let </span>render = WgpuRender::new(instance, surface, samples, size.width, size.height)<span class="question-mark">?</span>;
-
-        <span class="self">self</span>.renders.insert(desc.id, render);
-
-        <span class="prelude-val">Ok</span>(())
-    }
-
-    <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
-    </span><span class="kw">fn </span>create_glow_render(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        window: <span class="kw-2">&amp;</span>winit::window::Window,
-        desc: <span class="kw-2">&amp;</span>WindowDescriptor,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(ori_glow::GlutinContext, ori_glow::GlowRender), Error&gt; {
         <span class="kw">let </span>size = window.inner_size();
 
         <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
         </span>{
             <span class="kw">use </span>raw_window_handle::{HasRawDisplayHandle, HasRawWindowHandle};
 
-            <span class="kw">let </span>samples = <span class="kw">if </span>desc.anti_aliasing { <span class="number">4 </span>} <span class="kw">else </span>{ <span class="number">1 </span>};
-
             <span class="kw">let </span>context = ori_glow::GlutinContext::new(
                 window.raw_window_handle(),
                 window.raw_display_handle(),
                 size.width,
                 size.height,
-                samples,
+                <span class="number">4</span>,
             )<span class="question-mark">?</span>;
 
             context.make_current()<span class="question-mark">?</span>;
@@ -718,7 +710,7 @@
             <span class="kw">let </span>proc_addr = |s: <span class="kw-2">&amp;</span>str| context.get_proc_address(s);
             <span class="kw">let </span>render = ori_glow::GlowRender::new(proc_addr, size.width, size.height)<span class="question-mark">?</span>;
 
-            <span class="self">self</span>.renders.insert(desc.id, (render, context));
+            <span class="prelude-val">Ok</span>((context, render))
         }
 
         <span class="attr">#[cfg(target_arch = <span class="string">"wasm32"</span>)]
@@ -730,25 +722,18 @@
 
             <span class="self">self</span>.renders.insert(desc.id, render);
         }
-
-        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">fn </span>idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.app.idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
 
         <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
-        </span><span class="kw">for </span>(render, context) <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
-            <span class="kw">let _ </span>= context.make_current().is_ok();
-            render.clean();
+        </span><span class="kw">for </span>state <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
+            <span class="kw">let _ </span>= state.context.make_current().is_ok();
+            state.render.clean();
         }
 
         <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
-        </span><span class="kw">for </span>render <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
-            render.clean();
-        }
-
-        <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
         </span><span class="kw">for </span>render <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
             render.clean();
         }
@@ -757,38 +742,56 @@
     <span class="kw">fn </span>create_window(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         target: <span class="kw-2">&amp;</span>EventLoopWindowTarget&lt;()&gt;,
-        desc: WindowDescriptor,
+        ori: Window,
         builder: UiBuilder&lt;T&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>window_id = ori.id();
+
         <span class="comment">/* create the window */
         </span><span class="kw">let </span>window = WindowBuilder::new()
-            .with_title(<span class="kw-2">&amp;</span>desc.title)
-            .with_inner_size(LogicalSize::new(desc.width, desc.height))
-            .with_resizable(desc.resizable)
-            .with_decorations(desc.decorated)
-            .with_transparent(desc.transparent)
+            .with_title(<span class="kw-2">&amp;</span>ori.title)
+            .with_inner_size(LogicalSize::new(ori.width(), ori.height()))
+            .with_resizable(ori.resizable)
+            .with_decorations(ori.decorated)
+            .with_transparent(ori.color.map_or(<span class="bool-val">false</span>, Color::is_translucent))
             .with_visible(<span class="bool-val">false</span>)
             .build(target)<span class="question-mark">?</span>;
 
-        <span class="self">self</span>.window_ids.insert(window.id(), desc.id);
+        <span class="self">self</span>.window_ids.insert(window.id(), window_id);
 
         <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
-        </span><span class="self">self</span>.create_glow_render(<span class="kw-2">&amp;</span>window, <span class="kw-2">&amp;</span>desc)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>(context, render) = <span class="self">self</span>.create_glow_render(<span class="kw-2">&amp;</span>window)<span class="question-mark">?</span>;
 
-        <span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-        </span><span class="self">self</span>.create_wgpu_render(<span class="kw-2">&amp;</span>window, <span class="kw-2">&amp;</span>desc)<span class="question-mark">?</span>;
+        <span class="kw">let </span>icon = <span class="kw">match </span>ori.icon {
+            <span class="prelude-val">Some</span>(<span class="kw-2">ref </span>icon) =&gt; {
+                <span class="kw">let </span>icon = winit::window::Icon::from_rgba(
+                    icon.pixels().to_vec(),
+                    icon.width(),
+                    icon.height(),
+                )
+                .expect(<span class="string">"Failed to create icon"</span>);
 
-        <span class="comment">/* create the initial window */
-        </span><span class="kw">let </span>raw_window = Box::new(WinitWindow::from(window));
-        <span class="kw">let </span><span class="kw-2">mut </span>window = Window::new(raw_window, desc.id);
+                <span class="prelude-val">Some</span>(icon)
+            }
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">None</span>,
+        };
 
-        window.set_icon(desc.icon.as_ref());
-        window.set_visible(desc.visible);
-        window.set_maximized(desc.maximized);
-        window.set_color(desc.color);
+        window.set_window_icon(icon);
+        window.set_visible(ori.visible);
+        window.set_maximized(ori.maximized);
+
+        <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
+        </span><span class="self">self</span>.renders.insert(
+            window_id,
+            WindowState {
+                window,
+                context,
+                render,
+            },
+        );
 
         <span class="comment">/* add the window to the ui */
-        </span><span class="self">self</span>.app.add_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, builder, window);
+        </span><span class="self">self</span>.app.add_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, builder, ori);
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -801,35 +804,27 @@
 
         <span class="comment">/* glow */
         </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((render, context)) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            <span class="comment">// resize the context if necessary
-            </span>context.resize(
-                scene.physical_size.width <span class="kw">as </span>u32,
-                scene.physical_size.height <span class="kw">as </span>u32,
-            );
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
+            <span class="kw">let </span>size = state.window.inner_size();
 
-            context.make_current()<span class="question-mark">?</span>;
-            render.render_scene(
+            <span class="comment">// resize the context if necessary
+            </span>state.context.resize(size.width, size.height);
+
+            state.context.make_current()<span class="question-mark">?</span>;
+            state.render.render_scene(
                 scene.scene,
                 scene.clear_color,
                 scene.logical_size,
-                scene.physical_size,
-                scene.scale_factor,
+                Size::new(size.width <span class="kw">as </span>f32, size.height <span class="kw">as </span>f32),
+                state.window.scale_factor() <span class="kw">as </span>f32,
             )<span class="question-mark">?</span>;
 
-            context.swap_buffers()<span class="question-mark">?</span>;
+            state.context.swap_buffers()<span class="question-mark">?</span>;
         }
 
         <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(render) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
             render.render_scene(scene, clear_color, logical, physical, scale_factor)<span class="question-mark">?</span>;
-        }
-
-        <span class="comment">/* wgpu */
-        </span><span class="attr">#[cfg(feature = <span class="string">"wgpu"</span>)]
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(render) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            <span class="kw">let </span>cx = <span class="self">self</span>.ui.contexts.get::&lt;ori_wgpu::WgpuContext&gt;().unwrap();
-            render.render_scene(cx, scene, clear_color, logical, physical, scale_factor);
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -848,28 +843,19 @@
                 }
             }
             WindowEvent::CloseRequested =&gt; {
-                <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
-                </span><span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
-
+                <span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
                 <span class="self">self</span>.app.close_requested(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id);
             }
             WindowEvent::Resized(inner_size) =&gt; {
                 (<span class="self">self</span>.app).window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, inner_size.width, inner_size.height);
             }
-            WindowEvent::ScaleFactorChanged { .. } =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(window) = <span class="self">self</span>.app.get_window(id) {
-                    <span class="kw">let </span>width = window.width();
-                    <span class="kw">let </span>height = window.height();
-
-                    <span class="self">self</span>.app.window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, width, height);
-                }
-            }
+            WindowEvent::ScaleFactorChanged { .. } =&gt; {}
             WindowEvent::CursorMoved {
                 device_id,
                 position,
                 ..
             } =&gt; {
-                <span class="kw">let </span>scale_factor = <span class="self">self</span>.app.get_window(id).map_or(<span class="number">1.0</span>, |w| w.scale_factor());
+                <span class="kw">let </span>scale_factor = <span class="self">self</span>.app.get_window(id).map_or(<span class="number">1.0</span>, |w| w.scale);
                 <span class="kw">let </span>position = Point::new(position.x <span class="kw">as </span>f32, position.y <span class="kw">as </span>f32) / scale_factor;
                 <span class="self">self</span>.app.pointer_moved(
                     <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
@@ -944,7 +930,7 @@
     }
 
     <span class="kw">fn </span>touch_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, window_id: ori_core::window::WindowId, event: winit::event::Touch) {
-        <span class="kw">let </span>scale_factor = (<span class="self">self</span>.app.get_window(window_id)).map_or(<span class="number">1.0</span>, |w| w.scale_factor());
+        <span class="kw">let </span>scale_factor = (<span class="self">self</span>.app.get_window(window_id)).map_or(<span class="number">1.0</span>, |w| w.scale);
         <span class="kw">let </span>position = Point::new(event.location.x <span class="kw">as </span>f32, event.location.y <span class="kw">as </span>f32) / scale_factor;
         <span class="kw">let </span>pointer_id = PointerId::from_hash(<span class="kw-2">&amp;</span>event.device_id);
 

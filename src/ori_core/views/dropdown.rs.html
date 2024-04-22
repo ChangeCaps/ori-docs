@@ -244,7 +244,7 @@
         <span class="comment">// make sure the content is at least as wide as the header
         </span><span class="kw">let </span>content_space = Space {
             min: Size::new(header_size.width, <span class="number">0.0</span>),
-            max: cx.window().size(),
+            max: cx.window().size,
         };
         <span class="self">self</span>.content.layout(content, cx, data, content_space);
 

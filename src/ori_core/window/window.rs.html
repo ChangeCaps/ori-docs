@@ -344,6 +344,32 @@
 <a href="#342" id="342">342</a>
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -353,11 +379,11 @@
     canvas::Color,
     event::{PointerButton, PointerId},
     image::Image,
-    layout::{Point, Rect, Size},
+    layout::{Point, Size, Vector},
     view::ViewId,
 };
 
-<span class="kw">use super</span>::{Cursor, RawWindow};
+<span class="kw">use super</span>::{Cursor, Pointer};
 
 <span class="doccomment">/// A unique identifier for a window.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -386,306 +412,332 @@
     }
 }
 
-<span class="doccomment">/// A handle to a window.
+<span class="doccomment">/// A window.
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>Window {
     id: WindowId,
-    raw: Box&lt;<span class="kw">dyn </span>RawWindow&gt;,
     pointers: Vec&lt;Pointer&gt;,
+
+    <span class="doccomment">/// The title of the window.
+    </span><span class="kw">pub </span>title: String,
+
+    <span class="doccomment">/// The icon of the window.
+    </span><span class="kw">pub </span>icon: <span class="prelude-ty">Option</span>&lt;Image&gt;,
+
+    <span class="doccomment">/// The size of the window.
+    </span><span class="kw">pub </span>size: Size,
+
+    <span class="doccomment">/// The scale of the window.
+    </span><span class="kw">pub </span>scale: f32,
+
+    <span class="doccomment">/// Whether the window is resizable.
+    </span><span class="kw">pub </span>resizable: bool,
+
+    <span class="doccomment">/// Whether the window is decorated.
+    </span><span class="kw">pub </span>decorated: bool,
+
+    <span class="doccomment">/// Whether the window is maximized.
+    </span><span class="kw">pub </span>maximized: bool,
+
+    <span class="doccomment">/// Whether the window is visible.
+    </span><span class="kw">pub </span>visible: bool,
+
+    <span class="doccomment">/// The color of the window.
+    </span><span class="kw">pub </span>color: <span class="prelude-ty">Option</span>&lt;Color&gt;,
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>Window {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new()
+    }
 }
 
 <span class="kw">impl </span>Window {
-    <span class="doccomment">/// Create a new window with the given raw window implementation.
-    </span><span class="kw">pub fn </span>new(raw: Box&lt;<span class="kw">dyn </span>RawWindow&gt;, id: WindowId) -&gt; <span class="self">Self </span>{
+    <span class="doccomment">/// Create a new [`Window`].
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            id,
-            raw,
+            id: WindowId::new(),
             pointers: Vec::new(),
+            title: String::from(<span class="string">"Ori window"</span>),
+            icon: <span class="prelude-val">None</span>,
+            size: Size::new(<span class="number">800.0</span>, <span class="number">600.0</span>),
+            scale: <span class="number">1.0</span>,
+            resizable: <span class="bool-val">true</span>,
+            decorated: <span class="bool-val">true</span>,
+            maximized: <span class="bool-val">false</span>,
+            visible: <span class="bool-val">true</span>,
+            color: <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="doccomment">/// Get the [`WindowId`].
+    <span class="doccomment">/// Get the unique identifier of the window.
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WindowId {
         <span class="self">self</span>.id
     }
 
-    <span class="doccomment">/// Get the pointers.
-    </span><span class="kw">pub fn </span>pointers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Pointer] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.pointers
-    }
-
-    <span class="doccomment">/// Get the pointer with `id`.
-    </span><span class="kw">pub fn </span>pointer(<span class="kw-2">&amp;</span><span class="self">self</span>, id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Pointer&gt; {
-        <span class="self">self</span>.pointers.iter().find(|p| p.id() == id)
-    }
-
-    <span class="doccomment">/// Get the mutable pointer with `id`.
-    </span><span class="kw">pub fn </span>pointer_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Pointer&gt; {
-        <span class="self">self</span>.pointers.iter_mut().find(|p| p.id() == id)
-    }
-
-    <span class="doccomment">/// Move the pointer with `id` to `position`.
-    </span><span class="kw">pub fn </span>pointer_moved(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, position: Point) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.pointer_mut(id) {
-            pointer.position = position;
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.pointers.push(Pointer::new(id, position));
-        }
-    }
-
-    <span class="doccomment">/// Remove the pointer with `id`.
-    </span><span class="kw">pub fn </span>pointer_left(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = <span class="self">self</span>.pointers.iter().position(|p| p.id() == id) {
-            <span class="self">self</span>.pointers.swap_remove(index);
-        }
-    }
-
-    <span class="doccomment">/// Set the hovered view of the pointer with `id`.
-    </span><span class="kw">pub fn </span>pointer_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, hovered: <span class="prelude-ty">Option</span>&lt;ViewId&gt;) -&gt; bool {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.pointer_mut(id) {
-            <span class="kw">let </span>changed = pointer.hovered() != hovered;
-            pointer.hovered = hovered;
-            <span class="kw">return </span>changed;
-        }
-
-        <span class="bool-val">false
+    <span class="doccomment">/// Set the title of the window.
+    </span><span class="kw">pub fn </span>title(<span class="kw-2">mut </span><span class="self">self</span>, title: <span class="kw">impl </span>ToString) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.title = title.to_string();
+        <span class="self">self
     </span>}
 
-    <span class="doccomment">/// Get the pointer that is currently hovered over the given view.
-    </span><span class="kw">pub fn </span>is_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>, view: ViewId) -&gt; bool {
-        <span class="self">self</span>.pointers.iter().any(|p| p.hovered() == <span class="prelude-val">Some</span>(view))
-    }
-
-    <span class="doccomment">/// Pointer pressed.
-    </span><span class="kw">pub fn </span>pointer_pressed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, button: PointerButton) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.pointer_mut(id) {
-            pointer.press(button);
-        }
-    }
-
-    <span class="doccomment">/// Pointer released.
-    </span><span class="kw">pub fn </span>pointer_released(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: PointerId, button: PointerButton) -&gt; bool {
-        (<span class="self">self</span>.pointer_mut(id)).map_or(<span class="bool-val">false</span>, |pointer| pointer.release(button))
-    }
-
-    <span class="doccomment">/// Try to downcast the window to a specific type.
-    </span><span class="kw">pub fn </span>downcast_raw&lt;T: RawWindow&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt; {
-        <span class="self">self</span>.raw.downcast_ref()
-    }
-
-    <span class="doccomment">/// Get the title of the window.
-    </span><span class="kw">pub fn </span>title(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.raw.title()
-    }
-
-    <span class="doccomment">/// Set the title of the window.
-    </span><span class="kw">pub fn </span>set_title(<span class="kw-2">&amp;mut </span><span class="self">self</span>, title: <span class="kw-2">&amp;</span>str) {
-        <span class="self">self</span>.raw.set_title(title);
-    }
-
     <span class="doccomment">/// Set the icon of the window.
-    </span><span class="kw">pub fn </span>set_icon(<span class="kw-2">&amp;mut </span><span class="self">self</span>, icon: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Image&gt;) {
-        <span class="self">self</span>.raw.set_icon(icon);
-    }
+    </span><span class="kw">pub fn </span>icon(<span class="kw-2">mut </span><span class="self">self</span>, icon: <span class="kw">impl </span>Into&lt;<span class="prelude-ty">Option</span>&lt;Image&gt;&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.icon = icon.into();
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Get the size of the window.
-    </span><span class="kw">pub fn </span>size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Size {
-        <span class="kw">let </span>(width, height) = <span class="self">self</span>.raw.size();
-        Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32)
-    }
+    <span class="doccomment">/// Set the size of the window.
+    </span><span class="kw">pub fn </span>size(<span class="kw-2">mut </span><span class="self">self</span>, width: u32, height: u32) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.size = Size::new(width <span class="kw">as </span>f32, height <span class="kw">as </span>f32);
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Get the rect of the window.
-    </span><span class="kw">pub fn </span>rect(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rect {
-        Rect::min_size(Point::ZERO, <span class="self">self</span>.size())
-    }
+    <span class="doccomment">/// Set the scale of the window.
+    </span><span class="kw">pub fn </span>scale(<span class="kw-2">mut </span><span class="self">self</span>, scale: f32) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.scale = scale;
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Get the physical size of the window.
+    <span class="doccomment">/// Set whether the window is resizable.
+    </span><span class="kw">pub fn </span>resizable(<span class="kw-2">mut </span><span class="self">self</span>, resizable: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.resizable = resizable;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set whether the window is decorated.
+    </span><span class="kw">pub fn </span>decorated(<span class="kw-2">mut </span><span class="self">self</span>, decorated: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.decorated = decorated;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set whether the window is maximized.
+    </span><span class="kw">pub fn </span>maximized(<span class="kw-2">mut </span><span class="self">self</span>, maximized: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.maximized = maximized;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set whether the window is visible.
+    </span><span class="kw">pub fn </span>visible(<span class="kw-2">mut </span><span class="self">self</span>, visible: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.visible = visible;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set the color of the window.
+    </span><span class="kw">pub fn </span>color(<span class="kw-2">mut </span><span class="self">self</span>, color: <span class="kw">impl </span>Into&lt;<span class="prelude-ty">Option</span>&lt;Color&gt;&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.color = color.into();
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Get the size of the window in physical pixels.
+    ///
+    /// This is a shorthand for `self.size * self.scale`.
     </span><span class="kw">pub fn </span>physical_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Size {
-        <span class="self">self</span>.size() * <span class="self">self</span>.scale_factor()
+        <span class="self">self</span>.size * <span class="self">self</span>.scale
     }
 
     <span class="doccomment">/// Get the width of the window.
     </span><span class="kw">pub fn </span>width(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.raw.size().<span class="number">0
-    </span>}
+        <span class="self">self</span>.size.width <span class="kw">as </span>u32
+    }
 
     <span class="doccomment">/// Get the height of the window.
     </span><span class="kw">pub fn </span>height(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.raw.size().<span class="number">1
-    </span>}
-
-    <span class="doccomment">/// Get the physical width of the window.
-    </span><span class="kw">pub fn </span>physical_width(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="kw">let </span>width = <span class="self">self</span>.width() <span class="kw">as </span>f32 * <span class="self">self</span>.scale_factor();
-        width <span class="kw">as </span>u32
+        <span class="self">self</span>.size.height <span class="kw">as </span>u32
     }
 
-    <span class="doccomment">/// Get the physical height of the window.
-    </span><span class="kw">pub fn </span>physical_height(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="kw">let </span>height = <span class="self">self</span>.height() <span class="kw">as </span>f32 * <span class="self">self</span>.scale_factor();
-        height <span class="kw">as </span>u32
+    <span class="doccomment">/// Get the pointers in the window.
+    </span><span class="kw">pub fn </span>pointers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Pointer] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.pointers
     }
+
+    <span class="doccomment">/// Get the pointers in the window mutably.
+    </span><span class="kw">pub fn </span>pointers_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Vec&lt;Pointer&gt; {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.pointers
+    }
+
+    <span class="doccomment">/// Get whether a specific view is hovered.
+    </span><span class="kw">pub fn </span>is_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>, view_id: ViewId) -&gt; bool {
+        (<span class="self">self</span>.pointers.iter()).any(|pointer| pointer.hovering == <span class="prelude-val">Some</span>(view_id))
+    }
+
+    <span class="doccomment">/// Get the pointer with [`pointer_id`].
+    </span><span class="kw">pub fn </span>get_pointer(<span class="kw-2">&amp;</span><span class="self">self</span>, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Pointer&gt; {
+        (<span class="self">self</span>.pointers.iter()).find(|pointer| pointer.id() == pointer_id)
+    }
+
+    <span class="doccomment">/// Get the pointer with [`pointer_id`] mutably.
+    </span><span class="kw">pub fn </span>get_pointer_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Pointer&gt; {
+        (<span class="self">self</span>.pointers.iter_mut()).find(|pointer| pointer.id() == pointer_id)
+    }
+
+    <span class="doccomment">/// Press a button on a pointer.
+    ///
+    /// This is rarely what you want to do, do not use this unless you
+    /// really know what you are doing.
+    </span><span class="kw">pub fn </span>press_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId, button: PointerButton) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = <span class="self">self</span>.get_pointer_mut(pointer_id) {
+            pointer.press(button);
+        }
+    }
+
+    <span class="doccomment">/// Release a button on a pointer.
+    ///
+    /// This is rarely what you want to do, do not use this unless you
+    /// really know what you are doing.
+    </span><span class="kw">pub fn </span>release_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId, button: PointerButton) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.get_pointer_mut(pointer_id) {
+            <span class="prelude-val">Some</span>(pointer) =&gt; pointer.release(button),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="doccomment">/// Move a pointer, returning the movement.
+    </span><span class="kw">pub fn </span>move_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId, position: Point) -&gt; Vector {
+        <span class="kw">match </span><span class="self">self</span>.get_pointer_mut(pointer_id) {
+            <span class="prelude-val">Some</span>(pointer) =&gt; {
+                <span class="kw">let </span>delta = position - pointer.position;
+                pointer.position = position;
+
+                delta
+            }
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="self">self</span>.pointers.push(Pointer::new(pointer_id, position));
+
+                Vector::ZERO
+            }
+        }
+    }
+
+    <span class="doccomment">/// Remove a pointer.
+    ///
+    /// This is rarely what you want to do, do not use this unless you
+    /// really know what you are doing.
+    </span><span class="kw">pub fn </span>remove_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId) {
+        <span class="self">self</span>.pointers.retain(|pointer| pointer.id() != pointer_id);
+    }
+
+    <span class="doccomment">/// Update the window.
+    </span><span class="kw">pub fn </span>updates(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Vec&lt;WindowUpdate&gt; {
+        <span class="macro">vec!</span>[
+            WindowUpdate::Title(<span class="self">self</span>.title.clone()),
+            WindowUpdate::Icon(<span class="self">self</span>.icon.clone()),
+            WindowUpdate::Size(<span class="self">self</span>.size),
+            WindowUpdate::Scale(<span class="self">self</span>.scale),
+            WindowUpdate::Resizable(<span class="self">self</span>.resizable),
+            WindowUpdate::Decorated(<span class="self">self</span>.decorated),
+            WindowUpdate::Maximized(<span class="self">self</span>.maximized),
+            WindowUpdate::Visible(<span class="self">self</span>.visible),
+            WindowUpdate::Color(<span class="self">self</span>.color),
+        ]
+    }
+
+    <span class="doccomment">/// Get the [`WindowState`] of the window.
+    </span><span class="kw">pub fn </span>state(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WindowState {
+        WindowState {
+            title: <span class="self">self</span>.title.clone(),
+            icon: <span class="self">self</span>.icon.clone(),
+            size: <span class="self">self</span>.size,
+            scale: <span class="self">self</span>.scale,
+            resizable: <span class="self">self</span>.resizable,
+            decorated: <span class="self">self</span>.decorated,
+            maximized: <span class="self">self</span>.maximized,
+            visible: <span class="self">self</span>.visible,
+            color: <span class="self">self</span>.color,
+        }
+    }
+}
+
+<span class="doccomment">/// An update to a window.
+</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub enum </span>WindowUpdate {
+    <span class="doccomment">/// Set the title of the window.
+    </span>Title(String),
+
+    <span class="doccomment">/// Set the icon of the window.
+    </span>Icon(<span class="prelude-ty">Option</span>&lt;Image&gt;),
 
     <span class="doccomment">/// Set the size of the window.
-    </span><span class="kw">pub fn </span>set_size(<span class="kw-2">&amp;mut </span><span class="self">self</span>, width: u32, height: u32) {
-        <span class="self">self</span>.raw.set_size(width, height);
-    }
+    </span>Size(Size),
 
-    <span class="doccomment">/// Get whether the window is resizable.
-    </span><span class="kw">pub fn </span>resizable(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.raw.resizable()
-    }
+    <span class="doccomment">/// Set the scale of the window.
+    </span>Scale(f32),
 
     <span class="doccomment">/// Set whether the window is resizable.
-    </span><span class="kw">pub fn </span>set_resizable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, resizable: bool) {
-        <span class="self">self</span>.raw.set_resizable(resizable);
-    }
-
-    <span class="doccomment">/// Get whether the window is decorated.
-    </span><span class="kw">pub fn </span>decorated(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.raw.decorated()
-    }
+    </span>Resizable(bool),
 
     <span class="doccomment">/// Set whether the window is decorated.
-    </span><span class="kw">pub fn </span>set_decorated(<span class="kw-2">&amp;mut </span><span class="self">self</span>, decorated: bool) {
-        <span class="self">self</span>.raw.set_decorated(decorated);
-    }
-
-    <span class="doccomment">/// Get the scale factor of the window.
-    </span><span class="kw">pub fn </span>scale_factor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f32 {
-        <span class="self">self</span>.raw.scale_factor()
-    }
-
-    <span class="doccomment">/// Get whether the window is minimized.
-    </span><span class="kw">pub fn </span>minimized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.raw.minimized()
-    }
-
-    <span class="doccomment">/// Set whether the window is minimized.
-    </span><span class="kw">pub fn </span>set_minimized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, minimized: bool) {
-        <span class="self">self</span>.raw.set_minimized(minimized);
-    }
-
-    <span class="doccomment">/// Get whether the window is maximized.
-    </span><span class="kw">pub fn </span>maximized(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.raw.maximized()
-    }
+    </span>Decorated(bool),
 
     <span class="doccomment">/// Set whether the window is maximized.
-    </span><span class="kw">pub fn </span>set_maximized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, maximized: bool) {
-        <span class="self">self</span>.raw.set_maximized(maximized);
-    }
-
-    <span class="doccomment">/// Get whether the window is visible.
-    </span><span class="kw">pub fn </span>visible(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.raw.visible()
-    }
+    </span>Maximized(bool),
 
     <span class="doccomment">/// Set whether the window is visible.
-    </span><span class="kw">pub fn </span>set_visible(<span class="kw-2">&amp;mut </span><span class="self">self</span>, visible: bool) {
-        <span class="self">self</span>.raw.set_visible(visible);
-    }
+    </span>Visible(bool),
+
+    <span class="doccomment">/// Set the color of the window.
+    </span>Color(<span class="prelude-ty">Option</span>&lt;Color&gt;),
 
     <span class="doccomment">/// Set the cursor of the window.
-    </span><span class="kw">pub fn </span>set_cursor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: Cursor) {
-        <span class="self">self</span>.raw.set_cursor(cursor);
-    }
-
-    <span class="doccomment">/// Get the background of the window.
-    </span><span class="kw">pub fn </span>color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Color&gt; {
-        <span class="self">self</span>.raw.color()
-    }
-
-    <span class="doccomment">/// Set the background of the window.
-    </span><span class="kw">pub fn </span>set_color(<span class="kw-2">&amp;mut </span><span class="self">self</span>, color: <span class="prelude-ty">Option</span>&lt;Color&gt;) {
-        <span class="self">self</span>.raw.set_color(color);
-    }
-
-    <span class="doccomment">/// Get whether the soft input is enabled.
-    </span><span class="kw">pub fn </span>set_soft_input(<span class="kw-2">&amp;mut </span><span class="self">self</span>, enabled: bool) {
-        <span class="self">self</span>.raw.set_soft_input(enabled);
-    }
-
-    <span class="doccomment">/// Drag the window.
-    </span><span class="kw">pub fn </span>drag(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.raw.drag();
-    }
-
-    <span class="doccomment">/// Request a redraw of the window.
-    </span><span class="kw">pub fn </span>request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.raw.request_draw();
-    }
+    </span>Cursor(Cursor),
 }
 
-<span class="doccomment">/// The state of a pointer.
-</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
-</span><span class="kw">pub struct </span>Pointer {
-    <span class="doccomment">/// The unique id of the pointer.
-    </span>id: PointerId,
-
-    <span class="doccomment">/// The position of the pointer.
-    </span>position: Point,
-
-    <span class="doccomment">/// The buttons that are currently pressed by the pointer.
-    </span>pressed: Vec&lt;(PointerButton, Point)&gt;,
-
-    <span class="doccomment">/// The view that is currently hovered by the pointer.
-    </span>hovered: <span class="prelude-ty">Option</span>&lt;ViewId&gt;,
+<span class="doccomment">/// The state of a window.
+</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>WindowState {
+    title: String,
+    icon: <span class="prelude-ty">Option</span>&lt;Image&gt;,
+    size: Size,
+    scale: f32,
+    resizable: bool,
+    decorated: bool,
+    maximized: bool,
+    visible: bool,
+    color: <span class="prelude-ty">Option</span>&lt;Color&gt;,
 }
 
-<span class="kw">impl </span>Pointer {
-    <span class="doccomment">/// Create a new pointer.
-    </span><span class="kw">pub fn </span>new(id: PointerId, position: Point) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            id,
-            position,
-            pressed: Vec::new(),
-            hovered: <span class="prelude-val">None</span>,
+<span class="kw">impl </span>WindowState {
+    <span class="doccomment">/// Get the difference between a window and a previous state.
+    </span><span class="kw">pub fn </span>difference(<span class="kw-2">&amp;</span><span class="self">self</span>, window: <span class="kw-2">&amp;</span>Window) -&gt; Vec&lt;WindowUpdate&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>updates = Vec::new();
+
+        <span class="kw">if </span><span class="self">self</span>.title != window.title {
+            updates.push(WindowUpdate::Title(window.title.clone()));
         }
-    }
 
-    <span class="doccomment">/// Get the unique id of the pointer.
-    </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PointerId {
-        <span class="self">self</span>.id
-    }
-
-    <span class="doccomment">/// Get the position of the pointer.
-    </span><span class="kw">pub fn </span>position(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Point {
-        <span class="self">self</span>.position
-    }
-
-    <span class="doccomment">/// Get the view that is currently hovered by the pointer.
-    </span><span class="kw">pub fn </span>hovered(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;ViewId&gt; {
-        <span class="self">self</span>.hovered
-    }
-
-    <span class="doccomment">/// Set the view that is currently hovered by the pointer.
-    </span><span class="kw">pub fn </span>set_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hovered: <span class="prelude-ty">Option</span>&lt;ViewId&gt;) {
-        <span class="self">self</span>.hovered = hovered;
-    }
-
-    <span class="doccomment">/// Check if a button is currently pressed by the pointer.
-    </span><span class="kw">pub fn </span>is_pressed(<span class="kw-2">&amp;</span><span class="self">self</span>, button: PointerButton) -&gt; bool {
-        <span class="self">self</span>.pressed.iter().any(|(b, <span class="kw">_</span>)| <span class="kw-2">*</span>b == button)
-    }
-
-    <span class="doccomment">/// Press a button.
-    </span><span class="kw">pub fn </span>press(<span class="kw-2">&amp;mut </span><span class="self">self</span>, button: PointerButton) {
-        <span class="kw">if </span>!<span class="self">self</span>.is_pressed(button) {
-            <span class="self">self</span>.pressed.push((button, <span class="self">self</span>.position));
+        <span class="kw">if </span><span class="self">self</span>.icon != window.icon {
+            updates.push(WindowUpdate::Icon(window.icon.clone()));
         }
+
+        <span class="kw">if </span><span class="self">self</span>.size != window.size {
+            updates.push(WindowUpdate::Size(window.size));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.scale != window.scale {
+            updates.push(WindowUpdate::Scale(window.scale));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.resizable != window.resizable {
+            updates.push(WindowUpdate::Resizable(window.resizable));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.decorated != window.decorated {
+            updates.push(WindowUpdate::Decorated(window.decorated));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.maximized != window.maximized {
+            updates.push(WindowUpdate::Maximized(window.maximized));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.visible != window.visible {
+            updates.push(WindowUpdate::Visible(window.visible));
+        }
+
+        <span class="kw">if </span><span class="self">self</span>.color != window.color {
+            updates.push(WindowUpdate::Color(window.color));
+        }
+
+        updates
     }
-
-    <span class="doccomment">/// Release a button.
-    ///
-    /// Returns `true` if the button was clicked.
-    </span><span class="kw">pub fn </span>release(<span class="kw-2">&amp;mut </span><span class="self">self</span>, button: PointerButton) -&gt; bool {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(index) = <span class="self">self</span>.pressed.iter().position(|(b, <span class="kw">_</span>)| <span class="kw-2">*</span>b == button) <span class="kw">else </span>{
-            <span class="kw">return </span><span class="bool-val">false</span>;
-        };
-
-        <span class="kw">let </span>(<span class="kw">_</span>, position) = <span class="self">self</span>.pressed.swap_remove(index);
-        <span class="self">self</span>.position.distance(position) &lt; <span class="number">10.0
-    </span>}
 }
 </code></pre></div></section></main></body></html>

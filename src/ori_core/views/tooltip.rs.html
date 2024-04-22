@@ -379,8 +379,6 @@
 <a href="#377" id="377">377</a>
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 <span class="kw">use </span>smol_str::SmolStr;
 
@@ -600,7 +598,6 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>TooltipState {
-    <span class="kw">pub </span>window_size: Size,
     <span class="kw">pub </span>buffer: TextBuffer,
     <span class="kw">pub </span>timer: f32,
     <span class="kw">pub </span>position: Point,
@@ -611,7 +608,6 @@
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span><span class="kw-2">mut </span>state = TooltipState {
-            window_size: cx.window().size(),
             buffer: TextBuffer::new(cx.fonts(), <span class="number">12.0</span>, <span class="number">1.0</span>),
             timer: <span class="number">0.0</span>,
             position: Point::ZERO,
@@ -673,29 +669,29 @@
     ) {
         <span class="self">self</span>.content.event(content, cx, data, event);
 
-        <span class="kw">if let </span>Event::WindowResized(e) = event {
-            state.window_size = e.size();
-            cx.request_layout();
-        }
-
-        <span class="kw">if let </span>Event::PointerMoved(e) = event {
-            state.timer = <span class="number">0.0</span>;
-
-            <span class="kw">if </span>cx.is_hot() || cx.has_hot() {
-                state.position = e.position;
-                cx.animate();
+        <span class="kw">match </span>event {
+            Event::WindowResized(<span class="kw">_</span>) =&gt; {
+                cx.request_layout();
             }
-        }
+            Event::PointerMoved(e) =&gt; {
+                state.timer = <span class="number">0.0</span>;
 
-        <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>cx.is_hot() || cx.has_hot() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
-                state.timer += dt / <span class="self">self</span>.delay;
-                cx.animate();
+                <span class="kw">if </span>cx.is_hot() || cx.has_hot() {
+                    state.position = e.position;
+                    cx.animate();
+                }
             }
+            Event::Animate(dt) =&gt; {
+                <span class="kw">if </span>cx.is_hot() || cx.has_hot() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
+                    state.timer += dt / <span class="self">self</span>.delay;
+                    cx.animate();
+                }
 
-            state.timer = f32::clamp(state.timer, <span class="number">0.0</span>, <span class="number">1.0</span>);
+                state.timer = f32::clamp(state.timer, <span class="number">0.0</span>, <span class="number">1.0</span>);
 
-            cx.request_draw();
+                cx.request_draw();
+            }
+            <span class="kw">_ </span>=&gt; {}
         }
     }
 
@@ -706,7 +702,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>window_size = state.window_size - <span class="self">self</span>.padding.size();
+        <span class="kw">let </span>window_size = cx.window().size - <span class="self">self</span>.padding.size();
         state.buffer.set_bounds(cx.fonts(), window_size);
         <span class="self">self</span>.content.layout(content, cx, data, space)
     }
@@ -729,7 +725,7 @@
         }
 
         <span class="comment">// we need to try to move the tooltip so it fits on the screen
-        </span><span class="kw">let </span>window_rect = Rect::min_size(Point::ZERO, state.window_size);
+        </span><span class="kw">let </span>window_rect = Rect::min_size(Point::ZERO, cx.window().size);
 
         <span class="kw">let </span>size = state.buffer.size() + <span class="self">self</span>.padding.size();
         <span class="kw">let </span><span class="kw-2">mut </span>offset = Vector::new(-size.width / <span class="number">2.0</span>, <span class="number">20.0</span>);
@@ -746,7 +742,7 @@
         layer.transform = Affine::IDENTITY;
         layer.translate(Vector::from(state.position + offset));
         layer.depth += <span class="number">1000.0</span>;
-        layer.clip = Rect::min_size(Point::ZERO, cx.window().size());
+        layer.clip = Rect::min_size(Point::ZERO, cx.window().size);
 
         layer.draw_quad(
             Rect::min_size(Point::ZERO, size),

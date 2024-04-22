@@ -10,7 +10,7 @@
 </div></details><details class="toggle method-toggle" open><summary><section id="method.font" class="method"><a class="src rightside" href="../src/ori_app/builder.rs.html#58-64">source</a><h4 class="code-header">pub fn <a href="#method.font" class="fn">font</a>(self, font: impl <a class="trait" href="https://doc.rust-lang.org/1.77.2/core/convert/trait.Into.html" title="trait core::convert::Into">Into</a>&lt;FontSource&gt;) -&gt; Self</h4></section></summary><div class="docblock"><p>Add a font to the application.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.window" class="method"><a class="src rightside" href="../src/ori_app/builder.rs.html#67-75">source</a><h4 class="code-header">pub fn <a href="#method.window" class="fn">window</a>&lt;V: AnyView&lt;T&gt; + 'static&gt;(
     self,
-    descriptor: WindowDescriptor,
+    window: Window,
     ui: impl <a class="trait" href="https://doc.rust-lang.org/1.77.2/core/ops/function/trait.FnMut.html" title="trait core::ops::function::FnMut">FnMut</a>(<a class="primitive" href="https://doc.rust-lang.org/1.77.2/std/primitive.reference.html">&amp;mut T</a>) -&gt; V + 'static
 ) -&gt; Self</h4></section></summary><div class="docblock"><p>Add a window to the application.</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.build" class="method"><a class="src rightside" href="../src/ori_app/builder.rs.html#78-94">source</a><h4 class="code-header">pub fn <a href="#method.build" class="fn">build</a>(self, waker: CommandWaker) -&gt; <a class="struct" href="struct.App.html" title="struct ori_app::App">App</a>&lt;T&gt;</h4></section></summary><div class="docblock"><p>Build the application.</p>
