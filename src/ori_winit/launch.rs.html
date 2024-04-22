@@ -484,6 +484,7 @@
 <a href="#482" id="482">482</a>
 <a href="#483" id="483">483</a>
 <a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -635,7 +636,7 @@
             }
             AppRequest::UpdateWindow(id, update) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>id) {
-                    <span class="kw">match </span>update {
+                    <span class="kw">match </span><span class="macro">dbg!</span>(update) {
                         WindowUpdate::Title(title) =&gt; state.window.set_title(<span class="kw-2">&amp;</span>title),
                         WindowUpdate::Icon(icon) =&gt; <span class="kw">match </span>icon {
                             <span class="prelude-val">Some</span>(icon) =&gt; {
@@ -653,6 +654,7 @@
                             }
                         },
                         WindowUpdate::Size(size) =&gt; {
+                            <span class="kw">let </span>size = size.max(Size::all(<span class="number">10.0</span>));
                             <span class="kw">let </span>inner = LogicalSize::new(size.width, size.height);
 
                             state.window.set_min_inner_size(<span class="prelude-val">Some</span>(inner));
