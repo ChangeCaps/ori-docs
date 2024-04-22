@@ -636,7 +636,7 @@
             }
             AppRequest::UpdateWindow(id, update) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>id) {
-                    <span class="kw">match </span><span class="macro">dbg!</span>(update) {
+                    <span class="kw">match </span>update {
                         WindowUpdate::Title(title) =&gt; state.window.set_title(<span class="kw-2">&amp;</span>title),
                         WindowUpdate::Icon(icon) =&gt; <span class="kw">match </span>icon {
                             <span class="prelude-val">Some</span>(icon) =&gt; {

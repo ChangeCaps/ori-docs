@@ -356,6 +356,21 @@
 <a href="#354" id="354">354</a>
 <a href="#355" id="355">355</a>
 <a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -607,12 +622,8 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>(min_major, <span class="kw-2">mut </span>min_minor) = <span class="self">self</span>.axis.unpack(space.min);
+        <span class="kw">let </span>(min_major, min_minor) = <span class="self">self</span>.axis.unpack(space.min);
         <span class="kw">let </span>(max_major, max_minor) = <span class="self">self</span>.axis.unpack(space.max);
-
-        <span class="kw">if </span><span class="self">self</span>.align == Align::Stretch {
-            min_minor = max_minor;
-        }
 
         <span class="kw">let </span>total_gap = <span class="self">self</span>.gap * (<span class="self">self</span>.content.len() <span class="kw">as </span>f32 - <span class="number">1.0</span>);
 
@@ -681,6 +692,25 @@
             <span class="kw">let </span>size = <span class="self">self</span>.content.layout_nth(i, content, cx, data, space);
             state.majors[i] = <span class="self">self</span>.axis.major(size);
             state.minors[i] = <span class="self">self</span>.axis.minor(size);
+        }
+
+        <span class="comment">/* stretch the content */
+
+        </span><span class="kw">if </span><span class="self">self</span>.align.is_stretch() {
+            <span class="kw">let </span>minor = state.minors.iter().fold(<span class="number">0.0</span>, |a, <span class="kw-2">&amp;</span>b| f32::max(a, b));
+
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.content.len() {
+                <span class="kw">let </span>major = state.majors[i];
+
+                <span class="kw">let </span>space = Space::new(<span class="self">self</span>.axis.pack(major, minor), <span class="self">self</span>.axis.pack(major, minor));
+
+                <span class="comment">// calling layout_nth again is not ideal, as it can lead to exponential time complexity
+                // but considering how cheap layout generally is, this *should* be fine
+                </span><span class="kw">let </span>size = <span class="self">self</span>.content.layout_nth(i, content, cx, data, space);
+
+                state.majors[i] = <span class="self">self</span>.axis.major(size);
+                state.minors[i] = <span class="self">self</span>.axis.minor(size);
+            }
         }
 
         <span class="comment">/* position content */
