@@ -142,6 +142,22 @@
 <a href="#140" id="140">140</a>
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// Radi of the corners on a [`Quad`](super::Quad).
 </span><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq)]
 #[cfg_attr(feature = <span class="string">"serde"</span>, derive(serde::Serialize, serde::Deserialize))]
@@ -178,6 +194,22 @@
             bottom_right: radius,
             bottom_left: radius,
         }
+    }
+
+    <span class="doccomment">/// Get the maximum radius of the corners.
+    </span><span class="kw">pub fn </span>max_element(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f32 {
+        <span class="self">self</span>.top_left
+            .max(<span class="self">self</span>.top_right)
+            .max(<span class="self">self</span>.bottom_right)
+            .max(<span class="self">self</span>.bottom_left)
+    }
+
+    <span class="doccomment">/// Get the minimum radius of the corners.
+    </span><span class="kw">pub fn </span>min_element(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f32 {
+        <span class="self">self</span>.top_left
+            .min(<span class="self">self</span>.top_right)
+            .min(<span class="self">self</span>.bottom_right)
+            .min(<span class="self">self</span>.bottom_left)
     }
 }
 
