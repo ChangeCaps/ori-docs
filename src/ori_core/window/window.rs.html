@@ -414,6 +414,12 @@
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
 <a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -561,6 +567,12 @@
     <span class="doccomment">/// Set the sizing of the window.
     </span><span class="kw">pub fn </span>sizing(<span class="kw-2">mut </span><span class="self">self</span>, sizing: WindowSizing) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.sizing = sizing;
+        <span class="self">self
+    </span>}
+
+    <span class="doccomment">/// Set the sizing to [`WindowSizing::Content`].
+    </span><span class="kw">pub fn </span>fit_content(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.sizing = WindowSizing::Content;
         <span class="self">self
     </span>}
 
