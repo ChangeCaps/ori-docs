@@ -474,12 +474,6 @@
 <a href="#472" id="472">472</a>
 <a href="#473" id="473">473</a>
 <a href="#474" id="474">474</a>
-<a href="#475" id="475">475</a>
-<a href="#476" id="476">476</a>
-<a href="#477" id="477">477</a>
-<a href="#478" id="478">478</a>
-<a href="#479" id="479">479</a>
-<a href="#480" id="480">480</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -559,7 +553,8 @@
 
 <span class="kw">struct </span>WindowState {
     window: winit::window::Window,
-    context: ori_glow::GlutinContext,
+    <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+    </span>context: ori_glow::GlutinContext,
     render: ori_glow::GlowRender,
 }
 
@@ -570,10 +565,8 @@
     window_ids: HashMap&lt;winit::window::WindowId, ori_core::window::WindowId&gt;,
 
     <span class="comment">/* glow */
-    </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
+    </span><span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
     </span>renders: HashMap&lt;ori_core::window::WindowId, WindowState&gt;,
-    <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
-    </span>renders: HashMap&lt;ori_core::window::WindowId, ori_glow::GlowRender&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; WinitState&lt;T&gt; {
@@ -720,15 +713,12 @@
     <span class="kw">fn </span>idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.app.idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
 
-        <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
+        <span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
         </span><span class="kw">for </span>state <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
-            <span class="kw">let _ </span>= state.context.make_current().is_ok();
-            state.render.clean();
-        }
+            <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+            </span><span class="kw">let _ </span>= state.context.make_current().is_ok();
 
-        <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
-        </span><span class="kw">for </span>render <span class="kw">in </span><span class="self">self</span>.renders.values_mut() {
-            render.clean();
+            state.render.clean();
         }
     }
 
@@ -796,14 +786,16 @@
         };
 
         <span class="comment">/* glow */
-        </span><span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
+        </span><span class="attr">#[cfg(feature = <span class="string">"glow"</span>)]
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">let </span>size = state.window.inner_size();
 
             <span class="comment">// resize the context if necessary
             </span>state.context.resize(size.width, size.height);
 
-            state.context.make_current()<span class="question-mark">?</span>;
+            <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+            </span>state.context.make_current()<span class="question-mark">?</span>;
+
             state.render.render_scene(
                 scene.scene,
                 scene.clear_color,
@@ -812,12 +804,8 @@
                 state.window.scale_factor() <span class="kw">as </span>f32,
             )<span class="question-mark">?</span>;
 
-            state.context.swap_buffers()<span class="question-mark">?</span>;
-        }
-
-        <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, target_arch = <span class="string">"wasm32"</span>))]
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(render) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            render.render_scene(scene, clear_color, logical, physical, scale_factor)<span class="question-mark">?</span>;
+            <span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
+            </span>state.context.swap_buffers()<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())

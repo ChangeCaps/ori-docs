@@ -53,7 +53,7 @@ state accordingly. When a view differs from the old tree, it should call
 This can be quite tedius to write out, so the <a href="trait.Rebuild.html" title="trait ori::prelude::Rebuild"><code>Rebuild</code></a> derive macro can be
 used to generate this code.</li>
 <li><a href="trait.View.html#tymethod.event" title="method ori::prelude::View::event"><code>View::event</code></a> is called when an event occurs. The should then handle the
-event. Custom events can be send using <a href="super::BaseCx::cmd"><code>BaseCx::cmd</code></a>.</li>
+event. Custom events can be send using <a href="../core/context/struct.BaseCx.html#method.cmd" title="method ori::core::context::BaseCx::cmd"><code>BaseCx::cmd</code></a>.</li>
 <li><a href="trait.View.html#tymethod.layout" title="method ori::prelude::View::layout"><code>View::layout</code></a> is called when the view needs to be laid out. A leaf view
 should compute it’s own size in accordance with the given <a href="struct.Space.html" title="struct ori::prelude::Space"><code>Space</code></a>, and
 return it. A container view should pass an appropriate <a href="struct.Space.html" title="struct ori::prelude::Space"><code>Space</code></a> to it’s

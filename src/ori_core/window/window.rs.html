@@ -471,7 +471,7 @@
     <span class="doccomment">/// The window will have a fixed size equal to [`Window::size`].
     </span>Fixed,
 
-    <span class="doccomment">/// The root [`View`] will have [`Space::UNBOUNDED`], and the window will
+    <span class="doccomment">/// The root [`View`](crate::view::View) will have [`Space::UNBOUNDED`](crate::layout::Space), and the window will
     /// resize to fit the content.
     </span>Content,
 }
@@ -650,12 +650,12 @@
         (<span class="self">self</span>.pointers.iter()).any(|pointer| pointer.hovering == <span class="prelude-val">Some</span>(view_id))
     }
 
-    <span class="doccomment">/// Get the pointer with [`pointer_id`].
+    <span class="doccomment">/// Get the pointer with `pointer_id`.
     </span><span class="kw">pub fn </span>get_pointer(<span class="kw-2">&amp;</span><span class="self">self</span>, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Pointer&gt; {
         (<span class="self">self</span>.pointers.iter()).find(|pointer| pointer.id() == pointer_id)
     }
 
-    <span class="doccomment">/// Get the pointer with [`pointer_id`] mutably.
+    <span class="doccomment">/// Get the pointer with `pointer_id` mutably.
     </span><span class="kw">pub fn </span>get_pointer_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pointer_id: PointerId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Pointer&gt; {
         (<span class="self">self</span>.pointers.iter_mut()).find(|pointer| pointer.id() == pointer_id)
     }

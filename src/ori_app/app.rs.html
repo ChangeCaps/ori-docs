@@ -694,6 +694,9 @@
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
 <a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -1076,7 +1079,6 @@
     <span class="doccomment">/// Remove a window from the application.
     </span><span class="kw">pub fn </span>remove_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, window_id: WindowId) {
         <span class="self">self</span>.windows.remove(<span class="kw-2">&amp;</span>window_id);
-        <span class="self">self</span>.requests.push(AppRequest::CloseWindow(window_id));
     }
 
     <span class="doccomment">/// Get a window by id.
@@ -1105,8 +1107,12 @@
                 <span class="kw">let </span>builder: UiBuilder&lt;T&gt; = Box::new(<span class="kw">move </span>|<span class="kw">_</span>| any(opaque(ui())));
                 <span class="self">self</span>.add_window(data, builder, window);
             }
-            AppCommand::CloseWindow(window_id) =&gt; <span class="self">self</span>.remove_window(window_id),
-            AppCommand::Quit =&gt; <span class="self">self</span>.requests.push(AppRequest::Quit),
+            AppCommand::CloseWindow(window_id) =&gt; {
+                <span class="self">self</span>.requests.push(AppRequest::CloseWindow(window_id));
+            }
+            AppCommand::Quit =&gt; {
+                <span class="self">self</span>.requests.push(AppRequest::Quit);
+            }
         }
     }
 

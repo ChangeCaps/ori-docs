@@ -63,6 +63,7 @@
 <a href="#61" id="61">61</a>
 <a href="#62" id="62">62</a>
 <a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     view::{BoxedView, View},
     window::{Window, WindowId},
@@ -114,11 +115,12 @@
     ///             cx.cmd(AppCommand::open_window(window, popup));
     ///         },
     ///     )
-    /// )
+    /// }
     ///
     /// fn popup() -&gt; impl View {
     ///     text("Hello, world!")
     /// }
+    /// ```
     </span><span class="kw">pub fn </span>open_window&lt;V: View + <span class="lifetime">'static</span>&gt;(
         window: Window,
         <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut() -&gt; V + Send + <span class="lifetime">'static</span>,

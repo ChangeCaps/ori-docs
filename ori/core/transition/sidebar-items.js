@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["TransitionCurve"],"fn":["ease","linear"],"struct":["Transition"]};
+window.SIDEBAR_ITEMS = {"enum":["Easing"],"fn":["ease","linear"],"struct":["Transition"]};
