@@ -258,6 +258,15 @@
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
@@ -307,9 +316,18 @@
     }
 
     <span class="doccomment">/// Create a new vector from an angle.
+    ///
+    /// ```
+    /// # use ori_core::layout::Vector;
+    /// let x = std::f32::consts::FRAC_PI_3;
+    /// let v = Vector::from_angle(x);
+    ///
+    /// assert_eq!(v.x, x.cos());
+    /// assert_eq!(v.y, x.sin());
+    /// ```
     </span><span class="kw">pub fn </span>from_angle(angle: f32) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>(sin, cos) = angle.sin_cos();
-        <span class="self">Self</span>::new(sin, cos)
+        <span class="self">Self</span>::new(cos, sin)
     }
 
     <span class="doccomment">/// Get the min of self and other by element.
