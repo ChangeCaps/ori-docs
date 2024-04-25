@@ -19,6 +19,8 @@
 <a href="#17" id="17">17</a>
 <a href="#18" id="18">18</a>
 <a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
 </pre></div><pre class="rust"><code><span class="attr">#![deny(missing_docs)]
 #![allow(clippy::module_inception)]
 
@@ -26,11 +28,13 @@
 
 </span><span class="kw">mod </span>app;
 <span class="kw">mod </span>builder;
+<span class="kw">mod </span>command;
 <span class="kw">mod </span>delegate;
 <span class="kw">mod </span>request;
 
 <span class="kw">pub use </span>app::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>builder::<span class="kw-2">*</span>;
+<span class="kw">pub use </span>command::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>delegate::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>request::<span class="kw-2">*</span>;
 

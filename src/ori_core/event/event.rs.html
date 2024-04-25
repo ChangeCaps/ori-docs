@@ -68,15 +68,13 @@
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
 
 <span class="kw">use </span><span class="kw">crate</span>::command::Command;
 
 <span class="kw">use super</span>::{
-    KeyPressed, KeyReleased, PointerId, PointerMoved, PointerPressed, PointerReleased,
-    PointerScrolled, WindowResized,
+    CloseRequested, KeyPressed, KeyReleased, PointerLeft, PointerMoved, PointerPressed,
+    PointerReleased, PointerScrolled, WindowResized,
 };
 
 <span class="doccomment">/// An event that can be sent to a view.
@@ -85,11 +83,14 @@
     <span class="doccomment">/// The window was resized.
     </span>WindowResized(WindowResized),
 
+    <span class="doccomment">/// The window requested to be close.
+    </span>CloseRequested(CloseRequested),
+
     <span class="doccomment">/// A pointer moved.
     </span>PointerMoved(PointerMoved),
 
     <span class="doccomment">/// A pointer left the window.
-    </span>PointerLeft(PointerId),
+    </span>PointerLeft(PointerLeft),
 
     <span class="doccomment">/// A pointer button was pressed.
     </span>PointerPressed(PointerPressed),
@@ -117,11 +118,6 @@
 }
 
 <span class="kw">impl </span>Event {
-    <span class="doccomment">/// Create a new command event.
-    </span><span class="kw">pub fn </span>command(command: <span class="kw">impl </span>Any + Send) -&gt; <span class="self">Self </span>{
-        Event::Command(Command::new(command))
-    }
-
     <span class="doccomment">/// Check if the event is a command of a specific type.
     </span><span class="kw">pub fn </span>is_cmd&lt;T: Any&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">match </span><span class="self">self </span>{

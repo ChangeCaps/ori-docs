@@ -480,11 +480,6 @@
 <a href="#478" id="478">478</a>
 <a href="#479" id="479">479</a>
 <a href="#480" id="480">480</a>
-<a href="#481" id="481">481</a>
-<a href="#482" id="482">482</a>
-<a href="#483" id="483">483</a>
-<a href="#484" id="484">484</a>
-<a href="#485" id="485">485</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -622,11 +617,7 @@
                 <span class="self">self</span>.create_window(target, desc, builder)<span class="question-mark">?</span>;
             }
             AppRequest::CloseWindow(id) =&gt; {
-                <span class="attr">#[cfg(all(feature = <span class="string">"glow"</span>, not(target_arch = <span class="string">"wasm32"</span>)))]
-                </span><span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
-
-                <span class="macro">println!</span>(<span class="string">"Closing window: {:?}"</span>, id);
-
+                <span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
                 <span class="self">self</span>.app.remove_window(id);
             }
             AppRequest::RequestRedraw(id) =&gt; {
@@ -845,7 +836,6 @@
                 }
             }
             WindowEvent::CloseRequested =&gt; {
-                <span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
                 <span class="self">self</span>.app.close_requested(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id);
             }
             WindowEvent::Resized(inner_size) =&gt; {
