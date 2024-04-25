@@ -256,6 +256,8 @@
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, FontSystem, SwashCache};
@@ -397,9 +399,9 @@
     }
 
     <span class="doccomment">/// Prepare a text buffer for rasterization.
-    </span><span class="kw">pub fn </span>prepare_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) {
+    </span><span class="kw">pub fn </span>prepare_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer, scale: f32) {
         <span class="kw">loop </span>{
-            <span class="kw">if </span><span class="self">self</span>.try_prepare_text(buffer) {
+            <span class="kw">if </span><span class="self">self</span>.try_prepare_text(buffer, scale) {
                 <span class="kw">break</span>;
             }
 
@@ -407,13 +409,14 @@
         }
     }
 
-    <span class="kw">fn </span>try_prepare_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) -&gt; bool {
+    <span class="kw">fn </span>try_prepare_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer, scale: f32) -&gt; bool {
         <span class="kw">for </span>run <span class="kw">in </span>buffer.layout_runs() {
             <span class="kw">for </span>glyph <span class="kw">in </span>run.glyphs {
                 <span class="kw">let </span>rasterized = <span class="self">self</span>.font_atlas.rasterize_glyph(
                     <span class="kw-2">&amp;mut </span><span class="self">self</span>.swash_cache,
                     <span class="kw-2">&amp;mut </span><span class="self">self</span>.font_system,
                     glyph,
+                    scale,
                 );
 
                 <span class="kw">if </span>rasterized.is_none() {
@@ -429,13 +432,13 @@
     ///
     /// This involves shapind the text, rasterizing the glyphs, laying out the glyphs,
     /// and creating the mesh itself, and should ideally be done as little as possible.
-    </span><span class="kw">pub fn </span>rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) -&gt; Mesh {
+    </span><span class="kw">pub fn </span>rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer, scale: f32) -&gt; Mesh {
         <span class="comment">// if rasterizing returns None, it means the font atlas is full
         // so we need to grow it and try again
         //
         // TODO: handle the case where the font atlas is full and we can't grow it
         </span><span class="kw">loop </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(mesh) = <span class="self">self</span>.try_rasterize_text(buffer) {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(mesh) = <span class="self">self</span>.try_rasterize_text(buffer, scale) {
                 <span class="kw">break </span>mesh;
             }
 
@@ -443,7 +446,7 @@
         }
     }
 
-    <span class="kw">fn </span>try_rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) -&gt; <span class="prelude-ty">Option</span>&lt;Mesh&gt; {
+    <span class="kw">fn </span>try_rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer, scale: f32) -&gt; <span class="prelude-ty">Option</span>&lt;Mesh&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>mesh = Mesh::new();
         <span class="kw">let </span><span class="kw-2">mut </span>glyphs = Vec::&lt;(Rect, Rect, Color)&gt;::new();
 
@@ -453,6 +456,7 @@
                     <span class="kw-2">&amp;mut </span><span class="self">self</span>.swash_cache,
                     <span class="kw-2">&amp;mut </span><span class="self">self</span>.font_system,
                     glyph,
+                    scale,
                 )<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), <span class="number">1.0</span>);

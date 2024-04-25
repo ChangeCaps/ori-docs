@@ -379,6 +379,10 @@
 <a href="#377" id="377">377</a>
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 <span class="kw">use </span>smol_str::SmolStr;
 
@@ -626,6 +630,10 @@
         old: <span class="kw-2">&amp;</span><span class="self">Self</span>,
     ) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
+
+        <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
+            (state.buffer).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+        }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
             state.buffer.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);

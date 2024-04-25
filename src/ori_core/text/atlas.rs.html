@@ -179,6 +179,15 @@
 <a href="#177" id="177">177</a>
 <a href="#178" id="178">178</a>
 <a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, fmt::Debug};
 
 <span class="kw">use </span>cosmic_text::{CacheKey, FontSystem, LayoutGlyph, SwashCache, SwashContent};
@@ -275,13 +284,17 @@
     <span class="doccomment">/// Rasterizes a glyph and returns its [`Rect`] in the atlas.
     ///
     /// Returns `None` if the atlas is full, in which case [`FontAtlas::grow`], should be called.
+    ///
+    /// Note that `scale` will scale the size of the rendered glyph, but will not affect the layout.
+    /// `scale` should be set to the `scale_factor` of the window.
     </span><span class="kw">pub fn </span>rasterize_glyph(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         cache: <span class="kw-2">&amp;mut </span>SwashCache,
         font_system: <span class="kw-2">&amp;mut </span>FontSystem,
         glyph: <span class="kw-2">&amp;</span>LayoutGlyph,
+        scale: f32,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;RasterizedGlyph&gt; {
-        <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), <span class="number">1.0</span>);
+        <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
 
         <span class="comment">// check the cache
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>glyph) = <span class="self">self</span>.glyphs.get(<span class="kw-2">&amp;</span>physical.cache_key) {
@@ -345,7 +358,12 @@
 
         <span class="kw">let </span>min = Point::new(min_x <span class="kw">as </span>f32, min_y <span class="kw">as </span>f32) + <span class="self">Self</span>::PADDING <span class="kw">as </span>f32;
         <span class="kw">let </span>uv = Rect::min_size(min / <span class="self">self</span>.size() <span class="kw">as </span>f32, size / <span class="self">self</span>.size() <span class="kw">as </span>f32);
-        <span class="kw">let </span>glyph = RasterizedGlyph { uv, offset, size };
+
+        <span class="kw">let </span>glyph = RasterizedGlyph {
+            uv,
+            offset: offset / scale,
+            size: size / scale,
+        };
 
         <span class="comment">// cache the glyph, this is very important!
         </span><span class="self">self</span>.glyphs.insert(physical.cache_key, glyph);

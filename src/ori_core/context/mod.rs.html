@@ -105,6 +105,10 @@
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Contexts for views.
 
 </span><span class="kw">mod </span>base;
@@ -147,22 +151,26 @@
 
     <span class="doccomment">/// Prepare a text buffer for rasterization.
     </span><span class="kw">pub fn </span>prepare_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer) {
-        <span class="self">self</span>.fonts().prepare_text(buffer.raw());
+        <span class="kw">let </span>scale = <span class="self">self</span>.window().scale;
+        <span class="self">self</span>.fonts().prepare_text(buffer.raw(), scale);
     }
 
     <span class="doccomment">/// Prepare a raw cosmic text buffer for rasterization.
     </span><span class="kw">pub fn </span>prepare_text_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) {
-        <span class="self">self</span>.fonts().prepare_text(buffer);
+        <span class="kw">let </span>scale = <span class="self">self</span>.window().scale;
+        <span class="self">self</span>.fonts().prepare_text(buffer, scale);
     }
 
     <span class="doccomment">/// Create a mesh for the given text buffer.
     </span><span class="kw">pub fn </span>rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer) -&gt; Mesh {
-        <span class="self">self</span>.fonts().rasterize_text(buffer.raw())
+        <span class="kw">let </span>scale = <span class="self">self</span>.window().scale;
+        <span class="self">self</span>.fonts().rasterize_text(buffer.raw(), scale)
     }
 
     <span class="doccomment">/// Create a mesh for the given raw cosmic text buffer.
     </span><span class="kw">pub fn </span>rasterize_text_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer) -&gt; Mesh {
-        <span class="self">self</span>.fonts().rasterize_text(buffer)
+        <span class="kw">let </span>scale = <span class="self">self</span>.window().scale;
+        <span class="self">self</span>.fonts().rasterize_text(buffer, scale)
     }
 
     <span class="doccomment">/// Get the id of the view.

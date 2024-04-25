@@ -700,6 +700,12 @@
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -711,6 +717,7 @@
     event::{
         CloseRequested, Code, Event, KeyPressed, KeyReleased, Modifiers, PointerButton, PointerId,
         PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled, WindowResized,
+        WindowScaled,
     },
     layout::{Point, Size, Space, Vector},
     style::Styles,
@@ -899,13 +906,18 @@
     }
 
     <span class="doccomment">/// A window was scaled.
-    </span><span class="kw">pub fn </span>window_scaled(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, scale: f32) {
+    </span><span class="kw">pub fn </span>window_scaled(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, scale: f32) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             window_state.view_state.request_layout();
             window_state.window.scale = scale;
-
-            <span class="self">self</span>.requests.push(AppRequest::RequestRedraw(window_id));
         }
+
+        <span class="kw">let </span>event = Event::WindowScaled(WindowScaled {
+            window: window_id,
+            scale_factor: scale,
+        });
+
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
     }
 
     <span class="doccomment">/// A pointer moved.
