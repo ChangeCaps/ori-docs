@@ -423,6 +423,14 @@
 <a href="#421" id="421">421</a>
 <a href="#422" id="422">422</a>
 <a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -648,6 +656,14 @@
     <span class="doccomment">/// Get whether a specific view is hovered.
     </span><span class="kw">pub fn </span>is_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>, view_id: ViewId) -&gt; bool {
         (<span class="self">self</span>.pointers.iter()).any(|pointer| pointer.hovering == <span class="prelude-val">Some</span>(view_id))
+    }
+
+    <span class="doccomment">/// Get whether `button` is held down on pointer with `pointer_id`.
+    </span><span class="kw">pub fn </span>pointer_held(<span class="kw-2">&amp;</span><span class="self">self</span>, pointer_id: PointerId, button: PointerButton) -&gt; bool {
+        <span class="kw">match </span><span class="self">self</span>.get_pointer(pointer_id) {
+            <span class="prelude-val">Some</span>(pointer) =&gt; pointer.is_pressed(button),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
+        }
     }
 
     <span class="doccomment">/// Get the pointer with `pointer_id`.
