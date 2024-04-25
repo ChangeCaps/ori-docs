@@ -17,6 +17,13 @@
 <a href="#15" id="15">15</a>
 <a href="#16" id="16">16</a>
 <a href="#17" id="17">17</a>
+<a href="#18" id="18">18</a>
+<a href="#19" id="19">19</a>
+<a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::window::{Window, WindowId, WindowUpdate};
 
 <span class="kw">use </span><span class="kw">crate</span>::UiBuilder;
@@ -25,12 +32,19 @@
 </span><span class="kw">pub enum </span>AppRequest&lt;T&gt; {
     <span class="doccomment">/// Open a new window.
     </span>OpenWindow(Window, UiBuilder&lt;T&gt;),
+
     <span class="doccomment">/// Close a window.
     </span>CloseWindow(WindowId),
+
+    <span class="doccomment">/// Drag a window.
+    </span>DragWindow(WindowId),
+
     <span class="doccomment">/// Redraw a window.
     </span>RequestRedraw(WindowId),
+
     <span class="doccomment">/// Update a window.
     </span>UpdateWindow(WindowId, WindowUpdate),
+
     <span class="doccomment">/// Quit the application.
     </span>Quit,
 }

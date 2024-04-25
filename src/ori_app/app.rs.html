@@ -697,6 +697,9 @@
 <a href="#695" id="695">695</a>
 <a href="#696" id="696">696</a>
 <a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -1109,6 +1112,9 @@
             }
             AppCommand::CloseWindow(window_id) =&gt; {
                 <span class="self">self</span>.requests.push(AppRequest::CloseWindow(window_id));
+            }
+            AppCommand::DragWindow(window_id) =&gt; {
+                <span class="self">self</span>.requests.push(AppRequest::DragWindow(window_id));
             }
             AppCommand::Quit =&gt; {
                 <span class="self">self</span>.requests.push(AppRequest::Quit);
