@@ -220,7 +220,7 @@
             <span class="kw">let </span>da = Vector::normalize(curr - prev);
             <span class="kw">let </span>db = Vector::normalize(next - curr);
 
-            <span class="kw">let </span>miter = da.hat() + db.hat();
+            <span class="kw">let </span>miter = (da.hat() + db.hat()) / <span class="number">2.0</span>;
 
             <span class="kw">if </span>miter.length() &lt; MITER_LIMIT {
                 <span class="kw">let </span>offset = miter * radius;
