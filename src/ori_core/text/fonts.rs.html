@@ -258,6 +258,10 @@
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, FontSystem, SwashCache};
@@ -447,6 +451,10 @@
     }
 
     <span class="kw">fn </span>try_rasterize_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>Buffer, scale: f32) -&gt; <span class="prelude-ty">Option</span>&lt;Mesh&gt; {
+        <span class="kw">fn </span>round_point(point: Point, scale: f32) -&gt; Point {
+            Point::round(point * scale) / scale
+        }
+
         <span class="kw">let </span><span class="kw-2">mut </span>mesh = Mesh::new();
         <span class="kw">let </span><span class="kw-2">mut </span>glyphs = Vec::&lt;(Rect, Rect, Color)&gt;::new();
 
@@ -482,22 +490,22 @@
             <span class="kw">let </span>index = mesh.vertices.len() <span class="kw">as </span>u32;
 
             mesh.vertices.push(Vertex {
-                position: rect.top_left(),
+                position: round_point(rect.top_left(), scale),
                 tex_coords: uv.top_left(),
                 color,
             });
             mesh.vertices.push(Vertex {
-                position: rect.top_right(),
+                position: round_point(rect.top_right(), scale),
                 tex_coords: uv.top_right(),
                 color,
             });
             mesh.vertices.push(Vertex {
-                position: rect.bottom_right(),
+                position: round_point(rect.bottom_right(), scale),
                 tex_coords: uv.bottom_right(),
                 color,
             });
             mesh.vertices.push(Vertex {
-                position: rect.bottom_left(),
+                position: round_point(rect.bottom_left(), scale),
                 tex_coords: uv.bottom_left(),
                 color,
             });
