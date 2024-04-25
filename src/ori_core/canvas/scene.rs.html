@@ -249,7 +249,7 @@
 
     <span class="doccomment">/// Get the batches in the scene.
     </span><span class="attr">#[cfg_attr(feature = <span class="string">"tracing"</span>, tracing::instrument(skip(<span class="self">self</span>)))]
-    </span><span class="kw">pub fn </span>batches(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;Batch&gt; {
+    </span><span class="kw">pub fn </span>batches(<span class="kw-2">&amp;</span><span class="self">self</span>, scale: f32) -&gt; Vec&lt;Batch&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>batches = Vec::new();
 
         <span class="kw">let </span><span class="kw-2">mut </span>mesh = Mesh::new();
@@ -274,7 +274,7 @@
             }
 
             <span class="kw">if </span>fragment.pixel_perfect &amp;&amp; fragment.primitive.is_mesh() {
-                mesh.extend_transformed_pixel_perfect(<span class="kw-2">&amp;</span>fragment_mesh, fragment.transform);
+                mesh.extend_transformed_pixel_perfect(<span class="kw-2">&amp;</span>fragment_mesh, fragment.transform, scale);
             } <span class="kw">else </span>{
                 mesh.extend_transformed(<span class="kw-2">&amp;</span>fragment_mesh, fragment.transform);
             }

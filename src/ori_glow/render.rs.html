@@ -260,7 +260,7 @@
         logical_size: Size,
         scale_factor: f32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), GlowError&gt; {
-        <span class="kw">let </span>batches = scene.batches();
+        <span class="kw">let </span>batches = scene.batches(scale_factor);
 
         <span class="self">self</span>.gl.clear_color(clear.r, clear.g, clear.b, clear.a);
         <span class="self">self</span>.gl.clear(glow::COLOR_BUFFER_BIT);
