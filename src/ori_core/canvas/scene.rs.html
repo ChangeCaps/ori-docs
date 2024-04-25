@@ -152,6 +152,8 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{cmp::Ordering, mem};
 
 <span class="kw">use crate</span>::{
@@ -293,15 +295,17 @@
 </span><span class="kw">pub struct </span>Fragment {
     <span class="doccomment">/// The primitive to be rendered.
     </span><span class="kw">pub </span>primitive: Primitive,
+
     <span class="doccomment">/// The transform to apply to the primitive.
     </span><span class="kw">pub </span>transform: Affine,
+
     <span class="doccomment">/// The depth of the primitive.
     </span><span class="kw">pub </span>depth: f32,
+
     <span class="doccomment">/// The clip rectangle of the primitive.
     </span><span class="kw">pub </span>clip: Rect,
+
     <span class="doccomment">/// The view that the primitive is being drawn for.
     </span><span class="kw">pub </span>view: <span class="prelude-ty">Option</span>&lt;ViewId&gt;,
-    <span class="doccomment">/// Whether the fragment should be drawn pixel perfect.
-    </span><span class="kw">pub </span>pixel_perfect: bool,
 }
 </code></pre></div></section></main></body></html>

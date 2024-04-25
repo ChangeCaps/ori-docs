@@ -802,7 +802,7 @@
 
         <span class="self">self</span>.scene.clear();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scene, <span class="self">self</span>.window.size);
+        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scene, <span class="self">self</span>.window.size, <span class="self">self</span>.window.scale);
         <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
         <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;mut </span>canvas);

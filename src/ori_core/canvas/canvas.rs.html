@@ -169,6 +169,19 @@
 <a href="#167" id="167">167</a>
 <a href="#168" id="168">168</a>
 <a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     layout::{Affine, Point, Rect, Size, Vector},
     view::ViewId,
@@ -179,21 +192,27 @@
 <span class="doccomment">/// A canvas used for drawing a [`Scene`].
 </span><span class="kw">pub struct </span>Canvas&lt;<span class="lifetime">'a</span>&gt; {
     scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Scene,
+    scale_factor: f32,
+
     <span class="doccomment">/// The transform to apply to the canvas.
     </span><span class="kw">pub </span>transform: Affine,
+
     <span class="doccomment">/// The depth of the canvas.
     </span><span class="kw">pub </span>depth: f32,
+
     <span class="doccomment">/// The clip rectangle of the canvas.
     </span><span class="kw">pub </span>clip: Rect,
+
     <span class="doccomment">/// The view that the canvas is being drawn for.
     </span><span class="kw">pub </span>view: <span class="prelude-ty">Option</span>&lt;ViewId&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; Canvas&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// Create a new [`Canvas`].
-    </span><span class="kw">pub fn </span>new(scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Scene, window_size: Size) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Scene, window_size: Size, scale_factor: f32) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             scene,
+            scale_factor,
             transform: Affine::IDENTITY,
             depth: <span class="number">0.0</span>,
             clip: Rect::min_size(Point::ZERO, window_size),
@@ -207,6 +226,7 @@
     </span><span class="kw">pub fn </span>fork(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Canvas&lt;<span class="lifetime">'_</span>&gt; {
         Canvas {
             scene: <span class="self">self</span>.scene,
+            scale_factor: <span class="self">self</span>.scale_factor,
             transform: <span class="self">self</span>.transform,
             depth: <span class="self">self</span>.depth,
             clip: <span class="self">self</span>.clip,
@@ -299,19 +319,25 @@
             depth: <span class="self">self</span>.depth,
             clip: <span class="self">self</span>.clip,
             view: <span class="self">self</span>.view,
-            pixel_perfect: <span class="bool-val">false</span>,
         });
     }
 
     <span class="doccomment">/// Draw a [`Primitive`] with pixel-perfect coordinates.
     </span><span class="kw">pub fn </span>draw_pixel_perfect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, primitive: <span class="kw">impl </span>Into&lt;Primitive&gt;) {
+        <span class="kw">let </span>translation = <span class="self">self</span>.transform.translation * <span class="self">self</span>.scale_factor;
+        <span class="kw">let </span>translation = translation.round() / <span class="self">self</span>.scale_factor;
+
+        <span class="kw">let </span>transform = Affine {
+            translation,
+            matrix: <span class="self">self</span>.transform.matrix,
+        };
+
         <span class="self">self</span>.draw_fragment(Fragment {
             primitive: primitive.into(),
-            transform: <span class="self">self</span>.transform.round(),
+            transform,
             depth: <span class="self">self</span>.depth,
             clip: <span class="self">self</span>.clip,
             view: <span class="self">self</span>.view,
-            pixel_perfect: <span class="bool-val">true</span>,
         });
     }
 
