@@ -334,7 +334,7 @@
         }
 
         <span class="kw">if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">return </span>Mesh::circle(<span class="self">self</span>.points[<span class="number">0</span>], thickness, color);
+            <span class="kw">return </span>Mesh::circle(<span class="self">self</span>.points[<span class="number">0</span>], thickness / <span class="number">2.0</span>, color);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>mesh = Mesh::new();
