@@ -231,6 +231,8 @@
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -443,6 +445,8 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, t: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T, canvas: <span class="kw-2">&amp;mut </span>Canvas) {
         <span class="kw">let </span>bright = <span class="self">self</span>.border_color.lighten(<span class="number">0.2</span>);
+
+        canvas.set_hoverable(cx.id());
 
         canvas.draw_quad(
             cx.rect(),

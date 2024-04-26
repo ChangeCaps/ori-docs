@@ -284,8 +284,8 @@
         <span class="kw">let </span>widths: [f32; <span class="number">4</span>] = <span class="self">self</span>.border_width.into();
 
         <span class="kw">let </span>radius = radi[index];
-        <span class="kw">let </span>start_width = widths[index];
-        <span class="kw">let </span>end_width = widths[(index + <span class="number">3</span>) % <span class="number">4</span>];
+        <span class="kw">let </span>start_width = widths[(index + <span class="number">3</span>) % <span class="number">4</span>];
+        <span class="kw">let </span>end_width = widths[index];
 
         (radius, start_width, end_width)
     }
@@ -422,36 +422,36 @@
         <span class="comment">// add the corner vertices
         </span><span class="kw">let </span>tl_index = mesh.vertices.len() <span class="kw">as </span>u32;
         <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, tl, PI, <span class="number">0</span>);
-        <span class="kw">let </span>bl_index = mesh.vertices.len() <span class="kw">as </span>u32;
-        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, bl, -FRAC_PI_2, <span class="number">3</span>);
+        <span class="kw">let </span>tr_index = mesh.vertices.len() <span class="kw">as </span>u32;
+        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, tr, -FRAC_PI_2, <span class="number">1</span>);
         <span class="kw">let </span>br_index = mesh.vertices.len() <span class="kw">as </span>u32;
         <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, br, <span class="number">0.0</span>, <span class="number">2</span>);
-        <span class="kw">let </span>tr_index = mesh.vertices.len() <span class="kw">as </span>u32;
-        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, tr, FRAC_PI_2, <span class="number">1</span>);
+        <span class="kw">let </span>bl_index = mesh.vertices.len() <span class="kw">as </span>u32;
+        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, center_index, bl, FRAC_PI_2, <span class="number">3</span>);
         <span class="kw">let </span>end_index = mesh.vertices.len() <span class="kw">as </span>u32 - <span class="number">1</span>;
 
         <span class="comment">// connect the corner vertices
         </span><span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, end_index, tl_index);
-        <span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, bl_index - <span class="number">1</span>, bl_index);
-        <span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, br_index - <span class="number">1</span>, br_index);
         <span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, tr_index - <span class="number">1</span>, tr_index);
+        <span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, br_index - <span class="number">1</span>, br_index);
+        <span class="self">Self</span>::connect_corners(<span class="kw-2">&amp;mut </span>mesh, center_index, bl_index - <span class="number">1</span>, bl_index);
 
         <span class="comment">// add the border vertices
         </span><span class="kw">let </span>tl_index = mesh.vertices.len() <span class="kw">as </span>u32;
         <span class="kw">let </span>tl_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, tl, PI, <span class="number">0</span>);
-        <span class="kw">let </span>bl_index = mesh.vertices.len() <span class="kw">as </span>u32;
-        <span class="kw">let </span>bl_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, bl, -FRAC_PI_2, <span class="number">3</span>);
+        <span class="kw">let </span>tr_index = mesh.vertices.len() <span class="kw">as </span>u32;
+        <span class="kw">let </span>tr_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, tr, -FRAC_PI_2, <span class="number">1</span>);
         <span class="kw">let </span>br_index = mesh.vertices.len() <span class="kw">as </span>u32;
         <span class="kw">let </span>br_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, br, <span class="number">0.0</span>, <span class="number">2</span>);
-        <span class="kw">let </span>tr_index = mesh.vertices.len() <span class="kw">as </span>u32;
-        <span class="kw">let </span>tr_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, tr, FRAC_PI_2, <span class="number">1</span>);
+        <span class="kw">let </span>bl_index = mesh.vertices.len() <span class="kw">as </span>u32;
+        <span class="kw">let </span>bl_border = <span class="self">self</span>.add_border_corner(<span class="kw-2">&amp;mut </span>mesh, bl, FRAC_PI_2, <span class="number">3</span>);
         <span class="kw">let </span>end_index = mesh.vertices.len() <span class="kw">as </span>u32 - <span class="number">2</span>;
 
         <span class="comment">// connect the border vertices
-        </span><span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, tr_border &amp;&amp; tl_border, end_index, tl_index);
-        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, tl_border &amp;&amp; bl_border, bl_index - <span class="number">2</span>, bl_index);
-        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, bl_border &amp;&amp; br_border, br_index - <span class="number">2</span>, br_index);
-        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, br_border &amp;&amp; tr_border, tr_index - <span class="number">2</span>, tr_index);
+        </span><span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, bl_border &amp;&amp; tl_border, end_index, tl_index);
+        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, tl_border &amp;&amp; tr_border, tr_index - <span class="number">2</span>, tr_index);
+        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, tr_border &amp;&amp; br_border, br_index - <span class="number">2</span>, br_index);
+        <span class="self">Self</span>::connect_border(<span class="kw-2">&amp;mut </span>mesh, br_border &amp;&amp; bl_border, bl_index - <span class="number">2</span>, bl_index);
 
         mesh
     }

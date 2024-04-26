@@ -519,7 +519,7 @@
 
         <span class="kw">let </span>tr_start_inner = mesh.vertices.len();
         <span class="kw">let </span>tr_start_outer = tr_start_inner + <span class="number">1</span>;
-        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, tr, <span class="number">1</span>, tr_radius, PI / <span class="number">2.0</span>);
+        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, tr, <span class="number">1</span>, tr_radius, -PI / <span class="number">2.0</span>);
         <span class="kw">let </span>tr_end_outer = mesh.vertices.len() - <span class="number">1</span>;
         <span class="kw">let </span>tr_end_inner = tr_end_outer - <span class="number">1</span>;
 
@@ -531,48 +531,48 @@
 
         <span class="kw">let </span>bl_start_inner = mesh.vertices.len();
         <span class="kw">let </span>bl_start_outer = bl_start_inner + <span class="number">1</span>;
-        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, bl, <span class="number">2</span>, bl_radius, -PI / <span class="number">2.0</span>);
+        <span class="self">self</span>.add_corner(<span class="kw-2">&amp;mut </span>mesh, bl, <span class="number">2</span>, bl_radius, PI / <span class="number">2.0</span>);
         <span class="kw">let </span>bl_end_outer = mesh.vertices.len() - <span class="number">1</span>;
         <span class="kw">let </span>bl_end_inner = bl_end_outer - <span class="number">1</span>;
 
         <span class="self">Self</span>::connect_corners(
             <span class="kw-2">&amp;mut </span>mesh,
             <span class="number">0</span>,
-            tr_end_inner <span class="kw">as </span>u32,
-            tr_end_outer <span class="kw">as </span>u32,
+            tl_end_inner <span class="kw">as </span>u32,
+            tl_end_outer <span class="kw">as </span>u32,
             <span class="number">1</span>,
-            tl_start_inner <span class="kw">as </span>u32,
-            tl_start_outer <span class="kw">as </span>u32,
-        );
-
-        <span class="self">Self</span>::connect_corners(
-            <span class="kw-2">&amp;mut </span>mesh,
-            <span class="number">1</span>,
-            br_end_inner <span class="kw">as </span>u32,
-            br_end_outer <span class="kw">as </span>u32,
-            <span class="number">3</span>,
             tr_start_inner <span class="kw">as </span>u32,
             tr_start_outer <span class="kw">as </span>u32,
         );
 
         <span class="self">Self</span>::connect_corners(
             <span class="kw-2">&amp;mut </span>mesh,
+            <span class="number">1</span>,
+            tr_end_inner <span class="kw">as </span>u32,
+            tr_end_outer <span class="kw">as </span>u32,
             <span class="number">3</span>,
-            bl_end_inner <span class="kw">as </span>u32,
-            bl_end_outer <span class="kw">as </span>u32,
-            <span class="number">2</span>,
             br_start_inner <span class="kw">as </span>u32,
             br_start_outer <span class="kw">as </span>u32,
         );
 
         <span class="self">Self</span>::connect_corners(
             <span class="kw-2">&amp;mut </span>mesh,
+            <span class="number">3</span>,
+            br_end_inner <span class="kw">as </span>u32,
+            br_end_outer <span class="kw">as </span>u32,
             <span class="number">2</span>,
-            tl_end_inner <span class="kw">as </span>u32,
-            tl_end_outer <span class="kw">as </span>u32,
-            <span class="number">0</span>,
             bl_start_inner <span class="kw">as </span>u32,
             bl_start_outer <span class="kw">as </span>u32,
+        );
+
+        <span class="self">Self</span>::connect_corners(
+            <span class="kw-2">&amp;mut </span>mesh,
+            <span class="number">2</span>,
+            bl_end_inner <span class="kw">as </span>u32,
+            bl_end_outer <span class="kw">as </span>u32,
+            <span class="number">0</span>,
+            tl_start_inner <span class="kw">as </span>u32,
+            tl_start_outer <span class="kw">as </span>u32,
         );
 
         mesh

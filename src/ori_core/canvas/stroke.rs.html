@@ -156,6 +156,7 @@
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::PI;
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Matrix, Point, Vector};
@@ -221,9 +222,10 @@
             <span class="kw">let </span>db = Vector::normalize(next - curr);
 
             <span class="kw">let </span>miter = (da.hat() + db.hat()) / <span class="number">2.0</span>;
+            <span class="kw">let </span>miter_length = <span class="number">1.0 </span>/ miter.length();
 
-            <span class="kw">if </span>miter.length() &lt; MITER_LIMIT {
-                <span class="kw">let </span>offset = miter * radius;
+            <span class="kw">if </span>miter_length &lt; MITER_LIMIT {
+                <span class="kw">let </span>offset = miter.normalize() * radius * miter_length;
 
                 <span class="comment">// miter is within the limit, so we can use a miter join
                 </span><span class="kw">let </span>c = mesh.vertices.len();
