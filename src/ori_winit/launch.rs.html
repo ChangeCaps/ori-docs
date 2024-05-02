@@ -489,7 +489,6 @@
 <a href="#487" id="487">487</a>
 <a href="#488" id="488">488</a>
 <a href="#489" id="489">489</a>
-<a href="#490" id="490">490</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -627,7 +626,6 @@
             }
             AppRequest::CloseWindow(id) =&gt; {
                 <span class="self">self</span>.renders.remove(<span class="kw-2">&amp;</span>id);
-                <span class="self">self</span>.app.remove_window(id);
             }
             AppRequest::DragWindow(id) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.renders.get_mut(<span class="kw-2">&amp;</span>id) {

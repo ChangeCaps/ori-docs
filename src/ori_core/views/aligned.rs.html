@@ -140,6 +140,56 @@
     view::{Pod, State, View},
 };
 
+<span class="doccomment">/// Create a new [`Aligned`] view.
+</span><span class="kw">pub fn </span>align&lt;V&gt;(alignment: <span class="kw">impl </span>Into&lt;Alignment&gt;, content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(alignment.into(), content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the center.
+</span><span class="kw">pub fn </span>center&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::CENTER, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top left.
+</span><span class="kw">pub fn </span>top_left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::TOP_LEFT, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top.
+</span><span class="kw">pub fn </span>top&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::TOP, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top right.
+</span><span class="kw">pub fn </span>top_right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::TOP_RIGHT, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the left.
+</span><span class="kw">pub fn </span>left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::LEFT, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the right.
+</span><span class="kw">pub fn </span>right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::RIGHT, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom left.
+</span><span class="kw">pub fn </span>bottom_left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::BOTTOM_LEFT, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom.
+</span><span class="kw">pub fn </span>bottom&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::BOTTOM, content)
+}
+
+<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom right.
+</span><span class="kw">pub fn </span>bottom_right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
+    Aligned::new(Alignment::BOTTOM_RIGHT, content)
+}
+
 <span class="doccomment">/// A view that aligns its content.
 </span><span class="attr">#[example(name = <span class="string">"align"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
 #[derive(Rebuild)]
@@ -207,55 +257,5 @@
     ) {
         <span class="self">self</span>.content.draw(state, cx, data, canvas);
     }
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view.
-</span><span class="kw">pub fn </span>align&lt;V&gt;(alignment: <span class="kw">impl </span>Into&lt;Alignment&gt;, content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(alignment.into(), content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the center.
-</span><span class="kw">pub fn </span>center&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::CENTER, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top left.
-</span><span class="kw">pub fn </span>top_left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::TOP_LEFT, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top.
-</span><span class="kw">pub fn </span>top&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::TOP, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the top right.
-</span><span class="kw">pub fn </span>top_right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::TOP_RIGHT, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the left.
-</span><span class="kw">pub fn </span>left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::LEFT, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the right.
-</span><span class="kw">pub fn </span>right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::RIGHT, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom left.
-</span><span class="kw">pub fn </span>bottom_left&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::BOTTOM_LEFT, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom.
-</span><span class="kw">pub fn </span>bottom&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::BOTTOM, content)
-}
-
-<span class="doccomment">/// Create a new [`Aligned`] view that aligns its content to the bottom right.
-</span><span class="kw">pub fn </span>bottom_right&lt;V&gt;(content: V) -&gt; Aligned&lt;V&gt; {
-    Aligned::new(Alignment::BOTTOM_RIGHT, content)
 }
 </code></pre></div></section></main></body></html>

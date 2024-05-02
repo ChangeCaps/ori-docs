@@ -706,6 +706,7 @@
 <a href="#704" id="704">704</a>
 <a href="#705" id="705">705</a>
 <a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -879,6 +880,7 @@
 
         <span class="kw">if </span>!handled {
             <span class="self">self</span>.remove_window(window_id);
+            <span class="self">self</span>.requests.push(AppRequest::CloseWindow(window_id));
 
             <span class="kw">if </span><span class="self">self</span>.windows.is_empty() {
                 <span class="self">self</span>.requests.push(AppRequest::Quit);
