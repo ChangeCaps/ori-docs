@@ -812,12 +812,12 @@
     </span><span class="attr">#[build(ignore)]
     </span><span class="kw">pub </span>text: <span class="prelude-ty">Option</span>&lt;String&gt;,
 
-    <span class="doccomment">/// A function that returns the text to display.
+    <span class="doccomment">/// A callback that is called when an input is received.
     </span><span class="attr">#[build(ignore)]
     #[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>on_change: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, String)&gt;&gt;,
+    </span><span class="kw">pub </span>on_input: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, String)&gt;&gt;,
 
-    <span class="doccomment">/// A function that is called when the input is submitted.
+    <span class="doccomment">/// A callback that is called when the input is submitted.
     </span><span class="attr">#[build(ignore)]
     #[allow(clippy::type_complexity)]
     </span><span class="kw">pub </span>on_submit: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, String)&gt;&gt;,
@@ -877,7 +877,7 @@
     </span><span class="kw">pub fn </span>styled(style: TextInputStyle) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             text: <span class="prelude-val">None</span>,
-            on_change: <span class="prelude-val">None</span>,
+            on_input: <span class="prelude-val">None</span>,
             on_submit: <span class="prelude-val">None</span>,
             placeholder: String::from(<span class="string">"..."</span>),
             multiline: <span class="bool-val">false</span>,
@@ -900,14 +900,14 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// Set the callback that is called when the input changes.
+    <span class="doccomment">/// Set the callback that is called when an input is received.
     ///
     /// Note that this doesn't trigger a rebuild automatically.
-    </span><span class="kw">pub fn </span>on_change(
+    </span><span class="kw">pub fn </span>on_input(
         <span class="kw-2">mut </span><span class="self">self</span>,
         on_change: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, String) + <span class="lifetime">'static</span>,
     ) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.on_change = <span class="prelude-val">Some</span>(Box::new(on_change));
+        <span class="self">self</span>.on_input = <span class="prelude-val">Some</span>(Box::new(on_change));
         <span class="self">self
     </span>}
 
@@ -1265,7 +1265,7 @@
                 <span class="kw">let </span>text = state.text();
 
                 <span class="kw">if </span>changed {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_change) = <span class="self">self</span>.on_change {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_change) = <span class="self">self</span>.on_input {
                         on_change(cx, data, text.clone());
                     }
                 }
