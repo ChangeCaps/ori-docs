@@ -134,6 +134,54 @@
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
 <a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="kw">use </span><span class="kw">super</span>::style;
@@ -151,8 +199,8 @@
     <span class="doccomment">/// The background color.
     </span><span class="kw">pub </span>background: Color,
 
-    <span class="doccomment">/// The lowest emphasis surface color.
-    </span><span class="kw">pub </span>surface_lowest: Color,
+    <span class="doccomment">/// The lower emphasis surface color.
+    </span><span class="kw">pub </span>surface_lower: Color,
 
     <span class="doccomment">/// The low emphasis surface color.
     </span><span class="kw">pub </span>surface_low: Color,
@@ -163,109 +211,157 @@
     <span class="doccomment">/// The high emphasis surface color.
     </span><span class="kw">pub </span>surface_high: Color,
 
+    <span class="doccomment">/// The higher emphasis surface color.
+    </span><span class="kw">pub </span>surface_higher: Color,
+
     <span class="doccomment">/// The highest emphasis surface color.
     </span><span class="kw">pub </span>surface_highest: Color,
 
-    <span class="doccomment">/// The outline color.
-    </span><span class="kw">pub </span>outline: Color,
-
-    <span class="doccomment">/// The outline variant color.
-    </span><span class="kw">pub </span>outline_variant: Color,
-
-    <span class="doccomment">/// The text color.
-    </span><span class="kw">pub </span>text: Color,
-
-    <span class="doccomment">/// The subtle text color.
-    </span><span class="kw">pub </span>subtext: Color,
-
-    <span class="doccomment">/// The text contrast color.
-    </span><span class="kw">pub </span>text_contrast: Color,
-
-    <span class="doccomment">/// The subtle text contrast color.
-    </span><span class="kw">pub </span>subtext_contrast: Color,
+    <span class="doccomment">/// The contrast color.
+    ///
+    /// Used for text and icons.
+    </span><span class="kw">pub </span>contrast: Color,
 
     <span class="doccomment">/// The primary color.
     </span><span class="kw">pub </span>primary: Color,
 
-    <span class="doccomment">/// The primary variant color.
-    </span><span class="kw">pub </span>primary_variant: Color,
+    <span class="doccomment">/// The low emphasis primary color.
+    </span><span class="kw">pub </span>primary_low: Color,
 
     <span class="doccomment">/// The secondary color.
     </span><span class="kw">pub </span>secondary: Color,
 
-    <span class="doccomment">/// The secondary variant color.
-    </span><span class="kw">pub </span>secondary_variant: Color,
+    <span class="doccomment">/// The low emphasis secondary color.
+    </span><span class="kw">pub </span>secondary_low: Color,
 
     <span class="doccomment">/// The accent color.
     </span><span class="kw">pub </span>accent: Color,
 
-    <span class="doccomment">/// The accent variant color.
-    </span><span class="kw">pub </span>accent_variant: Color,
+    <span class="doccomment">/// The low emphasis accent color.
+    </span><span class="kw">pub </span>accent_low: Color,
 
-    <span class="doccomment">/// The error color.
-    </span><span class="kw">pub </span>error: Color,
+    <span class="doccomment">/// The danger color.
+    ///
+    /// Used for errors and destructive actions.
+    </span><span class="kw">pub </span>danger: Color,
 
-    <span class="doccomment">/// The error variant color.
-    </span><span class="kw">pub </span>error_variant: Color,
+    <span class="doccomment">/// The low emphasis danger color.
+    </span><span class="kw">pub </span>danger_low: Color,
+
+    <span class="doccomment">/// The success color.
+    </span><span class="kw">pub </span>success: Color,
+
+    <span class="doccomment">/// The low emphasis success color.
+    </span><span class="kw">pub </span>success_low: Color,
+
+    <span class="doccomment">/// The warning color.
+    </span><span class="kw">pub </span>warning: Color,
+
+    <span class="doccomment">/// The low emphasis warning color.
+    </span><span class="kw">pub </span>warning_low: Color,
+
+    <span class="doccomment">/// The info color.
+    </span><span class="kw">pub </span>info: Color,
+
+    <span class="doccomment">/// The low emphasis info color.
+    </span><span class="kw">pub </span>info_low: Color,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Palette {
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        Palette::light()
+        Palette::dark()
     }
 }
 
 <span class="kw">impl </span>Palette {
+    <span class="doccomment">/// Create a new palette, derived from the given colors.
+    </span><span class="attr">#[allow(clippy::too_many_arguments)]
+    </span><span class="kw">pub fn </span>derived(
+        background: Color,
+        surface: Color,
+        contrast: Color,
+        primary: Color,
+        secondary: Color,
+        accent: Color,
+        danger: Color,
+        success: Color,
+        warning: Color,
+        info: Color,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="kw">fn </span>emphasize(color: Color, is_light: bool, amount: f32) -&gt; Color {
+            <span class="kw">if </span>is_light {
+                color.darken(amount).saturate(amount * <span class="number">0.3</span>)
+            } <span class="kw">else </span>{
+                color.lighten(amount).saturate(amount * <span class="number">0.3</span>)
+            }
+        }
+
+        <span class="kw">fn </span>low(color: Color, is_light: bool) -&gt; Color {
+            <span class="kw">if </span>is_light {
+                color.lighten(<span class="number">0.3</span>).desaturate(<span class="number">0.2</span>)
+            } <span class="kw">else </span>{
+                color.darken(<span class="number">0.3</span>).desaturate(<span class="number">0.2</span>)
+            }
+        }
+
+        <span class="kw">let </span>is_light = background.luminocity() &gt; <span class="number">0.5</span>;
+
+        <span class="self">Self </span>{
+            background,
+            surface_lower: emphasize(surface, is_light, -<span class="number">0.2</span>),
+            surface_low: emphasize(surface, is_light, -<span class="number">0.1</span>),
+            surface,
+            surface_high: emphasize(surface, is_light, <span class="number">0.1</span>),
+            surface_higher: emphasize(surface, is_light, <span class="number">0.2</span>),
+            surface_highest: emphasize(surface, is_light, <span class="number">0.3</span>),
+            contrast,
+            primary,
+            primary_low: low(primary, is_light),
+            secondary,
+            secondary_low: low(secondary, is_light),
+            accent,
+            accent_low: low(accent, is_light),
+            danger,
+            danger_low: low(danger, is_light),
+            success,
+            success_low: low(success, is_light),
+            warning,
+            warning_low: low(warning, is_light),
+            info,
+            info_low: low(info, is_light),
+        }
+    }
+
     <span class="doccomment">/// The default light palette.
     </span><span class="kw">pub fn </span>light() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            background: Color::hex(<span class="string">"#eff1f5"</span>),
-            surface_lowest: Color::hex(<span class="string">"#dce0e8"</span>),
-            surface_low: Color::hex(<span class="string">"#e6e9ef"</span>),
-            surface: Color::hex(<span class="string">"#ccd0da"</span>),
-            surface_high: Color::hex(<span class="string">"#bcc0cc"</span>),
-            surface_highest: Color::hex(<span class="string">"#acb0be"</span>),
-            outline: Color::hex(<span class="string">"#6c6f85"</span>),
-            outline_variant: Color::hex(<span class="string">"#8c8fa1"</span>),
-            text: Color::hex(<span class="string">"#4c4f69"</span>),
-            subtext: Color::hex(<span class="string">"#5c5f77"</span>),
-            text_contrast: Color::hex(<span class="string">"#dce0e8"</span>),
-            subtext_contrast: Color::hex(<span class="string">"#cfd3db"</span>),
-            primary: Color::hex(<span class="string">"#04a5e5"</span>),
-            primary_variant: Color::hex(<span class="string">"#2196f3"</span>),
-            secondary: Color::hex(<span class="string">"#8839ef"</span>),
-            secondary_variant: Color::hex(<span class="string">"#9c27b0"</span>),
-            accent: Color::hex(<span class="string">"#40a02b"</span>),
-            accent_variant: Color::hex(<span class="string">"#4caf50"</span>),
-            error: Color::hex(<span class="string">"#d20f39"</span>),
-            error_variant: Color::hex(<span class="string">"#f44336"</span>),
-        }
+        <span class="self">Self</span>::derived(
+            Color::hex(<span class="string">"#f5f5f5"</span>),
+            Color::hex(<span class="string">"#e4e4e4"</span>),
+            Color::hex(<span class="string">"#212121"</span>),
+            Color::hex(<span class="string">"#1c71d8"</span>),
+            Color::hex(<span class="string">"#f6d32d"</span>),
+            Color::hex(<span class="string">"#0077c2"</span>),
+            Color::hex(<span class="string">"#e01b24"</span>),
+            Color::hex(<span class="string">"#33d17a"</span>),
+            Color::hex(<span class="string">"#f6d32d"</span>),
+            Color::hex(<span class="string">"#0077c2"</span>),
+        )
     }
 
     <span class="doccomment">/// The default dark palette.
     </span><span class="kw">pub fn </span>dark() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            background: Color::hex(<span class="string">"#1e1e2e"</span>),
-            surface_lowest: Color::hex(<span class="string">"#11111b"</span>),
-            surface_low: Color::hex(<span class="string">"#181825"</span>),
-            surface: Color::hex(<span class="string">"#313244"</span>),
-            surface_high: Color::hex(<span class="string">"#45475a"</span>),
-            surface_highest: Color::hex(<span class="string">"#585b70"</span>),
-            outline: Color::hex(<span class="string">"#6c6f85"</span>),
-            outline_variant: Color::hex(<span class="string">"#484c63"</span>),
-            text: Color::hex(<span class="string">"#cdd6f4"</span>),
-            subtext: Color::hex(<span class="string">"#bac2de"</span>),
-            text_contrast: Color::hex(<span class="string">"#1e1e2e"</span>),
-            subtext_contrast: Color::hex(<span class="string">"#2e2e3e"</span>),
-            primary: Color::hex(<span class="string">"#74c7ec"</span>),
-            primary_variant: Color::hex(<span class="string">"#2196f3"</span>),
-            secondary: Color::hex(<span class="string">"#f38ba8"</span>),
-            secondary_variant: Color::hex(<span class="string">"#e91e63"</span>),
-            accent: Color::hex(<span class="string">"#99d196"</span>),
-            accent_variant: Color::hex(<span class="string">"#4caf50"</span>),
-            error: Color::hex(<span class="string">"#e64553"</span>),
-            error_variant: Color::hex(<span class="string">"#f44336"</span>),
-        }
+        <span class="self">Self</span>::derived(
+            Color::hex(<span class="string">"#1e1e1e"</span>),
+            Color::hex(<span class="string">"#242424"</span>),
+            Color::hex(<span class="string">"#deddda"</span>),
+            Color::hex(<span class="string">"#62a0ea"</span>),
+            Color::hex(<span class="string">"#4dd0e1"</span>),
+            Color::hex(<span class="string">"#f8e45c"</span>),
+            Color::hex(<span class="string">"#ff7b63"</span>),
+            Color::hex(<span class="string">"#8ff0a4"</span>),
+            Color::hex(<span class="string">"#f8e45c"</span>),
+            Color::hex(<span class="string">"#4dd0e1"</span>),
+        )
     }
 }
 </code></pre></div></section></main></body></html>
