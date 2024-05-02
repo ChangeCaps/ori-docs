@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/ori-app/src/app.rs`."><title>app.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-5bc39a1768837dd0.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ori_app" data-themes="" data-resource-suffix="" data-rustdoc-version="1.77.2 (25ef9e3d8 2024-04-09)" data-channel="1.77.2" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-48f368f3872407c8.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/ori-app/src/app.rs`."><title>app.rs - source</title><script> if (window.location.protocol !== "file:") document.write(`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2">`)</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="ori_app" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0 (9b00956e5 2024-04-29)" data-channel="1.78.0" data-search-js="search-42d8da7a6b9792c2.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title">
             <h2>Files</h2></div></nav><div class="sidebar-resizer"></div>
     <main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../ori_app/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
@@ -696,17 +696,6 @@
 <a href="#694" id="694">694</a>
 <a href="#695" id="695">695</a>
 <a href="#696" id="696">696</a>
-<a href="#697" id="697">697</a>
-<a href="#698" id="698">698</a>
-<a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
-<a href="#703" id="703">703</a>
-<a href="#704" id="704">704</a>
-<a href="#705" id="705">705</a>
-<a href="#706" id="706">706</a>
-<a href="#707" id="707">707</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
@@ -811,44 +800,13 @@
         <span class="self">self</span>.scene.sort();
     }
 
-    <span class="kw">fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; f32 {
-        <span class="kw">match </span><span class="self">self</span>.animate.take() {
-            <span class="prelude-val">Some</span>(animate) =&gt; animate.elapsed().as_secs_f32(),
-            <span class="prelude-val">None </span>=&gt; <span class="number">0.0</span>,
-        }
-    }
-
-    <span class="kw">fn </span>update_and_request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) -&gt; Vec&lt;AppRequest&lt;T&gt;&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>redraw = <span class="bool-val">false</span>;
-
-        <span class="kw">if </span><span class="self">self</span>.view_state.needs_draw() {
-            redraw = <span class="bool-val">true</span>;
-        }
-
+    <span class="kw">fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) -&gt; Vec&lt;AppRequest&lt;T&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.view_state.needs_animate() &amp;&amp; <span class="self">self</span>.animate.is_none() {
             <span class="self">self</span>.animate = <span class="prelude-val">Some</span>(animate);
-
-            redraw = <span class="bool-val">true</span>;
+            <span class="kw">return </span><span class="macro">vec!</span>[AppRequest::RequestRedraw(<span class="self">self</span>.window.id())];
         }
 
-        <span class="kw">let </span>cursor = <span class="self">self</span>.view_state.cursor().unwrap_or_default();
-
-        <span class="kw">let </span><span class="kw-2">mut </span>requests = Vec::new();
-
-        <span class="kw">if </span>redraw {
-            requests.push(AppRequest::RequestRedraw(<span class="self">self</span>.window.id()));
-        }
-
-        <span class="kw">if </span>cursor != <span class="self">self</span>.cursor {
-            requests.push(AppRequest::UpdateWindow(
-                <span class="self">self</span>.window.id(),
-                WindowUpdate::Cursor(cursor),
-            ));
-
-            <span class="self">self</span>.cursor = cursor;
-        }
-
-        requests
+        Vec::new()
     }
 }
 
@@ -1223,16 +1181,31 @@
         <span class="bool-val">false
     </span>}
 
-    <span class="kw">fn </span>request_window_updates(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    <span class="kw">fn </span>handle_window_requests(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
+            <span class="kw">let </span>id = window_state.window.id();
+
             <span class="kw">let </span>updates = window_state.snapshot.difference(<span class="kw-2">&amp;</span>window_state.window);
+            window_state.snapshot = window_state.window.snapshot();
 
             <span class="kw">for </span>update <span class="kw">in </span>updates {
-                <span class="kw">let </span>request = AppRequest::UpdateWindow(window_state.window.id(), update);
-                <span class="self">self</span>.requests.push(request);
+                <span class="self">self</span>.requests.push(AppRequest::UpdateWindow(id, update));
             }
 
-            window_state.snapshot = window_state.window.snapshot();
+            <span class="kw">if </span>window_state.view_state.needs_draw()
+                || window_state.view_state.needs_layout()
+                || window_state.view_state.needs_animate()
+            {
+                <span class="self">self</span>.requests.push(AppRequest::RequestRedraw(id));
+            }
+
+            <span class="kw">let </span>cursor = window_state.view_state.cursor().unwrap_or_default();
+            <span class="kw">if </span>window_state.cursor != cursor {
+                <span class="kw">let </span>update = WindowUpdate::Cursor(cursor);
+                <span class="self">self</span>.requests.push(AppRequest::UpdateWindow(id, update));
+
+                window_state.cursor = cursor;
+            }
         }
     }
 
@@ -1277,13 +1250,13 @@
 
         <span class="comment">// update the window state after handling the event
         </span><span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+            <span class="kw">let </span>requests = window_state.animate(animate);
             <span class="self">self</span>.requests.extend(requests);
         }
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
-        <span class="self">self</span>.request_window_updates();
+        <span class="self">self</span>.handle_window_requests();
 
         event_handled
     }
@@ -1321,13 +1294,13 @@
 
         <span class="comment">// update the window state after handling the event
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            <span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+            <span class="kw">let </span>requests = window_state.animate(animate);
             <span class="self">self</span>.requests.extend(requests);
         }
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
-        <span class="self">self</span>.request_window_updates();
+        <span class="self">self</span>.handle_window_requests();
 
         event_handled
     }
@@ -1341,9 +1314,14 @@
                 // because there is no pod around the root
                 </span>window_state.view_state.mark_animated();
 
+                <span class="kw">let </span>delta_time = <span class="kw">match </span>window_state.animate.take() {
+                    <span class="prelude-val">Some</span>(t) =&gt; t.elapsed().as_secs_f32(),
+                    <span class="prelude-val">None </span>=&gt; <span class="number">0.0</span>,
+                };
+
                 <span class="comment">// we send an Animate event to the window, this uses the time since the last frame
                 // set in either the event, window_event, or draw_window functions
-                </span><span class="kw">let </span>event = Event::Animate(window_state.animate());
+                </span><span class="kw">let </span>event = Event::Animate(delta_time);
                 <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
             }
         }
@@ -1392,12 +1370,12 @@
         <span class="comment">// we need to update the window state after layout and draw
         //
         // if somehow the a layout or draw has been requested we must tell the window to redraw
-        </span><span class="kw">let </span>requests = window_state.update_and_request_draw(animate);
+        </span><span class="kw">let </span>requests = window_state.animate(animate);
         <span class="self">self</span>.requests.extend(requests);
 
         <span class="comment">// handle any pending commands
         </span><span class="self">self</span>.handle_commands(data);
-        <span class="self">self</span>.request_window_updates();
+        <span class="self">self</span>.handle_window_requests();
 
         <span class="kw">let </span>window_state = <span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id)<span class="question-mark">?</span>;
 
