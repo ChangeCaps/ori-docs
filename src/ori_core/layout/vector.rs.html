@@ -267,6 +267,11 @@
 <a href="#265" id="265">265</a>
 <a href="#266" id="266">266</a>
 <a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
@@ -407,6 +412,11 @@
     </span><span class="kw">pub fn </span>angle_between(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; f32 {
         <span class="kw">let </span>dot = <span class="self">self</span>.dot(other) / f32::sqrt(<span class="self">self</span>.length_squared() * other.length_squared());
         dot.acos()
+    }
+
+    <span class="doccomment">/// Get the angle of the vector.
+    </span><span class="kw">pub fn </span>angle(<span class="self">self</span>) -&gt; f32 {
+        <span class="self">self</span>.y.atan2(<span class="self">self</span>.x)
     }
 
     <span class="doccomment">/// Convert the vector to a vector.
