@@ -430,9 +430,6 @@
 <a href="#428" id="428">428</a>
 <a href="#429" id="429">429</a>
 <a href="#430" id="430">430</a>
-<a href="#431" id="431">431</a>
-<a href="#432" id="432">432</a>
-<a href="#433" id="433">433</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{FRAC_PI_2, PI, TAU};
 
 <span class="kw">use </span>ori_macro::Build;
@@ -671,10 +668,7 @@
             slider_height.acos()
         };
 
-        <span class="kw">if </span>state.can_edit(
-            ColorPickerPart::Alpha,
-            (-FRAC_PI_2..=FRAC_PI_2).contains(<span class="kw-2">&amp;</span>angle) &amp;&amp; is_slider,
-        ) {
+        <span class="kw">if </span>state.can_edit(ColorPickerPart::Alpha, local.x &gt; <span class="number">0.0 </span>&amp;&amp; is_slider) {
             state.edit = <span class="prelude-val">Some</span>(ColorPickerPart::Alpha);
 
             <span class="kw">let </span>alpha = (slider_angle - <span class="self">Self</span>::SLIDER_SHIM) / <span class="self">Self</span>::SLIDER_ARC;
