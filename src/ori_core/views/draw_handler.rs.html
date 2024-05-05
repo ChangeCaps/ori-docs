@@ -73,18 +73,7 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
-<a href="#78" id="78">78</a>
-<a href="#79" id="79">79</a>
-<a href="#80" id="80">80</a>
-<a href="#81" id="81">81</a>
-<a href="#82" id="82">82</a>
-<a href="#83" id="83">83</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -94,7 +83,7 @@
 <span class="doccomment">/// Create a new [`DrawHandler`].
 </span><span class="kw">pub fn </span>on_draw&lt;T, V&gt;(
     content: V,
-    on_draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas) + <span class="lifetime">'static</span>,
+    on_draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
 ) -&gt; DrawHandler&lt;T, V&gt; {
     DrawHandler::new(content).on_draw(on_draw)
 }
@@ -105,7 +94,7 @@
     </span><span class="kw">pub </span>content: V,
     <span class="doccomment">/// The draw callback.
     </span><span class="attr">#[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>on_draw: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas) + <span class="lifetime">'static</span>&gt;&gt;,
+    </span><span class="kw">pub </span>on_draw: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>&gt;&gt;,
 }
 
 <span class="kw">impl</span>&lt;T, V&gt; DrawHandler&lt;T, V&gt; {
@@ -118,10 +107,7 @@
     }
 
     <span class="doccomment">/// Set the draw callback.
-    </span><span class="kw">pub fn </span>on_draw(
-        <span class="kw-2">mut </span><span class="self">self</span>,
-        on_draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas) + <span class="lifetime">'static</span>,
-    ) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>on_draw(<span class="kw-2">mut </span><span class="self">self</span>, on_draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.on_draw = <span class="prelude-val">Some</span>(Box::new(on_draw));
         <span class="self">self
     </span>}
@@ -152,17 +138,11 @@
         <span class="self">self</span>.content.layout(state, cx, data, space)
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        <span class="self">self</span>.content.draw(state, cx, data, canvas);
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="self">self</span>.content.draw(state, cx, data);
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_draw) = <span class="self">self</span>.on_draw {
-            on_draw(cx, data, canvas);
+            on_draw(cx, data);
         }
     }
 }

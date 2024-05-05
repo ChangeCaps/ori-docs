@@ -66,15 +66,7 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
-<a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a>
-<a href="#73" id="73">73</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -136,14 +128,8 @@
         <span class="self">self</span>.content.layout(state, cx, data, space)
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        <span class="self">self</span>.content.draw(state, cx, data, canvas);
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="self">self</span>.content.draw(state, cx, data);
     }
 }
 </code></pre></div></section></main></body></html>

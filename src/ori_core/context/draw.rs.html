@@ -69,10 +69,131 @@
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
 <a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
-    layout::{Point, Rect, Size},
+    canvas::{FillRule, Mask, Paint, Stroke},
+    layout::{Affine, Point, Rect, Size, Vector},
+    prelude::{BorderRadius, BorderWidth, Canvas, Curve, Image},
+    text::{Fonts, TextBuffer},
     view::ViewState,
     window::Window,
 };
@@ -84,6 +205,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) base: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BaseCx&lt;<span class="lifetime">'b</span>&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) view_state: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ViewState,
     <span class="kw">pub</span>(<span class="kw">crate</span>) window: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Window,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) canvas: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Canvas,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; Deref <span class="kw">for </span>DrawCx&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; {
@@ -106,11 +228,13 @@
         base: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BaseCx&lt;<span class="lifetime">'b</span>&gt;,
         view_state: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ViewState,
         window: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Window,
+        canvas: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Canvas,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             base,
             view_state,
             window,
+            canvas,
         }
     }
 
@@ -120,6 +244,7 @@
             base: <span class="self">self</span>.base,
             view_state: <span class="self">self</span>.view_state,
             window: <span class="self">self</span>.window,
+            canvas: <span class="self">self</span>.canvas,
         }
     }
 
@@ -136,6 +261,117 @@
     <span class="doccomment">/// Get the rect of the view in local space.
     </span><span class="kw">pub fn </span>rect(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rect {
         Rect::min_size(Point::ZERO, <span class="self">self</span>.size())
+    }
+
+    <span class="doccomment">/// Get the canvas.
+    </span><span class="kw">pub fn </span>canvas(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Canvas {
+        <span class="self">self</span>.canvas
+    }
+
+    <span class="doccomment">/// Draw a rectangle.
+    </span><span class="kw">pub fn </span>fill_rect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
+        <span class="self">self</span>.canvas.rect(rect, paint.into());
+    }
+
+    <span class="doccomment">/// Draw a trigger rectangle.
+    </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect) {
+        <span class="self">self</span>.canvas.view(<span class="self">self</span>.id(), |canvas| {
+            canvas.trigger(rect);
+        });
+    }
+
+    <span class="doccomment">/// Fill a curve.
+    </span><span class="kw">pub fn </span>fill_curve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, fill: FillRule, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
+        <span class="self">self</span>.canvas.fill(curve, fill, paint.into());
+    }
+
+    <span class="doccomment">/// Stroke a curve.
+    </span><span class="kw">pub fn </span>stroke(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, stroke: <span class="kw">impl </span>Into&lt;Stroke&gt;, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
+        <span class="self">self</span>.canvas.stroke(curve, stroke.into(), paint.into());
+    }
+
+    <span class="doccomment">/// Draw an image.
+    </span><span class="kw">pub fn </span>image(<span class="kw-2">&amp;mut </span><span class="self">self</span>, point: Point, image: Image) {
+        <span class="self">self</span>.canvas.image(point, image);
+    }
+
+    <span class="doccomment">/// Draw a text buffer.
+    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: Vector, buffer: <span class="kw-2">&amp;</span>TextBuffer) {
+        <span class="self">self</span>.text_raw(offset, buffer.raw());
+    }
+
+    <span class="doccomment">/// Draw a raw text buffer.
+    </span><span class="kw">pub fn </span>text_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: Vector, buffer: <span class="kw-2">&amp;</span>cosmic_text::Buffer) {
+        <span class="kw">let </span>contexts = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.base.contexts;
+        <span class="kw">let </span>canvas = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.canvas;
+        <span class="kw">let </span>scale = <span class="self">self</span>.window.scale;
+
+        contexts
+            .get_or_default::&lt;Fonts&gt;()
+            .draw_buffer(canvas, buffer, offset, scale);
+    }
+
+    <span class="doccomment">/// Draw a rectangle with rounded corners and a border.
+    </span><span class="kw">pub fn </span>quad(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        rect: Rect,
+        paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
+        border_radius: <span class="kw">impl </span>Into&lt;BorderRadius&gt;,
+        _border_width: <span class="kw">impl </span>Into&lt;BorderWidth&gt;,
+        _border_paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
+    ) {
+        <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
+        curve.push_rect_with_radius(rect, border_radius.into());
+
+        <span class="self">self</span>.fill_curve(curve, FillRule::NonZero, paint);
+    }
+
+    <span class="doccomment">/// Draw a layer.
+    </span><span class="kw">pub fn </span>layer(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        transform: Affine,
+        mask: <span class="prelude-ty">Option</span>&lt;Mask&gt;,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;),
+    ) {
+        <span class="self">self</span>.canvas.layer(transform, mask, <span class="prelude-val">None</span>, |canvas| {
+            <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx {
+                base: <span class="self">self</span>.base,
+                view_state: <span class="self">self</span>.view_state,
+                window: <span class="self">self</span>.window,
+                canvas,
+            };
+
+            f(<span class="kw-2">&amp;mut </span>cx);
+        });
+    }
+
+    <span class="doccomment">/// Draw a hoverable layer.
+    </span><span class="kw">pub fn </span>hoverable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
+        <span class="self">self</span>.canvas.view(<span class="self">self</span>.id(), |canvas| {
+            <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx {
+                base: <span class="self">self</span>.base,
+                view_state: <span class="self">self</span>.view_state,
+                window: <span class="self">self</span>.window,
+                canvas,
+            };
+
+            f(<span class="kw-2">&amp;mut </span>cx);
+        });
+    }
+
+    <span class="doccomment">/// Draw a layer with a transform.
+    </span><span class="kw">pub fn </span>transform(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
+        <span class="self">self</span>.layer(transform, <span class="prelude-val">None</span>, f);
+    }
+
+    <span class="doccomment">/// Draw a layer with a translation.
+    </span><span class="kw">pub fn </span>translate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, translation: Vector, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
+        <span class="self">self</span>.transform(Affine::translate(translation), f);
+    }
+
+    <span class="doccomment">/// Draw a layer with a mask.
+    </span><span class="kw">pub fn </span>mask(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: <span class="kw">impl </span>Into&lt;Mask&gt;, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
+        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">Some</span>(mask.into()), f);
     }
 }
 </code></pre></div></section></main></body></html>

@@ -84,9 +84,7 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
-<a href="#85" id="85">85</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -164,9 +162,9 @@
         size
     }
 
-    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T, scene: <span class="kw-2">&amp;mut </span>Canvas) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         (<span class="self">self</span>.focus)(data, <span class="kw-2">&amp;mut </span>|data| {
-            <span class="self">self</span>.content.draw(state, cx, data, scene);
+            <span class="self">self</span>.content.draw(state, cx, data);
         });
     }
 }

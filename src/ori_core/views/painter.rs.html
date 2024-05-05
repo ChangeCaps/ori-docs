@@ -70,15 +70,7 @@
 <a href="#68" id="68">68</a>
 <a href="#69" id="69">69</a>
 <a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a>
-<a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -87,7 +79,7 @@
 };
 
 <span class="doccomment">/// Create a new [`Painter`] view.
-</span><span class="kw">pub fn </span>painter&lt;T&gt;(draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas) + <span class="lifetime">'static</span>) -&gt; Painter&lt;T&gt; {
+</span><span class="kw">pub fn </span>painter&lt;T&gt;(draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; Painter&lt;T&gt; {
     Painter::new(draw)
 }
 
@@ -97,16 +89,16 @@
 </span><span class="kw">pub struct </span>Painter&lt;T&gt; {
     <span class="doccomment">/// The draw function.
     </span><span class="attr">#[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>draw: Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas)&gt;,
+    </span><span class="kw">pub </span>draw: Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T)&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; Painter&lt;T&gt; {
     <span class="doccomment">/// Create a new [`Painter`] view.
-    </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Canvas) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(<span class="kw-2">mut </span>draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>snapshot = Styles::snapshot();
 
         <span class="self">Self </span>{
-            draw: Box::new(<span class="kw">move </span>|cx, data, canvas| snapshot.as_context(|| draw(cx, data, canvas))),
+            draw: Box::new(<span class="kw">move </span>|cx, data| snapshot.as_context(|| draw(cx, data))),
         }
     }
 }
@@ -144,14 +136,8 @@
         space.min
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        (<span class="self">self</span>.draw)(cx, data, canvas);
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        (<span class="self">self</span>.draw)(cx, data);
     }
 }
 </code></pre></div></section></main></body></html>

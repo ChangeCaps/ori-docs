@@ -126,21 +126,9 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::Rebuild;
 
 <span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space, Vector},
@@ -254,24 +242,14 @@
         header_size
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        (header, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        canvas.trigger(cx.id(), cx.rect());
-
-        <span class="self">self</span>.header.draw(header, cx, data, canvas);
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (header, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="self">self</span>.header.draw(header, cx, data);
 
         <span class="kw">if </span>!cx.is_focused() {
             <span class="kw">return</span>;
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>layer = canvas.layer();
-        layer.depth += <span class="number">10000.0</span>;
-        <span class="self">self</span>.content.draw(content, cx, data, <span class="kw-2">&amp;mut </span>layer);
+        <span class="self">self</span>.content.draw(content, cx, data);
     }
 }
 </code></pre></div></section></main></body></html>

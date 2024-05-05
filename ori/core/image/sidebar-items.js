@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Texture"],"fn":["gradient"],"struct":["Image","ImageData","ImageId","TextureId","WeakImage"]};
+window.SIDEBAR_ITEMS = {"enum":["Texture"],"struct":["Image","ImageData","ImageId","TextureId","WeakImage"]};

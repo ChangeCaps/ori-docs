@@ -1085,8 +1085,29 @@
 <a href="#1083" id="1083">1083</a>
 <a href="#1084" id="1084">1084</a>
 <a href="#1085" id="1085">1085</a>
+<a href="#1086" id="1086">1086</a>
+<a href="#1087" id="1087">1087</a>
+<a href="#1088" id="1088">1088</a>
+<a href="#1089" id="1089">1089</a>
+<a href="#1090" id="1090">1090</a>
+<a href="#1091" id="1091">1091</a>
+<a href="#1092" id="1092">1092</a>
+<a href="#1093" id="1093">1093</a>
+<a href="#1094" id="1094">1094</a>
+<a href="#1095" id="1095">1095</a>
+<a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::{Debug, Display},
+    hash::{Hash, Hasher},
     ops::{Add, AddAssign, Deref, Mul},
 };
 
@@ -1209,6 +1230,16 @@
     <span class="doccomment">/// Create a new color with the given gray component.
     </span><span class="kw">pub const fn </span>grayscale(g: f32) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::rgb(g, g, g)
+    }
+
+    <span class="doccomment">/// Create a new color with the given red, green, blue and alpha components.
+    </span><span class="kw">pub fn </span>rgba8(r: u8, g: u8, b: u8, a: u8) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::rgba(
+            r <span class="kw">as </span>f32 / <span class="number">255.0</span>,
+            g <span class="kw">as </span>f32 / <span class="number">255.0</span>,
+            b <span class="kw">as </span>f32 / <span class="number">255.0</span>,
+            a <span class="kw">as </span>f32 / <span class="number">255.0</span>,
+        )
     }
 
     <span class="doccomment">/// Get the red component as an 8 bit integer.
@@ -2068,6 +2099,15 @@
 <span class="kw">impl </span>Display <span class="kw">for </span>Color {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="macro">write!</span>(f, <span class="string">"rgba({}, {}, {}, {})"</span>, <span class="self">self</span>.r, <span class="self">self</span>.g, <span class="self">self</span>.b, <span class="self">self</span>.a)
+    }
+}
+
+<span class="kw">impl </span>Hash <span class="kw">for </span>Color {
+    <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
+        <span class="self">self</span>.r.to_bits().hash(state);
+        <span class="self">self</span>.g.to_bits().hash(state);
+        <span class="self">self</span>.b.to_bits().hash(state);
+        <span class="self">self</span>.a.to_bits().hash(state);
     }
 }
 

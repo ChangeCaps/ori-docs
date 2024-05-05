@@ -276,27 +276,16 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
-    canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Mesh, Vertex},
+    canvas::{BorderRadius, BorderWidth, Color},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
-    layout::{Point, Rect, Size, Space, Vector},
+    layout::{Affine, Point, Rect, Size, Space, Vector},
+    prelude::{Curve, FillRule},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     transition::Transition,
@@ -318,7 +307,7 @@
     <span class="doccomment">/// The color of the icon.
     </span><span class="kw">pub </span>icon_color: Color,
     <span class="doccomment">/// The background color of the header.
-    </span><span class="kw">pub </span>background: Background,
+    </span><span class="kw">pub </span>background: Color,
     <span class="doccomment">/// The border width of the header.
     </span><span class="kw">pub </span>border_width: BorderWidth,
     <span class="doccomment">/// The border radius of the header.
@@ -333,7 +322,7 @@
             transition: Transition::ease(<span class="number">0.1</span>),
             icon_size: <span class="number">16.0</span>,
             icon_color: style.palette().primary,
-            background: Background::color(Color::TRANSPARENT),
+            background: Color::TRANSPARENT,
             border_width: BorderWidth::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>),
             border_radius: BorderRadius::all(<span class="number">0.0</span>),
             border_color: style.palette().surface_higher,
@@ -380,7 +369,7 @@
 
     <span class="doccomment">/// The background color of the header.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>background: Background,
+    </span><span class="kw">pub </span>background: Color,
 
     <span class="doccomment">/// The border width of the header.
     </span><span class="attr">#[rebuild(draw)]
@@ -515,39 +504,30 @@
         Size::new(width, height)
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span>t = <span class="self">self</span>.transition.get(state.t);
 
         <span class="kw">let </span>header_height = <span class="self">self</span>.icon_size.max(state.header.size().height);
         <span class="kw">let </span>header_size = Size::new(cx.rect().width(), header_height);
         <span class="kw">let </span>header_rect = Rect::min_size(cx.rect().top_left(), header_size);
 
-        canvas.trigger(state.header.id(), header_rect);
-
-        canvas.draw_quad(
+        cx.quad(
             header_rect,
-            <span class="self">self</span>.background.clone(),
+            <span class="self">self</span>.background,
             <span class="self">self</span>.border_radius,
             <span class="self">self</span>.border_width,
             <span class="self">self</span>.border_color,
         );
 
-        canvas.forked(|canvas| {
-            canvas.translate(Vector::new(<span class="self">self</span>.icon_size / <span class="number">2.0</span>, header_height / <span class="number">2.0</span>));
-            canvas.scale(Vector::all(<span class="self">self</span>.icon_size));
+        <span class="kw">let </span>transform = Affine::translate(Vector::new(<span class="self">self</span>.icon_size / <span class="number">2.0</span>, header_height / <span class="number">2.0</span>))
+            * Affine::scale(Vector::all(<span class="self">self</span>.icon_size))
+            * Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
-            canvas.rotate(PI / <span class="number">2.0 </span>* t);
-
-            canvas.draw(icon(<span class="self">self</span>.icon_color));
+        cx.transform(transform, |cx| {
+            cx.fill_curve(icon(), FillRule::NonZero, <span class="self">self</span>.icon_color);
         });
 
-        <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data, canvas);
+        <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data);
 
         <span class="kw">let </span>content_offset = Vector::new(<span class="number">0.0</span>, state.header.size().height);
         <span class="kw">let </span>content_height = Vector::new(<span class="number">0.0</span>, state.content.size().height) * (<span class="number">1.0 </span>- t);
@@ -556,24 +536,20 @@
         <span class="kw">let </span>content_min = cx.rect().top_left() + content_offset;
         <span class="kw">let </span>content_rect = Rect::min_size(content_min, state.content.size());
 
-        canvas.clip(content_rect.transform(canvas.transform));
-        <span class="self">self</span>.content.draw(<span class="kw-2">&amp;mut </span>state.content, cx, data, canvas);
+        cx.mask(content_rect, |cx| {
+            <span class="self">self</span>.content.draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
+        });
     }
 }
 
-<span class="kw">fn </span>icon(color: Color) -&gt; Mesh {
-    <span class="kw">let </span><span class="kw-2">mut </span>mesh = Mesh::new();
+<span class="kw">fn </span>icon() -&gt; Curve {
+    <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
 
     <span class="kw">let </span>d = <span class="number">0.25</span>;
+    curve.move_to(Point::new(-d, -d * SQRT_2));
+    curve.line_to(Point::new(d * SQRT_2, <span class="number">0.0</span>));
+    curve.line_to(Point::new(-d, d * SQRT_2));
 
-    mesh.vertices.extend([
-        Vertex::new_color(Point::new(-d, -d * SQRT_2), color),
-        Vertex::new_color(Point::new(d * SQRT_2, <span class="number">0.0</span>), color),
-        Vertex::new_color(Point::new(-d, d * SQRT_2), color),
-    ]);
-
-    mesh.indices.extend([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>]);
-
-    mesh
+    curve
 }
 </code></pre></div></section></main></body></html>

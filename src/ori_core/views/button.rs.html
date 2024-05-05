@@ -264,25 +264,10 @@
 <a href="#262" id="262">262</a>
 <a href="#263" id="263">263</a>
 <a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
-    canvas::{Background, BorderRadius, BorderWidth, Canvas, Color},
+    canvas::{BorderRadius, BorderWidth, Color},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Padding, Size, Space, Vector},
@@ -310,7 +295,7 @@
     </span><span class="kw">pub </span>transition: Transition,
 
     <span class="doccomment">/// The color of the button.
-    </span><span class="kw">pub </span>color: Background,
+    </span><span class="kw">pub </span>color: Color,
 
     <span class="doccomment">/// The border radius of the button.
     </span><span class="kw">pub </span>border_radius: BorderRadius,
@@ -330,7 +315,7 @@
             padding: Padding::all(<span class="number">8.0</span>),
             fancy: <span class="number">0.0</span>,
             transition: Transition::ease(<span class="number">0.1</span>),
-            color: Background::new(palette.primary),
+            color: palette.primary,
             border_radius: BorderRadius::all(<span class="number">4.0</span>),
             border_width: BorderWidth::all(<span class="number">0.0</span>),
             border_color: palette.surface_higher,
@@ -362,7 +347,7 @@
 
     <span class="doccomment">/// The color of the button.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>color: Background,
+    </span><span class="kw">pub </span>color: Color,
 
     <span class="doccomment">/// The border radius.
     </span><span class="attr">#[rebuild(draw)]
@@ -493,69 +478,54 @@
         space.fit(content_size + <span class="self">self</span>.padding.size())
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        canvas.set_hoverable(cx.id());
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        cx.hoverable(|cx| {
+            <span class="kw">let </span>dark = <span class="self">self</span>.color.darken(<span class="number">0.05</span>);
+            <span class="kw">let </span>dim = <span class="self">self</span>.color.darken(<span class="number">0.025</span>);
+            <span class="kw">let </span>bright = <span class="self">self</span>.color.lighten(<span class="number">0.05</span>);
 
-        <span class="kw">let </span>dark = <span class="self">self</span>.color.color.darken(<span class="number">0.05</span>);
-        <span class="kw">let </span>dim = <span class="self">self</span>.color.color.darken(<span class="number">0.025</span>);
-        <span class="kw">let </span>bright = <span class="self">self</span>.color.color.lighten(<span class="number">0.05</span>);
+            <span class="kw">let </span>hot = <span class="self">self</span>.transition.get(state.hot);
+            <span class="kw">let </span>active = <span class="self">self</span>.transition.get(state.active);
 
-        <span class="kw">let </span>hot = <span class="self">self</span>.transition.get(state.hot);
-        <span class="kw">let </span>active = <span class="self">self</span>.transition.get(state.active);
+            <span class="kw">let </span>face = <span class="self">self</span>.color.mix(bright, hot).mix(dim, active);
 
-        <span class="kw">let </span>face = <span class="self">self</span>.color.color.mix(bright, hot).mix(dim, active);
+            <span class="kw">if </span><span class="self">self</span>.fancy == <span class="number">0.0 </span>{
+                cx.quad(
+                    cx.rect(),
+                    face,
+                    <span class="self">self</span>.border_radius,
+                    <span class="self">self</span>.border_width,
+                    <span class="self">self</span>.border_color,
+                );
 
-        <span class="kw">let </span>face = Background {
-            texture: <span class="self">self</span>.color.texture.clone(),
-            color: face,
-        };
+                <span class="self">self</span>.content.draw(content, cx, data);
+                <span class="kw">return</span>;
+            }
 
-        <span class="kw">if </span><span class="self">self</span>.fancy == <span class="number">0.0 </span>{
-            canvas.draw_quad(
+            <span class="kw">let </span>base = dim.mix(dark, <span class="number">1.0 </span>- active);
+
+            cx.quad(
                 cx.rect(),
-                face,
+                base,
                 <span class="self">self</span>.border_radius,
-                <span class="self">self</span>.border_width,
-                <span class="self">self</span>.border_color,
+                BorderWidth::ZERO,
+                Color::TRANSPARENT,
             );
 
-            <span class="self">self</span>.content.draw(content, cx, data, canvas);
-            <span class="kw">return</span>;
-        }
+            <span class="kw">let </span>float = Vector::NEG_Y * (<span class="number">1.0 </span>- active) * <span class="self">self</span>.fancy;
 
-        <span class="kw">let </span>base = dim.mix(dark, <span class="number">1.0 </span>- active);
+            cx.translate(float, |cx| {
+                cx.quad(
+                    cx.rect(),
+                    face,
+                    <span class="self">self</span>.border_radius,
+                    <span class="self">self</span>.border_width,
+                    <span class="self">self</span>.border_color,
+                );
 
-        canvas.draw_quad(
-            cx.rect(),
-            Background {
-                texture: <span class="self">self</span>.color.texture.clone(),
-                color: base,
-            },
-            <span class="self">self</span>.border_radius,
-            BorderWidth::ZERO,
-            Color::TRANSPARENT,
-        );
-
-        <span class="kw">let </span>float = Vector::NEG_Y * (<span class="number">1.0 </span>- active) * <span class="self">self</span>.fancy;
-
-        <span class="kw">let </span><span class="kw-2">mut </span>layer = canvas.layer();
-        layer.translate(float);
-
-        layer.draw_quad(
-            cx.rect(),
-            face,
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color,
-        );
-
-        <span class="self">self</span>.content.draw(content, cx, data, <span class="kw-2">&amp;mut </span>layer);
+                <span class="self">self</span>.content.draw(content, cx, data);
+            });
+        });
     }
 }
 </code></pre></div></section></main></body></html>

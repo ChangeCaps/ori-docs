@@ -369,28 +369,14 @@
 <a href="#367" id="367">367</a>
 <a href="#368" id="368">368</a>
 <a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
-    canvas::{BorderRadius, BorderWidth, Canvas, Color},
+    canvas::{BorderRadius, BorderWidth, Color},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
-    layout::{Affine, Padding, Point, Rect, Size, Space, Vector},
+    layout::{Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     text::{
@@ -715,16 +701,9 @@
         <span class="self">self</span>.content.layout(content, cx, data, space)
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="comment">// we need to set the view to be enable hit testing
-        </span>canvas.set_hoverable(cx.id());
-        <span class="self">self</span>.content.draw(content, cx, data, canvas);
+        </span><span class="self">self</span>.content.draw(content, cx, data);
 
         <span class="kw">let </span>alpha = f32::clamp(state.timer * <span class="number">10.0 </span>- <span class="number">9.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);
 
@@ -746,24 +725,17 @@
         offset += Vector::max(tl_delta, Vector::ZERO);
         offset -= Vector::max(br_delta, Vector::ZERO);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>layer = canvas.layer();
-        layer.transform = Affine::IDENTITY;
-        layer.translate(Vector::from(state.position + offset));
-        layer.depth += <span class="number">1000.0</span>;
-        layer.clip = Rect::min_size(Point::ZERO, cx.window().size);
+        cx.translate(Vector::from(state.position + offset), |cx| {
+            cx.quad(
+                Rect::min_size(Point::ZERO, size),
+                <span class="self">self</span>.background.fade(alpha),
+                <span class="self">self</span>.border_radius,
+                <span class="self">self</span>.border_width,
+                <span class="self">self</span>.border_color.fade(alpha),
+            );
 
-        layer.draw_quad(
-            Rect::min_size(Point::ZERO, size),
-            <span class="self">self</span>.background.fade(alpha),
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color.fade(alpha),
-        );
-
-        layer.translate(<span class="self">self</span>.padding.offset());
-
-        <span class="kw">let </span>mesh = cx.rasterize_text(<span class="kw-2">&amp;</span>state.buffer);
-        layer.draw_pixel_perfect(mesh);
+            cx.text(<span class="self">self</span>.padding.offset(), <span class="kw-2">&amp;</span>state.buffer);
+        });
     }
 }
 </code></pre></div></section></main></body></html>

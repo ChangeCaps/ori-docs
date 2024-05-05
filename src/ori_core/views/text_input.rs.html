@@ -705,33 +705,16 @@
 <a href="#703" id="703">703</a>
 <a href="#704" id="704">704</a>
 <a href="#705" id="705">705</a>
-<a href="#706" id="706">706</a>
-<a href="#707" id="707">707</a>
-<a href="#708" id="708">708</a>
-<a href="#709" id="709">709</a>
-<a href="#710" id="710">710</a>
-<a href="#711" id="711">711</a>
-<a href="#712" id="712">712</a>
-<a href="#713" id="713">713</a>
-<a href="#714" id="714">714</a>
-<a href="#715" id="715">715</a>
-<a href="#716" id="716">716</a>
-<a href="#717" id="717">717</a>
-<a href="#718" id="718">718</a>
-<a href="#719" id="719">719</a>
-<a href="#720" id="720">720</a>
-<a href="#721" id="721">721</a>
-<a href="#722" id="722">722</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
 <span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
-    canvas::{Background, BorderRadius, BorderWidth, Canvas, Color, Quad},
+    canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{Code, Event, KeyPressed},
-    layout::{Point, Rect, Size, Space},
+    layout::{Point, Rect, Size, Space, Vector},
     style::{style, Palette, Style, Styles},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
@@ -1367,81 +1350,64 @@
         space.fit(size)
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        _data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-        canvas.trigger(cx.id(), cx.rect());
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
+        cx.hoverable(|cx| {
+            cx.trigger(cx.rect());
 
-        <span class="comment">// FIXME: this is bad
-        </span>(state.editor).shape_as_needed(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, <span class="bool-val">true</span>);
+            <span class="comment">// FIXME: this is bad
+            </span>(state.editor).shape_as_needed(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, <span class="bool-val">true</span>);
 
-        <span class="kw">let </span>cursor = state.editor.cursor();
+            <span class="kw">let </span>cursor = state.editor.cursor();
 
-        <span class="comment">/* draw the highlights and the cursor */
-        // FIXME: this is bad
-        </span><span class="kw">for </span>(i, run) <span class="kw">in </span>state.buffer().layout_runs().enumerate() {
-            <span class="kw">if </span>!cx.is_focused() {
-                <span class="kw">break</span>;
-            }
+            <span class="comment">/* draw the highlights and the cursor */
+            // FIXME: this is bad
+            </span><span class="kw">for </span>(i, run) <span class="kw">in </span>state.buffer().layout_runs().enumerate() {
+                <span class="kw">if </span>!cx.is_focused() {
+                    <span class="kw">break</span>;
+                }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>((start, end)) = state.editor.selection_bounds() {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>((start, width)) = run.highlight(start, end) {
-                    <span class="kw">let </span>min = Point::new(cx.rect().min.x + start, cx.rect().min.y + run.line_top);
-                    <span class="kw">let </span>size = Size::new(width, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
+                <span class="kw">if let </span><span class="prelude-val">Some</span>((start, end)) = state.editor.selection_bounds() {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>((start, width)) = run.highlight(start, end) {
+                        <span class="kw">let </span>min =
+                            Point::new(cx.rect().min.x + start, cx.rect().min.y + run.line_top);
+                        <span class="kw">let </span>size = Size::new(width, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
 
-                    <span class="kw">let </span>highlight = Rect::min_size(min, size);
+                        <span class="kw">let </span>highlight = Rect::min_size(min, size);
 
-                    canvas.draw_pixel_perfect(Quad {
-                        rect: highlight,
-                        background: Background::new(Color::hex(<span class="string">"#25d0ea80"</span>)),
-                        border_radius: BorderRadius::ZERO,
-                        border_width: BorderWidth::ZERO,
-                        border_color: Color::TRANSPARENT,
-                    });
+                        cx.fill_rect(highlight, <span class="self">self</span>.color.fade(<span class="number">0.2</span>));
+                    }
+                }
+
+                <span class="kw">if </span>i == cursor.line {
+                    <span class="kw">let </span>size = Size::new(<span class="number">1.0</span>, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
+
+                    <span class="kw">let </span>min = <span class="kw">match </span>run.glyphs.get(cursor.index) {
+                        <span class="prelude-val">Some</span>(glyph) =&gt; {
+                            <span class="kw">let </span>physical = glyph.physical((cx.rect().min.x, cx.rect().min.y), <span class="number">1.0</span>);
+                            Point::new(physical.x <span class="kw">as </span>f32, run.line_top + physical.y <span class="kw">as </span>f32)
+                        }
+                        <span class="prelude-val">None </span><span class="kw">if </span>cursor.index == <span class="number">0 </span>=&gt; {
+                            Point::new(cx.rect().min.x, cx.rect().min.y + run.line_top)
+                        }
+                        <span class="prelude-val">None </span>=&gt; {
+                            Point::new(cx.rect().min.x + run.line_w, cx.rect().min.y + run.line_top)
+                        }
+                    };
+
+                    <span class="kw">let </span>cursor = Rect::min_size(min.round(), size);
+
+                    <span class="kw">let </span>blink = state.blink.cos() * <span class="number">0.5 </span>+ <span class="number">0.5</span>;
+                    cx.fill_rect(cursor, <span class="self">self</span>.color.fade(blink));
                 }
             }
 
-            <span class="kw">if </span>i == cursor.line {
-                <span class="kw">let </span>size = Size::new(<span class="number">1.0</span>, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
-
-                <span class="kw">let </span>min = <span class="kw">match </span>run.glyphs.get(cursor.index) {
-                    <span class="prelude-val">Some</span>(glyph) =&gt; {
-                        <span class="kw">let </span>physical = glyph.physical((cx.rect().min.x, cx.rect().min.y), <span class="number">1.0</span>);
-                        Point::new(physical.x <span class="kw">as </span>f32, run.line_top + physical.y <span class="kw">as </span>f32)
-                    }
-                    <span class="prelude-val">None </span><span class="kw">if </span>cursor.index == <span class="number">0 </span>=&gt; {
-                        Point::new(cx.rect().min.x, cx.rect().min.y + run.line_top)
-                    }
-                    <span class="prelude-val">None </span>=&gt; {
-                        Point::new(cx.rect().min.x + run.line_w, cx.rect().min.y + run.line_top)
-                    }
-                };
-
-                <span class="kw">let </span>cursor = Rect::min_size(min.round(), size);
-
-                <span class="kw">let </span>blink = state.blink.cos() * <span class="number">0.5 </span>+ <span class="number">0.5</span>;
-                canvas.draw_pixel_perfect(Quad {
-                    rect: cursor,
-                    background: Background::new(<span class="self">self</span>.color.fade(blink)),
-                    border_radius: BorderRadius::ZERO,
-                    border_width: BorderWidth::ZERO,
-                    border_color: Color::TRANSPARENT,
-                });
-            }
-        }
-
-        <span class="comment">/* draw the text */
-        </span><span class="kw">let </span>mesh = <span class="kw">if </span>!<span class="self">self</span>.get_text(state).is_empty() {
-            cx.rasterize_text_raw(state.buffer())
-        } <span class="kw">else </span>{
-            cx.rasterize_text(<span class="kw-2">&amp;</span>state.placeholder)
-        };
-
-        canvas.draw_pixel_perfect(mesh);
+            <span class="comment">/* draw the text */
+            </span><span class="kw">if </span>!<span class="self">self</span>.get_text(state).is_empty() {
+                cx.text_raw(Vector::ZERO, state.buffer())
+            } <span class="kw">else </span>{
+                cx.text(Vector::ZERO, <span class="kw-2">&amp;</span>state.placeholder)
+            };
+        });
     }
 }
 </code></pre></div></section></main></body></html>

@@ -209,28 +209,7 @@
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -299,7 +278,7 @@
     ) -&gt; Size;
 
     <span class="doccomment">/// Draw the view, see top-level documentation for more information.
-    </span><span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T, canvas: <span class="kw-2">&amp;mut </span>Canvas);
+    </span><span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T);
 }
 
 <span class="kw">impl</span>&lt;T&gt; View&lt;T&gt; <span class="kw">for </span>() {
@@ -335,14 +314,7 @@
         space.min
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        _cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        _data: <span class="kw-2">&amp;mut </span>T,
-        _canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
-    }
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, _cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {}
 }
 
 <span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span><span class="prelude-ty">Option</span>&lt;V&gt; {
@@ -386,15 +358,9 @@
         }
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(view) = <span class="self">self </span>{
-            view.draw(state.as_mut().unwrap(), cx, data, canvas);
+            view.draw(state.as_mut().unwrap(), cx, data);
         }
     }
 }
@@ -444,16 +410,10 @@
         }
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">match </span>(<span class="self">self</span>, state) {
-            (<span class="prelude-val">Ok</span>(view), <span class="prelude-val">Ok</span>(state)) =&gt; view.draw(state, cx, data, canvas),
-            (<span class="prelude-val">Err</span>(view), <span class="prelude-val">Err</span>(state)) =&gt; view.draw(state, cx, data, canvas),
+            (<span class="prelude-val">Ok</span>(view), <span class="prelude-val">Ok</span>(state)) =&gt; view.draw(state, cx, data),
+            (<span class="prelude-val">Err</span>(view), <span class="prelude-val">Err</span>(state)) =&gt; view.draw(state, cx, data),
             <span class="kw">_ </span>=&gt; {}
         }
     }

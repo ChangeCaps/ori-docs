@@ -245,33 +245,13 @@
 <a href="#243" id="243">243</a>
 <a href="#244" id="244">244</a>
 <a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
-<a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span>ori_macro::{example, Build};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
-    canvas::{Canvas, Color, Mesh},
+    canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -420,7 +400,6 @@
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>TextState {
     buffer: TextBuffer,
-    mesh: <span class="prelude-ty">Option</span>&lt;Mesh&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; View&lt;T&gt; <span class="kw">for </span>Text {
@@ -430,28 +409,25 @@
         <span class="kw">let </span><span class="kw-2">mut </span>buffer = TextBuffer::new(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
         <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>buffer);
 
-        TextState { buffer, mesh: <span class="prelude-val">None </span>}
+        TextState { buffer }
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
             (state.buffer).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
 
-            state.mesh.take();
             cx.request_layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
             state.buffer.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
 
-            state.mesh.take();
             cx.request_draw();
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
             state.buffer.set_align(<span class="self">self</span>.align);
 
-            state.mesh.take();
             cx.request_draw();
         }
 
@@ -474,7 +450,6 @@
                 },
             );
 
-            state.mesh.take();
             cx.request_layout();
         }
     }
@@ -495,31 +470,16 @@
         _data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">if </span>state.mesh.is_none() || state.buffer.bounds() != space.max {
+        <span class="kw">if </span>state.buffer.bounds() != space.max {
             state.buffer.set_bounds(cx.fonts(), space.max);
-            cx.prepare_text(<span class="kw-2">&amp;</span>state.buffer);
         }
 
         space.fit(state.buffer.size())
     }
 
-    <span class="kw">fn </span>draw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
-        cx: <span class="kw-2">&amp;mut </span>DrawCx,
-        _data: <span class="kw-2">&amp;mut </span>T,
-        canvas: <span class="kw-2">&amp;mut </span>Canvas,
-    ) {
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span>offset = cx.rect().center() - state.buffer.rect().center();
-
-        <span class="kw">if </span>state.mesh.is_none() {
-            state.mesh = <span class="prelude-val">Some</span>(cx.rasterize_text(<span class="kw-2">&amp;</span>state.buffer));
-        }
-
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>mesh) = state.mesh {
-            canvas.translate(offset);
-            canvas.draw_pixel_perfect(mesh.clone());
-        }
+        cx.text(offset, <span class="kw-2">&amp;</span>state.buffer);
     }
 }
 

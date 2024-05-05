@@ -185,66 +185,20 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Debug,
     hash::{Hash, Hasher},
     ops::{Deref, DerefMut},
 };
 
-<span class="kw">use crate</span>::{
-    canvas::Color,
-    layout::{Size, Vector},
-};
+<span class="kw">use </span><span class="kw">crate</span>::layout::Size;
 
 <span class="kw">use </span><span class="kw">super</span>::ImageId;
 
 <span class="doccomment">/// Image data.
 </span><span class="attr">#[derive(Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>ImageData {
-    pixels: Vec&lt;u8&gt;,
+    data: Vec&lt;u8&gt;,
     width: u32,
     height: u32,
     filter: bool,
@@ -261,55 +215,15 @@
     ///
     /// # Panics
     /// - If `pixels.len()` is not equal to `width * height * 4`.
-    </span><span class="kw">pub fn </span>new(pixels: Vec&lt;u8&gt;, width: u32, height: u32) -&gt; <span class="self">Self </span>{
-        <span class="macro">assert_eq!</span>(pixels.len() <span class="kw">as </span>u32, width * height * <span class="number">4</span>);
+    </span><span class="kw">pub fn </span>new(data: Vec&lt;u8&gt;, width: u32, height: u32) -&gt; <span class="self">Self </span>{
+        <span class="macro">assert_eq!</span>(data.len() <span class="kw">as </span>u32, width * height * <span class="number">4</span>);
 
         <span class="self">Self </span>{
-            pixels,
+            data,
             width,
             height,
             filter: <span class="bool-val">true</span>,
         }
-    }
-
-    <span class="doccomment">/// Create a new gradient image data.
-    ///
-    /// Note that `angle` is in degrees.
-    </span><span class="kw">pub fn </span>gradient(angle: f32, colors: <span class="kw-2">&amp;</span>[Color]) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>pixels = Vec::new();
-
-        <span class="kw">let </span>angle = angle.to_radians();
-        <span class="kw">let </span>(sin, cos) = angle.sin_cos();
-        <span class="kw">let </span>direction = Vector::new(cos, sin);
-        <span class="kw">let </span>length = sin.abs() + cos.abs();
-
-        <span class="kw">let </span>size = colors.len() <span class="kw">as </span>u32 * <span class="number">16</span>;
-        <span class="kw">let </span>max = size <span class="kw">as </span>f32 - <span class="number">1.0</span>;
-
-        <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..size {
-            <span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..size {
-                <span class="kw">let </span>x = x <span class="kw">as </span>f32;
-                <span class="kw">let </span>y = y <span class="kw">as </span>f32;
-
-                <span class="kw">let </span>position = Vector::new(x, y) / max * <span class="number">2.0 </span>- <span class="number">1.0</span>;
-                <span class="kw">let </span>dist = position.dot(direction) / length / <span class="number">2.0 </span>+ <span class="number">0.5</span>;
-                <span class="kw">let </span>position = dist.clamp(<span class="number">0.0</span>, <span class="number">1.0</span>) * (colors.len() - <span class="number">1</span>) <span class="kw">as </span>f32;
-
-                <span class="kw">let </span>prev_index = position.floor() <span class="kw">as </span>usize;
-                <span class="kw">let </span>next_index = usize::min(prev_index + <span class="number">1</span>, colors.len() - <span class="number">1</span>);
-                <span class="kw">let </span>prev = colors[prev_index];
-                <span class="kw">let </span>next = colors[next_index];
-
-                <span class="kw">let </span>color = prev.mix(next, position.fract());
-
-                pixels.push(color.r8());
-                pixels.push(color.g8());
-                pixels.push(color.b8());
-                pixels.push(color.a8());
-            }
-        }
-
-        <span class="self">Self</span>::new(pixels, size, size)
     }
 
     <span class="doccomment">/// Try to load image data from a file.
@@ -318,7 +232,7 @@
         <span class="kw">let </span>data = image::load_from_memory(<span class="kw-2">&amp;</span>data)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-            pixels: data.to_rgba8().into_raw(),
+            data: data.to_rgba8().into_raw(),
             width: data.width(),
             height: data.height(),
             filter: <span class="bool-val">true</span>,
@@ -343,7 +257,7 @@
         <span class="kw">let </span>data = image::open(path)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-            pixels: data.to_rgba8().into_raw(),
+            data: data.to_rgba8().into_raw(),
             width: data.width(),
             height: data.height(),
             filter: <span class="bool-val">true</span>,
@@ -380,30 +294,30 @@
     <span class="doccomment">/// Get a pixel.
     </span><span class="kw">pub fn </span>get_pixel(<span class="kw-2">&amp;</span><span class="self">self</span>, x: u32, y: u32) -&gt; [u8; <span class="number">4</span>] {
         <span class="kw">let </span>i = (y * <span class="self">self</span>.width + x) <span class="kw">as </span>usize * <span class="number">4</span>;
-        <span class="kw">let </span>r = <span class="self">self</span>.pixels[i];
-        <span class="kw">let </span>g = <span class="self">self</span>.pixels[i + <span class="number">1</span>];
-        <span class="kw">let </span>b = <span class="self">self</span>.pixels[i + <span class="number">2</span>];
-        <span class="kw">let </span>a = <span class="self">self</span>.pixels[i + <span class="number">3</span>];
+        <span class="kw">let </span>r = <span class="self">self</span>.data[i];
+        <span class="kw">let </span>g = <span class="self">self</span>.data[i + <span class="number">1</span>];
+        <span class="kw">let </span>b = <span class="self">self</span>.data[i + <span class="number">2</span>];
+        <span class="kw">let </span>a = <span class="self">self</span>.data[i + <span class="number">3</span>];
         [r, g, b, a]
     }
 
     <span class="doccomment">/// Set a pixel.
     </span><span class="kw">pub fn </span>set_pixel(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32, y: u32, pixel: [u8; <span class="number">4</span>]) {
         <span class="kw">let </span>i = (y * <span class="self">self</span>.width + x) <span class="kw">as </span>usize * <span class="number">4</span>;
-        <span class="self">self</span>.pixels[i] = pixel[<span class="number">0</span>];
-        <span class="self">self</span>.pixels[i + <span class="number">1</span>] = pixel[<span class="number">1</span>];
-        <span class="self">self</span>.pixels[i + <span class="number">2</span>] = pixel[<span class="number">2</span>];
-        <span class="self">self</span>.pixels[i + <span class="number">3</span>] = pixel[<span class="number">3</span>];
+        <span class="self">self</span>.data[i] = pixel[<span class="number">0</span>];
+        <span class="self">self</span>.data[i + <span class="number">1</span>] = pixel[<span class="number">1</span>];
+        <span class="self">self</span>.data[i + <span class="number">2</span>] = pixel[<span class="number">2</span>];
+        <span class="self">self</span>.data[i + <span class="number">3</span>] = pixel[<span class="number">3</span>];
     }
 
     <span class="doccomment">/// Get the pixels.
-    </span><span class="kw">pub fn </span>pixels(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.pixels
+    </span><span class="kw">pub fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.data
     }
 
     <span class="doccomment">/// Get the pixels mutably.
-    </span><span class="kw">pub fn </span>pixels_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[u8] {
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>.pixels
+    </span><span class="kw">pub fn </span>data_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[u8] {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.data
     }
 
     <span class="doccomment">/// Get the filter mode.
@@ -447,13 +361,13 @@
     <span class="kw">type </span>Target = [u8];
 
     <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.pixels
+        <span class="kw-2">&amp;</span><span class="self">self</span>.data
     }
 }
 
 <span class="kw">impl </span>DerefMut <span class="kw">for </span>ImageData {
     <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>.pixels
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.data
     }
 }
 </code></pre></div></section></main></body></html>

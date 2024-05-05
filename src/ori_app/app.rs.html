@@ -696,11 +696,13 @@
 <a href="#694" id="694">694</a>
 <a href="#695" id="695">695</a>
 <a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">use </span>instant::Instant;
 <span class="kw">use </span>ori_core::{
-    canvas::{Canvas, Color, Scene},
+    canvas::{Canvas, Color},
     clipboard::{Clipboard, ClipboardContext},
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
@@ -720,8 +722,8 @@
 
 <span class="doccomment">/// Information needed to render a window.
 </span><span class="kw">pub struct </span>WindowRenderScene&lt;<span class="lifetime">'a</span>&gt; {
-    <span class="doccomment">/// The scene to render.
-    </span><span class="kw">pub </span>scene: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Scene,
+    <span class="doccomment">/// The canvas to render.
+    </span><span class="kw">pub </span>canvas: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Canvas,
     <span class="doccomment">/// The size of the window.
     </span><span class="kw">pub </span>logical_size: Size,
     <span class="doccomment">/// The clear color of the window.
@@ -733,7 +735,7 @@
     view: BoxedView&lt;T&gt;,
     cursor: Cursor,
     state: AnyState,
-    scene: Scene,
+    canvas: Canvas,
     view_state: ViewState,
     window: Window,
     snapshot: WindowSnapshot,
@@ -790,14 +792,16 @@
         <span class="self">self</span>.view_state.prepare();
         <span class="self">self</span>.view_state.mark_drawn();
 
-        <span class="self">self</span>.scene.clear();
+        <span class="self">self</span>.canvas.clear();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.scene, <span class="self">self</span>.window.size, <span class="self">self</span>.window.scale);
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(
+            base,
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state,
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>.window,
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>.canvas,
+        );
 
-        <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;mut </span>canvas);
-
-        <span class="self">self</span>.scene.sort();
+        <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data);
     }
 
     <span class="kw">fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) -&gt; Vec&lt;AppRequest&lt;T&gt;&gt; {
@@ -1041,7 +1045,7 @@
             view,
             cursor: Cursor::Default,
             state,
-            scene: Scene::new(),
+            canvas: Canvas::new(),
             view_state,
             window,
             snapshot,
@@ -1117,7 +1121,7 @@
             <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..window_state.window.pointers().len() {
                 <span class="kw">let </span>pointer = <span class="kw-2">&amp;</span>window_state.window.pointers()[i];
                 <span class="kw">let </span>position = pointer.position;
-                <span class="kw">let </span>hovered = window_state.scene.view_at(position);
+                <span class="kw">let </span>hovered = window_state.canvas.view_at(position);
 
                 <span class="kw">let </span>pointer = <span class="kw-2">&amp;mut </span>window_state.window.pointers_mut()[i];
                 changed |= pointer.hovering != hovered;
@@ -1386,7 +1390,7 @@
         };
 
         <span class="prelude-val">Some</span>(WindowRenderScene {
-            scene: <span class="kw-2">&amp;</span>window_state.scene,
+            canvas: <span class="kw-2">&amp;</span>window_state.canvas,
             logical_size: window_state.window.size,
             clear_color,
         })
