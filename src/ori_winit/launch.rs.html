@@ -843,7 +843,7 @@
                     <span class="kw">let </span>len = diff.rects().len();
                     diff.simplify();
 
-                    <span class="macro">tracing::debug!</span>(<span class="string">"Diff rects: {} -&gt; {}"</span>, len, diff.rects().len());
+                    <span class="macro">tracing::trace!</span>(<span class="string">"Diff rects: {} -&gt; {}"</span>, len, diff.rects().len());
 
                     <span class="kw">for </span>rect <span class="kw">in </span>diff.rects() {
                         <span class="kw">if </span>rect.size().min_element() &lt; <span class="number">1.0 </span>{
