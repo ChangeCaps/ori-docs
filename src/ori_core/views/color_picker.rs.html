@@ -496,19 +496,19 @@
     </span>}
 
     <span class="kw">fn </span>wheel_image(lightness: f32, alpha: f32) -&gt; Image {
-        <span class="kw">let </span><span class="kw-2">mut </span>pixels = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4 </span>* <span class="number">256 </span>* <span class="number">256</span>];
+        <span class="kw">let </span><span class="kw-2">mut </span>pixels = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4 </span>* <span class="number">128 </span>* <span class="number">128</span>];
 
-        <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..<span class="number">256 </span>{
-            <span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..<span class="number">256 </span>{
-                <span class="kw">let </span>angle = f32::atan2(y <span class="kw">as </span>f32 - <span class="number">128.0</span>, x <span class="kw">as </span>f32 - <span class="number">128.0</span>);
-                <span class="kw">let </span>radius = f32::hypot(y <span class="kw">as </span>f32 - <span class="number">128.0</span>, x <span class="kw">as </span>f32 - <span class="number">128.0</span>);
+        <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..<span class="number">128 </span>{
+            <span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..<span class="number">128 </span>{
+                <span class="kw">let </span>angle = f32::atan2(y <span class="kw">as </span>f32 - <span class="number">64.0</span>, x <span class="kw">as </span>f32 - <span class="number">64.0</span>);
+                <span class="kw">let </span>radius = f32::hypot(y <span class="kw">as </span>f32 - <span class="number">64.0</span>, x <span class="kw">as </span>f32 - <span class="number">64.0</span>);
 
                 <span class="kw">let </span>hue = angle.to_degrees();
-                <span class="kw">let </span>saturation = radius / <span class="number">128.0</span>;
+                <span class="kw">let </span>saturation = radius / <span class="number">64.0</span>;
 
                 <span class="kw">let </span>color = Color::okhsla(hue, saturation, lightness, alpha);
 
-                <span class="kw">let </span>i = (y * <span class="number">256 </span>+ x) * <span class="number">4</span>;
+                <span class="kw">let </span>i = (y * <span class="number">128 </span>+ x) * <span class="number">4</span>;
                 <span class="kw">let </span>[r, g, b, a] = color.to_rgba8();
 
                 pixels[i] = (r <span class="kw">as </span>u16 * a <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
@@ -518,7 +518,7 @@
             }
         }
 
-        Image::new(pixels, <span class="number">256</span>, <span class="number">256</span>)
+        Image::new(pixels, <span class="number">128</span>, <span class="number">128</span>)
     }
 
     <span class="kw">fn </span>input(
@@ -616,7 +616,7 @@
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, l, a) = <span class="self">self</span>.color.to_okhsla();
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, old_l, old_a) = old.color.to_okhsla();
 
-        <span class="kw">if </span>(l - old_l).abs() &lt; <span class="number">0.01 </span>|| (a - old_a).abs() &lt; <span class="number">0.01 </span>{
+        <span class="kw">if </span>(l - old_l).abs() &gt; <span class="number">1e-6 </span>|| (a - old_a).abs() &gt; <span class="number">1e-6 </span>{
             state.image = <span class="prelude-val">None</span>;
             cx.request_draw();
         }
