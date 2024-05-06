@@ -413,7 +413,7 @@
         new_cx.view_state = view_state;
 
         <span class="comment">// draw the content
-        </span>new_cx.transform(new_cx.view_state.transform, f);
+        </span>new_cx.layer(new_cx.view_state.transform, f);
 
         <span class="comment">// propagate the view state
         </span>cx.view_state.propagate(view_state);

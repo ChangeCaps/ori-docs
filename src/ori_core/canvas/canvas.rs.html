@@ -585,8 +585,57 @@
 <a href="#583" id="583">583</a>
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
-    collections::HashMap,
+    collections::{BTreeMap, HashMap},
     hash::{Hash, Hasher},
 };
 
@@ -875,6 +924,7 @@
 <span class="doccomment">/// A canvas that can be drawn on.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
 </span><span class="kw">pub struct </span>Canvas {
+    overlays: BTreeMap&lt;i32, Vec&lt;Primitive&gt;&gt;,
     primitives: Vec&lt;Primitive&gt;,
 }
 
@@ -888,17 +938,20 @@
     <span class="doccomment">/// Create a new canvas.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
+            overlays: BTreeMap::new(),
             primitives: Vec::new(),
         }
     }
 
     <span class="doccomment">/// Get the primitives of the canvas.
-    </span><span class="kw">pub fn </span>primitives(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Primitive] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.primitives
+    </span><span class="kw">pub fn </span>primitives(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Primitive&gt; + <span class="lifetime">'_ </span>{
+        <span class="kw">let </span>overlays = <span class="self">self</span>.overlays.values().flat_map(|p| p.iter());
+        <span class="self">self</span>.primitives.iter().chain(overlays)
     }
 
     <span class="doccomment">/// Clear the canvas.
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.overlays.clear();
         <span class="self">self</span>.primitives.clear();
     }
 
@@ -938,17 +991,42 @@
         <span class="self">self</span>.primitives.push(Primitive::Image { point, image });
     }
 
+    <span class="doccomment">/// Draw an overlay.
+    </span><span class="kw">pub fn </span>overlay&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: i32, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="kw">let </span><span class="kw-2">mut </span>overlay = Canvas::new();
+
+        <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>overlay);
+
+        <span class="kw">for </span>(i, primitives) <span class="kw">in </span>overlay.overlays {
+            <span class="self">self</span>.overlays
+                .entry(i + index)
+                .or_default()
+                .extend(primitives);
+        }
+
+        <span class="self">self</span>.overlays
+            .entry(index)
+            .or_default()
+            .extend(overlay.primitives);
+
+        result
+    }
+
     <span class="doccomment">/// Draw a layer.
-    </span><span class="kw">pub fn </span>layer(
+    </span><span class="kw">pub fn </span>layer&lt;T&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         transform: Affine,
         mask: <span class="prelude-ty">Option</span>&lt;Mask&gt;,
         view: <span class="prelude-ty">Option</span>&lt;ViewId&gt;,
-        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>),
-    ) {
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T,
+    ) -&gt; T {
         <span class="kw">let </span><span class="kw-2">mut </span>layer = Canvas::new();
 
-        f(<span class="kw-2">&amp;mut </span>layer);
+        <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>layer);
+
+        <span class="kw">for </span>(i, overlay) <span class="kw">in </span>layer.overlays {
+            <span class="self">self</span>.overlays.entry(i).or_default().extend(overlay);
+        }
 
         <span class="self">self</span>.primitives.push(Primitive::Layer {
             primitives: layer.primitives,
@@ -956,21 +1034,23 @@
             mask,
             view,
         });
+
+        result
     }
 
     <span class="doccomment">/// Draw a layer with a transformation.
-    </span><span class="kw">pub fn </span>transform(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>)) {
-        <span class="self">self</span>.layer(transform, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, f);
+    </span><span class="kw">pub fn </span>transform&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.layer(transform, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, f)
     }
 
     <span class="doccomment">/// Draw a layer with a mask.
-    </span><span class="kw">pub fn </span>mask(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: Mask, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>)) {
-        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">Some</span>(mask), <span class="prelude-val">None</span>, f);
+    </span><span class="kw">pub fn </span>mask&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: Mask, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">Some</span>(mask), <span class="prelude-val">None</span>, f)
     }
 
     <span class="doccomment">/// Draw a layer with a view.
-    </span><span class="kw">pub fn </span>view(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>)) {
-        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(view), f);
+    </span><span class="kw">pub fn </span>view&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(view), f)
     }
 
     <span class="doccomment">/// Get the view at a point.
@@ -1028,6 +1108,12 @@
             <span class="prelude-val">None
         </span>}
 
+        <span class="kw">for </span>primitives <span class="kw">in </span><span class="self">self</span>.overlays.values().rev() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(view) = recurse(primitives, <span class="prelude-val">None</span>, point) {
+                <span class="kw">return </span><span class="prelude-val">Some</span>(view);
+            }
+        }
+
         recurse(<span class="kw-2">&amp;</span><span class="self">self</span>.primitives, <span class="prelude-val">None</span>, point)
     }
 
@@ -1037,12 +1123,24 @@
         <span class="kw">let </span><span class="kw-2">mut </span>old_rects = HashMap::new();
 
         <span class="comment">// collect new rects
-        </span><span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.primitives {
+        </span><span class="kw">for </span>primitives <span class="kw">in </span><span class="self">self</span>.overlays.values() {
+            <span class="kw">for </span>primitive <span class="kw">in </span>primitives {
+                <span class="self">Self</span>::add_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span>rects);
+            }
+        }
+
+        <span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.primitives {
             <span class="self">Self</span>::add_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span>rects);
         }
 
         <span class="comment">// collect old rects
-        </span><span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span>old.primitives {
+        </span><span class="kw">for </span>primitives <span class="kw">in </span>old.overlays.values() {
+            <span class="kw">for </span>primitive <span class="kw">in </span>primitives {
+                <span class="self">Self</span>::add_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span>old_rects);
+            }
+        }
+
+        <span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span>old.primitives {
             <span class="self">Self</span>::add_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span>old_rects);
         }
 

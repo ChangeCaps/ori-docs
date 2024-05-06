@@ -749,6 +749,9 @@
 <a href="#747" id="747">747</a>
 <a href="#748" id="748">748</a>
 <a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Affine, Point, Rect, Size, Vector};
@@ -1236,9 +1239,11 @@
                 }
                 CurveSegment::Quad(c0, e) =&gt; {
                     crossings += <span class="self">Self</span>::quad_intersections(s, c0, e, p);
+                    s = e;
                 }
                 CurveSegment::Cubic(c0, c1, e) =&gt; {
                     crossings += <span class="self">Self</span>::cubic_intersections(s, c0, c1, e, p);
+                    s = e;
                 }
                 CurveSegment::Close =&gt; {}
             }
@@ -1253,7 +1258,7 @@
 
         <span class="kw">let </span>t = -b / a;
 
-        <span class="kw">let </span>is_on_curve = (<span class="number">0.0</span>..<span class="number">1.0</span>).contains(<span class="kw-2">&amp;</span>t);
+        <span class="kw">let </span>is_on_curve = (<span class="number">0.0</span>..=<span class="number">1.0</span>).contains(<span class="kw-2">&amp;</span>t);
         <span class="kw">let </span>is_right = <span class="self">Self</span>::lerps(s.x, e.x, t) &gt;= p.x;
 
         (is_on_curve &amp;&amp; is_right) <span class="kw">as </span>usize
@@ -1267,6 +1272,7 @@
         <span class="kw">let </span>is_valid = |t: f32| {
             <span class="kw">let </span>is_on_curve = (<span class="number">0.0</span>..<span class="number">1.0</span>).contains(<span class="kw-2">&amp;</span>t);
             <span class="kw">let </span>is_right = <span class="self">Self</span>::quadratic_bezier(s.x, c0.x, e.x, t) &gt;= p.x;
+
             is_on_curve &amp;&amp; is_right
         };
 
@@ -1282,7 +1288,7 @@
         <span class="kw">let </span>d = s.y - p.y;
 
         <span class="kw">let </span>is_valid = |t: f32| {
-            <span class="kw">let </span>is_on_curve = (<span class="number">0.0</span>..<span class="number">1.0</span>).contains(<span class="kw-2">&amp;</span>t);
+            <span class="kw">let </span>is_on_curve = (<span class="number">0.0</span>..=<span class="number">1.0</span>).contains(<span class="kw-2">&amp;</span>t);
             <span class="kw">let </span>is_right = <span class="self">Self</span>::cubic_bezier(s.x, c0.x, c1.x, e.x, t) &gt;= p.x;
             is_on_curve &amp;&amp; is_right
         };

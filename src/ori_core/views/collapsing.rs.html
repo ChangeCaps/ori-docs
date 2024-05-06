@@ -523,7 +523,7 @@
             * Affine::scale(Vector::all(<span class="self">self</span>.icon_size))
             * Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
-        cx.transform(transform, |cx| {
+        cx.layer(transform, |cx| {
             cx.fill_curve(icon(), FillRule::NonZero, <span class="self">self</span>.icon_color);
         });
 

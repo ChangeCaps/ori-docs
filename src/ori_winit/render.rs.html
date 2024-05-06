@@ -247,9 +247,9 @@
     render_primitives(pixmap, canvas.primitives(), transform, <span class="prelude-val">None</span>);
 }
 
-<span class="kw">fn </span>render_primitives(
+<span class="kw">fn </span>render_primitives&lt;<span class="lifetime">'a</span>&gt;(
     pixmap: <span class="kw-2">&amp;mut </span>PixmapMut&lt;<span class="lifetime">'_</span>&gt;,
-    primitives: <span class="kw-2">&amp;</span>[Primitive],
+    primitives: <span class="kw">impl </span>IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Primitive&gt;,
     transform: tiny_skia::Transform,
     mask: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>tiny_skia::Mask&gt;,
 ) {
