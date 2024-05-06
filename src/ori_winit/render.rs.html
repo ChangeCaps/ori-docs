@@ -202,6 +202,36 @@
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::{
         BlendMode, Canvas, Curve, CurveSegment, FillRule, LineCap, LineJoin, Paint, Primitive,
@@ -238,24 +268,38 @@
         Primitive::Rect { rect, paint } =&gt; {
             pixmap.fill_rect(map_rect(rect), <span class="kw-2">&amp;</span>map_paint(paint), transform, mask)
         }
-        Primitive::Fill { curve, fill, paint } =&gt; pixmap.fill_path(
-            <span class="kw-2">&amp;</span>map_curve(curve),
-            <span class="kw-2">&amp;</span>map_paint(paint),
-            map_fill_rule(fill),
-            transform,
-            mask,
-        ),
+        Primitive::Fill { curve, fill, paint } =&gt; {
+            <span class="kw">let </span>curve = <span class="kw">match </span>map_curve(curve) {
+                <span class="prelude-val">Some</span>(curve) =&gt; curve,
+                <span class="prelude-val">None </span>=&gt; <span class="kw">return</span>,
+            };
+
+            pixmap.fill_path(
+                <span class="kw-2">&amp;</span>curve,
+                <span class="kw-2">&amp;</span>map_paint(paint),
+                map_fill_rule(fill),
+                transform,
+                mask,
+            )
+        }
         Primitive::Stroke {
             curve,
             stroke,
             paint,
-        } =&gt; pixmap.stroke_path(
-            <span class="kw-2">&amp;</span>map_curve(curve),
-            <span class="kw-2">&amp;</span>map_paint(paint),
-            <span class="kw-2">&amp;</span>map_stroke(stroke),
-            transform,
-            mask,
-        ),
+        } =&gt; {
+            <span class="kw">let </span>curve = <span class="kw">match </span>map_curve(curve) {
+                <span class="prelude-val">Some</span>(curve) =&gt; curve,
+                <span class="prelude-val">None </span>=&gt; <span class="kw">return</span>,
+            };
+
+            pixmap.stroke_path(
+                <span class="kw-2">&amp;</span>curve,
+                <span class="kw-2">&amp;</span>map_paint(paint),
+                <span class="kw-2">&amp;</span>map_stroke(stroke),
+                transform,
+                mask,
+            )
+        }
         Primitive::Image { point, image } =&gt; {
             <span class="kw">if </span>!image.is_empty() {
                 <span class="kw">let </span>x = point.x.round() <span class="kw">as </span>i32;
@@ -274,7 +318,7 @@
             mask: layer_mask,
             ..
         } =&gt; {
-            <span class="kw">let </span>transform = transform.post_concat(map_transform(layer_transform));
+            <span class="kw">let </span>transform = transform.pre_concat(map_transform(layer_transform));
 
             <span class="kw">match </span>layer_mask {
                 <span class="prelude-val">Some</span>(layer_mask) =&gt; {
@@ -283,12 +327,12 @@
                         <span class="prelude-val">None </span>=&gt; tiny_skia::Mask::new(pixmap.width(), pixmap.height()).unwrap(),
                     };
 
-                    mask.fill_path(
-                        <span class="kw-2">&amp;</span>map_curve(<span class="kw-2">&amp;</span>layer_mask.curve),
-                        map_fill_rule(<span class="kw-2">&amp;</span>layer_mask.fill),
-                        <span class="bool-val">true</span>,
-                        transform,
-                    );
+                    <span class="kw">let </span>curve = <span class="kw">match </span>map_curve(<span class="kw-2">&amp;</span>layer_mask.curve) {
+                        <span class="prelude-val">Some</span>(curve) =&gt; curve,
+                        <span class="prelude-val">None </span>=&gt; <span class="kw">return</span>,
+                    };
+
+                    mask.fill_path(<span class="kw-2">&amp;</span>curve, map_fill_rule(<span class="kw-2">&amp;</span>layer_mask.fill), <span class="bool-val">true</span>, transform);
 
                     render_primitives(pixmap, primitives, transform, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>mask));
                 }
@@ -321,6 +365,22 @@
             .unwrap();
 
             tiny_skia::Shader::SolidColor(color)
+        }
+        Shader::Pattern(pattern) =&gt; {
+            <span class="kw">let </span>pixmap = tiny_skia::PixmapRef::from_bytes(
+                pattern.image.data(),
+                pattern.image.width(),
+                pattern.image.height(),
+            )
+            .unwrap();
+
+            tiny_skia::Pattern::new(
+                pixmap,
+                tiny_skia::SpreadMode::Pad,
+                tiny_skia::FilterQuality::Bilinear,
+                pattern.opacity,
+                map_transform(<span class="kw-2">&amp;</span>pattern.transform),
+            )
         }
     }
 }
@@ -363,7 +423,7 @@
     }
 }
 
-<span class="kw">fn </span>map_curve(curve: <span class="kw-2">&amp;</span>Curve) -&gt; tiny_skia::Path {
+<span class="kw">fn </span>map_curve(curve: <span class="kw-2">&amp;</span>Curve) -&gt; <span class="prelude-ty">Option</span>&lt;tiny_skia::Path&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>path = tiny_skia::PathBuilder::new();
 
     <span class="kw">for </span>segment <span class="kw">in </span>curve {
@@ -376,7 +436,7 @@
         }
     }
 
-    path.finish().unwrap()
+    path.finish()
 }
 
 <span class="kw">fn </span>map_stroke(stroke: <span class="kw-2">&amp;</span>Stroke) -&gt; tiny_skia::Stroke {

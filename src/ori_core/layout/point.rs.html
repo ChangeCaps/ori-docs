@@ -221,6 +221,16 @@
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
 <a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
@@ -302,6 +312,16 @@
     <span class="doccomment">/// Get the fractional component by element.
     </span><span class="kw">pub fn </span>fract(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(<span class="self">self</span>.x.fract(), <span class="self">self</span>.y.fract())
+    }
+
+    <span class="doccomment">/// Check if the point is finite.
+    </span><span class="kw">pub fn </span>is_finite(<span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.x.is_finite() &amp;&amp; <span class="self">self</span>.y.is_finite()
+    }
+
+    <span class="doccomment">/// Check if the point is infinite.
+    </span><span class="kw">pub fn </span>is_infinite(<span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.x.is_infinite() || <span class="self">self</span>.y.is_infinite()
     }
 
     <span class="doccomment">/// Compute the dot distance between two points.

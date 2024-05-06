@@ -187,6 +187,17 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -275,9 +286,7 @@
 
     <span class="doccomment">/// Draw a trigger rectangle.
     </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect) {
-        <span class="self">self</span>.canvas.view(<span class="self">self</span>.id(), |canvas| {
-            canvas.trigger(rect);
-        });
+        <span class="self">self</span>.canvas.trigger(rect);
     }
 
     <span class="doccomment">/// Fill a curve.
@@ -317,13 +326,21 @@
         rect: Rect,
         paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
         border_radius: <span class="kw">impl </span>Into&lt;BorderRadius&gt;,
-        _border_width: <span class="kw">impl </span>Into&lt;BorderWidth&gt;,
-        _border_paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
+        border_width: <span class="kw">impl </span>Into&lt;BorderWidth&gt;,
+        border_paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
     ) {
+        <span class="kw">let </span>radius = border_radius.into();
+        <span class="kw">let </span>width = border_width.into();
+
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
-        curve.push_rect_with_radius(rect, border_radius.into());
+        curve.push_rect_with_radius(rect, radius);
 
         <span class="self">self</span>.fill_curve(curve, FillRule::NonZero, paint);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
+        curve.push_rect_with_borders(rect, radius, width);
+
+        <span class="self">self</span>.fill_curve(curve, FillRule::NonZero, border_paint);
     }
 
     <span class="doccomment">/// Draw a layer.
@@ -367,6 +384,11 @@
     <span class="doccomment">/// Draw a layer with a translation.
     </span><span class="kw">pub fn </span>translate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, translation: Vector, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
         <span class="self">self</span>.transform(Affine::translate(translation), f);
+    }
+
+    <span class="doccomment">/// Draw a layer with a rotation.
+    </span><span class="kw">pub fn </span>rotate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, angle: f32, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
+        <span class="self">self</span>.transform(Affine::rotate(angle), f);
     }
 
     <span class="doccomment">/// Draw a layer with a mask.

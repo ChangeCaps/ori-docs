@@ -184,6 +184,8 @@
 <a href="#182" id="182">182</a>
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
@@ -348,24 +350,26 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, t: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span>bright = <span class="self">self</span>.border_color.lighten(<span class="number">0.2</span>);
+        cx.hoverable(|cx| {
+            <span class="kw">let </span>bright = <span class="self">self</span>.border_color.lighten(<span class="number">0.2</span>);
 
-        cx.quad(
-            cx.rect(),
-            <span class="self">self</span>.background,
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color.mix(bright, <span class="self">self</span>.transition.get(<span class="kw-2">*</span>t)),
-        );
+            cx.quad(
+                cx.rect(),
+                <span class="self">self</span>.background,
+                <span class="self">self</span>.border_radius,
+                <span class="self">self</span>.border_width,
+                <span class="self">self</span>.border_color.mix(bright, <span class="self">self</span>.transition.get(<span class="kw-2">*</span>t)),
+            );
 
-        <span class="kw">if </span><span class="self">self</span>.checked {
-            <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
-            curve.move_to(Point::new(<span class="number">0.2</span>, <span class="number">0.5</span>) * cx.size());
-            curve.line_to(Point::new(<span class="number">0.4</span>, <span class="number">0.7</span>) * cx.size());
-            curve.line_to(Point::new(<span class="number">0.8</span>, <span class="number">0.3</span>) * cx.size());
+            <span class="kw">if </span><span class="self">self</span>.checked {
+                <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
+                curve.move_to(Point::new(<span class="number">0.2</span>, <span class="number">0.5</span>) * cx.size());
+                curve.line_to(Point::new(<span class="number">0.4</span>, <span class="number">0.7</span>) * cx.size());
+                curve.line_to(Point::new(<span class="number">0.8</span>, <span class="number">0.3</span>) * cx.size());
 
-            cx.stroke(curve, <span class="self">self</span>.stroke, <span class="self">self</span>.color);
-        }
+                cx.stroke(curve, <span class="self">self</span>.stroke, <span class="self">self</span>.color);
+            }
+        });
     }
 }
 </code></pre></div></section></main></body></html>

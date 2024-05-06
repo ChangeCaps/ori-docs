@@ -193,6 +193,25 @@
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
 <a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Debug,
     hash::{Hash, Hasher},
@@ -284,6 +303,12 @@
         <span class="self">Self</span>::from(ImageData::load(path))
     }
 
+    <span class="doccomment">/// Premultiply the image alpha, returning a new image.
+    </span><span class="kw">pub fn </span>premultiplied(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.multiply_alpha();
+        <span class="self">self
+    </span>}
+
     <span class="doccomment">/// Get the [`ImageId`].
     </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ImageId {
         <span class="self">self</span>.id
@@ -296,7 +321,7 @@
     }
 
     <span class="doccomment">/// Multiply the image with a color.
-    </span><span class="kw">pub fn </span>multiply(<span class="kw-2">&amp;mut </span><span class="self">self</span>, color: Color) {
+    </span><span class="kw">pub fn </span>color(<span class="kw-2">&amp;mut </span><span class="self">self</span>, color: Color) {
         <span class="kw">let </span>[r, g, b, a] = color.to_rgba8();
 
         <span class="self">self</span>.modify(|data| {
@@ -305,6 +330,19 @@
                 pixel[<span class="number">1</span>] = (pixel[<span class="number">1</span>] <span class="kw">as </span>u16 * g <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
                 pixel[<span class="number">2</span>] = (pixel[<span class="number">2</span>] <span class="kw">as </span>u16 * b <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
                 pixel[<span class="number">3</span>] = (pixel[<span class="number">3</span>] <span class="kw">as </span>u16 * a <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
+            }
+        });
+    }
+
+    <span class="doccomment">/// Premultiply the image alpha.
+    </span><span class="kw">pub fn </span>multiply_alpha(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.modify(|data| {
+            <span class="kw">for </span>pixel <span class="kw">in </span>data.chunks_exact_mut(<span class="number">4</span>) {
+                <span class="kw">let </span>alpha = pixel[<span class="number">3</span>] <span class="kw">as </span>u16;
+
+                pixel[<span class="number">0</span>] = (pixel[<span class="number">0</span>] <span class="kw">as </span>u16 * alpha / <span class="number">255</span>) <span class="kw">as </span>u8;
+                pixel[<span class="number">1</span>] = (pixel[<span class="number">1</span>] <span class="kw">as </span>u16 * alpha / <span class="number">255</span>) <span class="kw">as </span>u8;
+                pixel[<span class="number">2</span>] = (pixel[<span class="number">2</span>] <span class="kw">as </span>u16 * alpha / <span class="number">255</span>) <span class="kw">as </span>u8;
             }
         });
     }

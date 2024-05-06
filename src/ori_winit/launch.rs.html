@@ -528,6 +528,11 @@
 <a href="#526" id="526">526</a>
 <a href="#527" id="527">527</a>
 <a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, num::NonZeroU32, rc::Rc};
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -777,7 +782,12 @@
         window.set_maximized(ori.maximized);
 
         <span class="kw">let </span>context = softbuffer::Context::new(window.clone()).unwrap();
-        <span class="kw">let </span>surface = softbuffer::Surface::new(<span class="kw-2">&amp;</span>context, window.clone()).unwrap();
+        <span class="kw">let </span><span class="kw-2">mut </span>surface = softbuffer::Surface::new(<span class="kw-2">&amp;</span>context, window.clone()).unwrap();
+
+        surface.resize(
+            NonZeroU32::new(ori.width()).unwrap(),
+            NonZeroU32::new(ori.height()).unwrap(),
+        )<span class="question-mark">?</span>;
 
         <span class="self">self</span>.windows.insert(
             window_id,

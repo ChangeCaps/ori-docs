@@ -365,62 +365,7 @@
 <a href="#363" id="363">363</a>
 <a href="#364" id="364">364</a>
 <a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-<a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a>
-<a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
-<a href="#411" id="411">411</a>
-<a href="#412" id="412">412</a>
-<a href="#413" id="413">413</a>
-<a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a>
-<a href="#416" id="416">416</a>
-<a href="#417" id="417">417</a>
-<a href="#418" id="418">418</a>
-<a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{FRAC_PI_2, PI};
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{FRAC_PI_2, PI, TAU};
 
 <span class="kw">use </span>ori_macro::Build;
 
@@ -428,7 +373,8 @@
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
-    layout::{Point, Size, Space},
+    layout::{Affine, Point, Rect, Size, Space, Vector},
+    prelude::{Curve, FillRule, Image, Pattern},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     view::View,
@@ -454,12 +400,6 @@
     <span class="doccomment">/// The width of the sliders.
     </span><span class="kw">pub </span>slider_width: f32,
 
-    <span class="doccomment">/// The padding of the sliders.
-    </span><span class="kw">pub </span>slider_padding: f32,
-
-    <span class="doccomment">/// The color of the slider tracks.
-    </span><span class="kw">pub </span>track_color: Color,
-
     <span class="doccomment">/// The color of the lightness slider.
     </span><span class="kw">pub </span>lightness_color: Color,
 
@@ -475,9 +415,7 @@
             size: <span class="number">140.0</span>,
             border_width: <span class="number">2.0</span>,
             border_color: palette.surface_higher,
-            slider_width: <span class="number">8.0</span>,
-            slider_padding: <span class="number">8.0</span>,
-            track_color: palette.surface_higher,
+            slider_width: <span class="number">12.0</span>,
             lightness_color: palette.primary,
             alpha_color: palette.secondary,
         }
@@ -512,14 +450,6 @@
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>slider_width: f32,
 
-    <span class="doccomment">/// The padding of the sliders.
-    </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>slider_padding: f32,
-
-    <span class="doccomment">/// The color of the slider tracks.
-    </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>track_color: Color,
-
     <span class="doccomment">/// The color of the lightness slider.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>lightness_color: Color,
@@ -536,7 +466,7 @@
 }
 
 <span class="kw">impl</span>&lt;T&gt; ColorPicker&lt;T&gt; {
-    <span class="kw">const </span>SLIDER_HALF: f32 = FRAC_PI_2 * <span class="number">0.95</span>;
+    <span class="kw">const </span>SLIDER_HALF: f32 = FRAC_PI_2 * <span class="number">0.9</span>;
     <span class="kw">const </span>SLIDER_ARC: f32 = <span class="self">Self</span>::SLIDER_HALF * <span class="number">2.0</span>;
     <span class="kw">const </span>SLIDER_SHIM: f32 = FRAC_PI_2 - <span class="self">Self</span>::SLIDER_HALF;
 
@@ -554,8 +484,6 @@
             border_width: style.border_width,
             border_color: style.border_color,
             slider_width: style.slider_width,
-            slider_padding: style.slider_padding,
-            track_color: style.track_color,
             lightness_color: style.lightness_color,
             alpha_color: style.alpha_color,
         }
@@ -567,58 +495,33 @@
         <span class="self">self
     </span>}
 
-    <span class="comment">/*
-    fn wheel_mesh(lightness: f32, alpha: f32, radial: u32, angular: u32) -&gt; Mesh {
-        let mut mesh = Mesh::new();
+    <span class="kw">fn </span>wheel_image(lightness: f32, alpha: f32) -&gt; Image {
+        <span class="kw">let </span><span class="kw-2">mut </span>pixels = <span class="macro">vec!</span>[<span class="number">0u8</span>; <span class="number">4 </span>* <span class="number">256 </span>* <span class="number">256</span>];
 
-        mesh.vertices.push(Vertex {
-            position: Point::ZERO,
-            tex_coords: Point::ZERO,
-            color: Color::okhsla(0.0, 0.0, lightness, alpha),
-        });
+        <span class="kw">for </span>y <span class="kw">in </span><span class="number">0</span>..<span class="number">256 </span>{
+            <span class="kw">for </span>x <span class="kw">in </span><span class="number">0</span>..<span class="number">256 </span>{
+                <span class="kw">let </span>angle = f32::atan2(y <span class="kw">as </span>f32 - <span class="number">128.0</span>, x <span class="kw">as </span>f32 - <span class="number">128.0</span>);
+                <span class="kw">let </span>radius = f32::hypot(y <span class="kw">as </span>f32 - <span class="number">128.0</span>, x <span class="kw">as </span>f32 - <span class="number">128.0</span>);
 
-        for i in 1..=radial {
-            let r = i as f32 / radial as f32;
+                <span class="kw">let </span>hue = angle.to_degrees();
+                <span class="kw">let </span>saturation = radius / <span class="number">128.0</span>;
 
-            for j in 0..angular {
-                let a = j as f32 / angular as f32 * TAU;
+                <span class="kw">let </span>color = Color::okhsla(hue, saturation, lightness, alpha);
 
-                mesh.vertices.push(Vertex {
-                    position: Point::new(r * a.cos(), r * a.sin()),
-                    tex_coords: Point::ZERO,
-                    color: Color::okhsla(a.to_degrees(), r, lightness, alpha),
-                });
+                <span class="kw">let </span>i = (y * <span class="number">256 </span>+ x) * <span class="number">4</span>;
+                <span class="kw">let </span>[r, g, b, a] = color.to_rgba8();
 
-                let di0 = j;
-                let di1 = (j + 1) % angular;
-
-                let i2 = (i - 1) * angular + di0;
-                let i3 = (i - 1) * angular + di1;
-
-                if i == 1 {
-                    mesh.indices.push(0);
-                    mesh.indices.push(i3);
-                    mesh.indices.push(i2);
-                } else {
-                    let i0 = (i - 2) * angular + di0;
-                    let i1 = (i - 2) * angular + di1;
-
-                    mesh.indices.push(i0);
-                    mesh.indices.push(i1);
-                    mesh.indices.push(i2);
-
-                    mesh.indices.push(i1);
-                    mesh.indices.push(i3);
-                    mesh.indices.push(i2);
-                }
+                pixels[i] = (r <span class="kw">as </span>u16 * a <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
+                pixels[i + <span class="number">1</span>] = (g <span class="kw">as </span>u16 * a <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
+                pixels[i + <span class="number">2</span>] = (b <span class="kw">as </span>u16 * a <span class="kw">as </span>u16 / <span class="number">255</span>) <span class="kw">as </span>u8;
+                pixels[i + <span class="number">3</span>] = a;
             }
         }
 
-        mesh
+        Image::new(pixels, <span class="number">256</span>, <span class="number">256</span>)
     }
-    */
 
-    </span><span class="kw">fn </span>input(
+    <span class="kw">fn </span>input(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         state: <span class="kw-2">&amp;mut </span>ColorPickerState,
         cx: <span class="kw-2">&amp;mut </span>EventCx,
@@ -628,9 +531,7 @@
         <span class="kw">let </span>local = cx.local(position) - cx.rect().center();
         <span class="kw">let </span>angle = local.angle();
         <span class="kw">let </span>radius = cx.size().min_element() / <span class="number">2.0</span>;
-        <span class="kw">let </span>wheel_radius = radius - <span class="self">self</span>.slider_width - <span class="self">self</span>.slider_padding;
-        <span class="kw">let </span>slider_start = radius - <span class="self">self</span>.slider_width;
-        <span class="kw">let </span>slider_radius = radius - <span class="self">self</span>.slider_width / <span class="number">2.0</span>;
+        <span class="kw">let </span>wheel_radius = radius - <span class="self">self</span>.slider_width;
 
         <span class="kw">let </span>(h, s, l, a) = <span class="self">self</span>.color.to_okhsla();
 
@@ -650,20 +551,12 @@
             <span class="kw">return</span>;
         }
 
-        <span class="kw">let </span>is_slider = (slider_start..=radius).contains(<span class="kw-2">&amp;</span>local.length());
-        <span class="kw">let </span>slider_height = f32::clamp(local.y / slider_radius, -<span class="number">1.0</span>, <span class="number">1.0</span>);
-        <span class="kw">let </span>slider_angle = <span class="kw">if </span>slider_height == -<span class="number">1.0 </span>{
-            PI
-        } <span class="kw">else if </span>slider_height == <span class="number">1.0 </span>{
-            <span class="number">0.0
-        </span>} <span class="kw">else </span>{
-            slider_height.acos()
-        };
+        <span class="kw">let </span>slider_angle = (angle + TAU + FRAC_PI_2) % TAU;
 
-        <span class="kw">if </span>state.can_edit(ColorPickerPart::Alpha, local.x &gt; <span class="number">0.0 </span>&amp;&amp; is_slider) {
+        <span class="kw">if </span>state.can_edit(ColorPickerPart::Alpha, local.x &gt; <span class="number">2.0</span>) &amp;&amp; local.x &gt; <span class="number">2.0 </span>{
             state.edit = <span class="prelude-val">Some</span>(ColorPickerPart::Alpha);
 
-            <span class="kw">let </span>alpha = (slider_angle - <span class="self">Self</span>::SLIDER_SHIM) / <span class="self">Self</span>::SLIDER_ARC;
+            <span class="kw">let </span>alpha = (PI - <span class="self">Self</span>::SLIDER_SHIM - slider_angle) / <span class="self">Self</span>::SLIDER_ARC;
             <span class="kw">let </span>alpha = alpha.clamp(<span class="number">0.0</span>, <span class="number">1.0</span>);
 
             <span class="kw">let </span>color = Color::okhsla(h, s, l, alpha);
@@ -672,10 +565,10 @@
                 on_input(cx, data, color);
                 cx.request_rebuild();
             }
-        } <span class="kw">else if </span>state.can_edit(ColorPickerPart::Lightness, is_slider) {
+        } <span class="kw">else if </span>state.can_edit(ColorPickerPart::Lightness, local.x &lt; -<span class="number">2.0</span>) &amp;&amp; local.x &lt; -<span class="number">2.0 </span>{
             state.edit = <span class="prelude-val">Some</span>(ColorPickerPart::Lightness);
 
-            <span class="kw">let </span>lightness = (slider_angle - <span class="self">Self</span>::SLIDER_SHIM) / <span class="self">Self</span>::SLIDER_ARC;
+            <span class="kw">let </span>lightness = (slider_angle - PI - <span class="self">Self</span>::SLIDER_SHIM) / <span class="self">Self</span>::SLIDER_ARC;
             <span class="kw">let </span>lightness = lightness.clamp(<span class="number">0.001</span>, <span class="number">0.999</span>);
 
             <span class="kw">let </span>color = Color::okhsla(h, s, lightness, a);
@@ -697,6 +590,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>ColorPickerState {
+    image: <span class="prelude-ty">Option</span>&lt;Image&gt;,
     edit: <span class="prelude-ty">Option</span>&lt;ColorPickerPart&gt;,
 }
 
@@ -710,18 +604,22 @@
     <span class="kw">type </span>State = ColorPickerState;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, _l, _a) = <span class="self">self</span>.color.to_okhsla();
-
-        ColorPickerState { edit: <span class="prelude-val">None </span>}
+        ColorPickerState {
+            image: <span class="prelude-val">None</span>,
+            edit: <span class="prelude-val">None</span>,
+        }
     }
 
-    <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+    <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
 
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, l, a) = <span class="self">self</span>.color.to_okhsla();
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, old_l, old_a) = old.color.to_okhsla();
 
-        <span class="kw">if </span>(l - old_l).abs() &lt; <span class="number">0.01 </span>|| (a - old_a).abs() &lt; <span class="number">0.01 </span>{}
+        <span class="kw">if </span>(l - old_l).abs() &lt; <span class="number">0.01 </span>|| (a - old_a).abs() &lt; <span class="number">0.01 </span>{
+            state.image = <span class="prelude-val">None</span>;
+            cx.request_draw();
+        }
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
@@ -751,93 +649,85 @@
         space.fit(Size::all(<span class="self">self</span>.size))
     }
 
-    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, _cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="comment">/*
-        let radius = cx.size().min_element() / 2.0;
-        let wheel_radius = radius - self.slider_width - self.slider_padding;
+    <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="kw">let </span>radius = cx.size().min_element() / <span class="number">2.0</span>;
+        <span class="kw">let </span>wheel_radius = radius - <span class="self">self</span>.slider_width;
 
-        canvas.translate(cx.rect().center().to_vector());
+        <span class="kw">let </span>(h, s, l, a) = <span class="self">self</span>.color.to_okhsla();
 
-        canvas.draw_quad(
-            Rect::center_size(
-                Point::ZERO,
-                Size::all(wheel_radius * 2.0 + self.border_width * 2.0),
-            ),
-            Color::TRANSPARENT,
-            wheel_radius + self.border_width,
-            self.border_width,
-            self.border_color,
-        );
+        <span class="kw">let </span>image = state.image.get_or_insert_with(|| <span class="self">Self</span>::wheel_image(l, a));
 
-        {
-            let mut canvas = canvas.layer();
-            canvas.scale(Vector::all(wheel_radius));
-            canvas.draw(state.mesh.clone());
-        }
+        cx.translate(cx.rect().center() - cx.rect().top_left(), |cx| {
+            cx.hoverable(|cx| {
+                <span class="comment">// draw the sliders
+                </span><span class="kw">let </span>lightness_angle = -<span class="self">Self</span>::SLIDER_HALF + l * <span class="self">Self</span>::SLIDER_ARC;
+                <span class="kw">let </span>alpha_angle = <span class="self">Self</span>::SLIDER_HALF - a * <span class="self">Self</span>::SLIDER_ARC;
 
-        let mut canvas = canvas.layer();
-        let (h, s, l, a) = self.color.to_okhsla();
+                cx.rotate(lightness_angle, |cx| {
+                    cx.quad(
+                        Rect::center_size(
+                            Point::new(-wheel_radius, <span class="number">0.0</span>),
+                            Size::new(<span class="self">self</span>.slider_width * <span class="number">2.0</span>, <span class="self">self</span>.slider_width * <span class="number">1.5</span>),
+                        ),
+                        <span class="self">self</span>.lightness_color,
+                        <span class="self">self</span>.slider_width / <span class="number">2.0</span>,
+                        <span class="self">self</span>.border_width / <span class="number">2.0</span>,
+                        <span class="self">self</span>.border_color,
+                    );
+                });
 
-        let offset = Vector::from_angle(h.to_radians()) * s * wheel_radius;
+                cx.rotate(alpha_angle, |cx| {
+                    cx.quad(
+                        Rect::center_size(
+                            Point::new(wheel_radius, <span class="number">0.0</span>),
+                            Size::new(<span class="self">self</span>.slider_width * <span class="number">2.0</span>, <span class="self">self</span>.slider_width * <span class="number">1.5</span>),
+                        ),
+                        <span class="self">self</span>.alpha_color,
+                        <span class="self">self</span>.slider_width / <span class="number">2.0</span>,
+                        <span class="self">self</span>.border_width / <span class="number">2.0</span>,
+                        <span class="self">self</span>.border_color,
+                    );
+                });
 
-        canvas.draw_quad(
-            Rect::center_size(Point::ZERO + offset, Size::all(8.0)),
-            Color::TRANSPARENT,
-            4.0,
-            1.0,
-            Color::WHITE,
-        );
+                <span class="comment">// draw the wheel
+                </span>cx.fill_curve(
+                    Curve::circle(Point::ZERO, wheel_radius + <span class="self">self</span>.border_width),
+                    FillRule::NonZero,
+                    <span class="self">self</span>.border_color,
+                );
 
-        canvas.draw_quad(
-            Rect::center_size(Point::ZERO + offset, Size::all(12.0)),
-            Color::TRANSPARENT,
-            6.0,
-            2.0,
-            Color::BLACK,
-        );
+                <span class="kw">let </span>pattern = Pattern {
+                    image: image.clone(),
+                    transform: Affine::translate(cx.rect().top_left() - cx.rect().center())
+                        * Affine::scale(Vector::from(cx.size() / image.size())),
+                    opacity: <span class="number">1.0</span>,
+                };
 
-        // draw the lightness slider from bottom to top along the left edge
+                cx.fill_curve(
+                    Curve::circle(Point::ZERO, wheel_radius),
+                    FillRule::NonZero,
+                    pattern,
+                );
 
-        let slider_radius = radius - self.slider_width / 2.0;
+                <span class="kw">let </span>offset = Vector::from_angle(h.to_radians()) * s * wheel_radius;
 
-        let track = Curve::arc_center_angle(
-            Point::ZERO,
-            slider_radius,
-            PI - Self::SLIDER_HALF,
-            PI + Self::SLIDER_HALF,
-        );
+                cx.quad(
+                    Rect::center_size(Point::ZERO + offset, Size::all(<span class="number">8.0</span>)),
+                    Color::TRANSPARENT,
+                    <span class="number">4.0</span>,
+                    <span class="number">1.0</span>,
+                    Color::WHITE,
+                );
 
-        canvas.draw(track.stroke(self.slider_width, self.track_color));
-
-        let slider = Curve::arc_center_angle(
-            Point::ZERO,
-            slider_radius,
-            PI - Self::SLIDER_HALF,
-            PI - Self::SLIDER_HALF + Self::SLIDER_ARC * l,
-        );
-
-        canvas.draw(slider.stroke(self.slider_width, self.lightness_color));
-
-        // draw the alpha slider from left to right along the bottom edge
-
-        let track = Curve::arc_center_angle(
-            Point::ZERO,
-            slider_radius,
-            -Self::SLIDER_HALF,
-            Self::SLIDER_HALF,
-        );
-
-        canvas.draw(track.stroke(self.slider_width, self.track_color));
-
-        let slider = Curve::arc_center_angle(
-            Point::ZERO,
-            slider_radius,
-            Self::SLIDER_HALF - Self::SLIDER_ARC * a,
-            Self::SLIDER_HALF,
-        );
-
-        canvas.draw(slider.stroke(self.slider_width, self.alpha_color));
-        */
-    </span>}
+                cx.quad(
+                    Rect::center_size(Point::ZERO + offset, Size::all(<span class="number">10.0</span>)),
+                    Color::TRANSPARENT,
+                    <span class="number">5.0</span>,
+                    <span class="number">1.0</span>,
+                    Color::BLACK,
+                );
+            });
+        });
+    }
 }
 </code></pre></div></section></main></body></html>

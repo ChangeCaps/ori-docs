@@ -426,7 +426,7 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>image = cached.image.clone();
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(color) = glyph.color_opt {
-                    image.multiply(Color::rgba8(color.r(), color.g(), color.b(), color.a()));
+                    image.color(Color::rgba8(color.r(), color.g(), color.b(), color.a()));
                 }
 
                 canvas.image(point + cached.offset + offset, image);
