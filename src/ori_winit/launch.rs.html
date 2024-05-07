@@ -519,20 +519,6 @@
 <a href="#517" id="517">517</a>
 <a href="#518" id="518">518</a>
 <a href="#519" id="519">519</a>
-<a href="#520" id="520">520</a>
-<a href="#521" id="521">521</a>
-<a href="#522" id="522">522</a>
-<a href="#523" id="523">523</a>
-<a href="#524" id="524">524</a>
-<a href="#525" id="525">525</a>
-<a href="#526" id="526">526</a>
-<a href="#527" id="527">527</a>
-<a href="#528" id="528">528</a>
-<a href="#529" id="529">529</a>
-<a href="#530" id="530">530</a>
-<a href="#531" id="531">531</a>
-<a href="#532" id="532">532</a>
-<a href="#533" id="533">533</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, num::NonZeroU32, rc::Rc};
 
 <span class="kw">use </span>ori_app::{App, AppBuilder, AppRequest, UiBuilder};
@@ -544,11 +530,11 @@
     window::{Window, WindowUpdate},
 };
 <span class="kw">use </span>winit::{
+    application::ApplicationHandler,
     dpi::LogicalSize,
-    event::{Event, KeyEvent, MouseScrollDelta, TouchPhase, WindowEvent},
-    event_loop::{EventLoop, EventLoopWindowTarget},
+    event::{KeyEvent, MouseScrollDelta, TouchPhase, WindowEvent},
+    event_loop::{ActiveEventLoop, EventLoop},
     keyboard::{ModifiersState, PhysicalKey},
-    window::WindowBuilder,
 };
 
 <span class="kw">use crate</span>::{
@@ -577,37 +563,8 @@
     <span class="kw">let </span><span class="kw-2">mut </span>app = app.build(waker);
     app.set_clipboard(WinitClipboard::new());
 
-    <span class="kw">let </span><span class="kw-2">mut </span>state = WinitState::new(data, app);
-
-    event_loop.run(<span class="kw">move </span>|event, target| {
-        <span class="kw">match </span>event {
-            <span class="comment">// we need to recreate the surfaces when the event loop is resumed
-            //
-            // this is necessary for android
-            </span>Event::Resumed =&gt; {
-                state.resume();
-            }
-            Event::AboutToWait =&gt; {
-                <span class="comment">// after all events for a frame have been processed, we need to
-                // run the idle function
-                </span>state.idle();
-            }
-
-            <span class="comment">// this event is sent by [`WinitWaker`] telling us that there are
-            // commands that need to be processed
-            </span>Event::UserEvent(<span class="kw">_</span>) =&gt; {
-                state.app.handle_commands(<span class="kw-2">&amp;mut </span>state.data);
-            }
-            Event::WindowEvent { window_id, event } =&gt; {
-                state.window_event(window_id, event);
-            }
-            <span class="kw">_ </span>=&gt; {}
-        }
-
-        state.handle_requests(target);
-    })<span class="question-mark">?</span>;
-
-    <span class="prelude-val">Ok</span>(())
+    <span class="kw">let </span><span class="kw-2">mut </span>winit_app = WinitApp::new(data, app);
+    <span class="prelude-val">Ok</span>(event_loop.run_app(<span class="kw-2">&amp;mut </span>winit_app)<span class="question-mark">?</span>)
 }
 
 <span class="kw">type </span>RcWindow = Rc&lt;winit::window::Window&gt;;
@@ -622,7 +579,7 @@
     clear_color: Color,
 }
 
-<span class="kw">struct </span>WinitState&lt;T&gt; {
+<span class="kw">struct </span>WinitApp&lt;T&gt; {
     init: bool,
     app: App&lt;T&gt;,
     data: T,
@@ -630,7 +587,139 @@
     windows: HashMap&lt;ori_core::window::WindowId, WindowState&gt;,
 }
 
-<span class="kw">impl</span>&lt;T&gt; WinitState&lt;T&gt; {
+<span class="kw">impl</span>&lt;T&gt; ApplicationHandler&lt;()&gt; <span class="kw">for </span>WinitApp&lt;T&gt; {
+    <span class="kw">fn </span>resumed(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event_loop: <span class="kw-2">&amp;</span>ActiveEventLoop) {
+        <span class="kw">if </span><span class="self">self</span>.init {
+            <span class="kw">return</span>;
+        }
+
+        <span class="self">self</span>.init = <span class="bool-val">true</span>;
+        <span class="self">self</span>.app.init(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
+
+        <span class="self">self</span>.handle_requests(event_loop);
+    }
+
+    <span class="kw">fn </span>window_event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        event_loop: <span class="kw-2">&amp;</span>ActiveEventLoop,
+        winit_id: winit::window::WindowId,
+        event: WindowEvent,
+    ) {
+        <span class="comment">// if the window id is not in the map, we ignore the event
+        </span><span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>id) = <span class="self">self</span>.window_ids.get(<span class="kw-2">&amp;</span>winit_id) <span class="kw">else </span>{
+            <span class="kw">return</span>;
+        };
+
+        <span class="kw">match </span>event {
+            WindowEvent::RedrawRequested =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.render(id) {
+                    <span class="macro">tracing::error!</span>(<span class="string">"Failed to render: {}"</span>, err);
+                }
+            }
+            WindowEvent::CloseRequested =&gt; {
+                <span class="self">self</span>.app.close_requested(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id);
+            }
+            WindowEvent::Resized(inner_size) =&gt; {
+                (<span class="self">self</span>.app).window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, inner_size.width, inner_size.height);
+            }
+            WindowEvent::ScaleFactorChanged { scale_factor, .. } =&gt; {
+                (<span class="self">self</span>.app).window_scaled(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, scale_factor <span class="kw">as </span>f32);
+            }
+            WindowEvent::CursorMoved {
+                device_id,
+                position,
+                ..
+            } =&gt; {
+                <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor(id);
+                <span class="kw">let </span>position = Point::new(position.x <span class="kw">as </span>f32, position.y <span class="kw">as </span>f32) / scale_factor;
+                <span class="self">self</span>.app.pointer_moved(
+                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
+                    id,
+                    PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
+                    position,
+                );
+            }
+            WindowEvent::CursorLeft { device_id } =&gt; {
+                (<span class="self">self</span>.app).pointer_left(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, PointerId::from_hash(<span class="kw-2">&amp;</span>device_id));
+            }
+            WindowEvent::MouseInput {
+                device_id,
+                state,
+                button,
+                ..
+            } =&gt; {
+                <span class="self">self</span>.app.pointer_button(
+                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
+                    id,
+                    PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
+                    convert_mouse_button(button),
+                    is_pressed(state),
+                );
+            }
+            WindowEvent::MouseWheel {
+                delta: MouseScrollDelta::LineDelta(x, y),
+                device_id,
+                ..
+            } =&gt; <span class="self">self</span>.app.pointer_scrolled(
+                <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
+                id,
+                PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
+                Vector::new(x, y),
+            ),
+            <span class="comment">// since we're using a pointer model we need to handle touch
+            // by emulating pointer events
+            </span>WindowEvent::Touch(event) =&gt; <span class="self">self</span>.touch_event(id, event),
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        physical_key,
+                        text,
+                        state,
+                        ..
+                    },
+                ..
+            } =&gt; {
+                <span class="kw">let </span>code = <span class="kw">match </span>physical_key {
+                    PhysicalKey::Code(code) =&gt; convert_key(code),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+                };
+
+                <span class="self">self</span>.app.keyboard_key(
+                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
+                    id,
+                    code,
+                    text.map(Into::into),
+                    is_pressed(state),
+                );
+            }
+            WindowEvent::ModifiersChanged(modifiers) =&gt; {
+                <span class="self">self</span>.app.modifiers_changed(Modifiers {
+                    shift: modifiers.state().contains(ModifiersState::SHIFT),
+                    ctrl: modifiers.state().contains(ModifiersState::CONTROL),
+                    alt: modifiers.state().contains(ModifiersState::ALT),
+                    meta: modifiers.state().contains(ModifiersState::SUPER),
+                });
+            }
+            <span class="kw">_ </span>=&gt; {}
+        }
+
+        <span class="self">self</span>.handle_requests(event_loop);
+    }
+
+    <span class="kw">fn </span>user_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event_loop: <span class="kw-2">&amp;</span>ActiveEventLoop, _event: ()) {
+        <span class="self">self</span>.app.handle_commands(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
+
+        <span class="self">self</span>.handle_requests(event_loop);
+    }
+
+    <span class="kw">fn </span>about_to_wait(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event_loop: <span class="kw-2">&amp;</span>ActiveEventLoop) {
+        <span class="self">self</span>.app.idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
+
+        <span class="self">self</span>.handle_requests(event_loop);
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; WinitApp&lt;T&gt; {
     <span class="kw">fn </span>new(data: T, app: App&lt;T&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             init: <span class="bool-val">false</span>,
@@ -641,16 +730,7 @@
         }
     }
 
-    <span class="kw">fn </span>resume(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">if </span><span class="self">self</span>.init {
-            <span class="kw">return</span>;
-        }
-
-        <span class="self">self</span>.init = <span class="bool-val">true</span>;
-        <span class="self">self</span>.app.init(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
-    }
-
-    <span class="kw">fn </span>handle_requests(<span class="kw-2">&amp;mut </span><span class="self">self</span>, target: <span class="kw-2">&amp;</span>EventLoopWindowTarget&lt;()&gt;) {
+    <span class="kw">fn </span>handle_requests(<span class="kw-2">&amp;mut </span><span class="self">self</span>, target: <span class="kw-2">&amp;</span>ActiveEventLoop) {
         <span class="kw">for </span>request <span class="kw">in </span><span class="self">self</span>.app.take_requests() {
             <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.handle_request(target, request) {
                 <span class="macro">tracing::error!</span>(<span class="string">"Failed to handle request: {}"</span>, err);
@@ -660,7 +740,7 @@
 
     <span class="kw">fn </span>handle_request(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        target: <span class="kw-2">&amp;</span>EventLoopWindowTarget&lt;()&gt;,
+        target: <span class="kw-2">&amp;</span>ActiveEventLoop,
         request: AppRequest&lt;T&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">match </span>request {
@@ -726,7 +806,7 @@
                             state.window.set_transparent(transparent);
                         }
                         WindowUpdate::Cursor(cursor) =&gt; {
-                            state.window.set_cursor_icon(convert_cursor_icon(cursor));
+                            state.window.set_cursor(convert_cursor_icon(cursor));
                         }
                     }
                 }
@@ -737,31 +817,23 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn </span>idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.app.idle(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data);
-    }
-
     <span class="kw">fn </span>create_window(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        target: <span class="kw-2">&amp;</span>EventLoopWindowTarget&lt;()&gt;,
+        target: <span class="kw-2">&amp;</span>ActiveEventLoop,
         ori: Window,
         builder: UiBuilder&lt;T&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>window_id = ori.id();
-
-        <span class="comment">/* create the window */
-        </span><span class="kw">let </span>window = WindowBuilder::new()
+        <span class="kw">let </span>attributes = winit::window::WindowAttributes::default()
             .with_title(<span class="kw-2">&amp;</span>ori.title)
             .with_inner_size(LogicalSize::new(ori.width(), ori.height()))
             .with_resizable(ori.resizable)
             .with_decorations(ori.decorated)
             .with_transparent(ori.color.map_or(<span class="bool-val">false</span>, Color::is_translucent))
-            .with_visible(<span class="bool-val">false</span>)
-            .build(target)<span class="question-mark">?</span>;
+            .with_visible(<span class="bool-val">false</span>);
 
-        <span class="kw">let </span>window = Rc::new(window);
-
-        <span class="self">self</span>.window_ids.insert(window.id(), window_id);
+        <span class="comment">/* create the window */
+        </span><span class="kw">let </span>window = Rc::new(target.create_window(attributes)<span class="question-mark">?</span>);
+        <span class="self">self</span>.window_ids.insert(window.id(), ori.id());
 
         <span class="kw">let </span>icon = <span class="kw">match </span>ori.icon {
             <span class="prelude-val">Some</span>(<span class="kw-2">ref </span>icon) =&gt; {
@@ -790,7 +862,7 @@
         )<span class="question-mark">?</span>;
 
         <span class="self">self</span>.windows.insert(
-            window_id,
+            ori.id(),
             WindowState {
                 window,
                 context,
@@ -924,106 +996,6 @@
         <span class="kw">match </span><span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id) {
             <span class="prelude-val">Some</span>(state) =&gt; state.window.scale_factor() <span class="kw">as </span>f32,
             <span class="prelude-val">None </span>=&gt; <span class="number">1.0</span>,
-        }
-    }
-
-    <span class="kw">fn </span>window_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, winit_id: winit::window::WindowId, event: WindowEvent) {
-        <span class="comment">// if the window id is not in the map, we ignore the event
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>id) = <span class="self">self</span>.window_ids.get(<span class="kw-2">&amp;</span>winit_id) <span class="kw">else </span>{
-            <span class="kw">return</span>;
-        };
-
-        <span class="kw">match </span>event {
-            WindowEvent::RedrawRequested =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.render(id) {
-                    <span class="macro">tracing::error!</span>(<span class="string">"Failed to render: {}"</span>, err);
-                }
-            }
-            WindowEvent::CloseRequested =&gt; {
-                <span class="self">self</span>.app.close_requested(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id);
-            }
-            WindowEvent::Resized(inner_size) =&gt; {
-                (<span class="self">self</span>.app).window_resized(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, inner_size.width, inner_size.height);
-            }
-            WindowEvent::ScaleFactorChanged { scale_factor, .. } =&gt; {
-                (<span class="self">self</span>.app).window_scaled(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, scale_factor <span class="kw">as </span>f32);
-            }
-            WindowEvent::CursorMoved {
-                device_id,
-                position,
-                ..
-            } =&gt; {
-                <span class="kw">let </span>scale_factor = <span class="self">self</span>.scale_factor(id);
-                <span class="kw">let </span>position = Point::new(position.x <span class="kw">as </span>f32, position.y <span class="kw">as </span>f32) / scale_factor;
-                <span class="self">self</span>.app.pointer_moved(
-                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
-                    id,
-                    PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
-                    position,
-                );
-            }
-            WindowEvent::CursorLeft { device_id } =&gt; {
-                (<span class="self">self</span>.app).pointer_left(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, id, PointerId::from_hash(<span class="kw-2">&amp;</span>device_id));
-            }
-            WindowEvent::MouseInput {
-                device_id,
-                state,
-                button,
-                ..
-            } =&gt; {
-                <span class="self">self</span>.app.pointer_button(
-                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
-                    id,
-                    PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
-                    convert_mouse_button(button),
-                    is_pressed(state),
-                );
-            }
-            WindowEvent::MouseWheel {
-                delta: MouseScrollDelta::LineDelta(x, y),
-                device_id,
-                ..
-            } =&gt; <span class="self">self</span>.app.pointer_scrolled(
-                <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
-                id,
-                PointerId::from_hash(<span class="kw-2">&amp;</span>device_id),
-                Vector::new(x, y),
-            ),
-            <span class="comment">// since we're using a pointer model we need to handle touch
-            // by emulating pointer events
-            </span>WindowEvent::Touch(event) =&gt; <span class="self">self</span>.touch_event(id, event),
-            WindowEvent::KeyboardInput {
-                event:
-                    KeyEvent {
-                        physical_key,
-                        text,
-                        state,
-                        ..
-                    },
-                ..
-            } =&gt; {
-                <span class="kw">let </span>code = <span class="kw">match </span>physical_key {
-                    PhysicalKey::Code(code) =&gt; convert_key(code),
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-                };
-
-                <span class="self">self</span>.app.keyboard_key(
-                    <span class="kw-2">&amp;mut </span><span class="self">self</span>.data,
-                    id,
-                    code,
-                    text.map(Into::into),
-                    is_pressed(state),
-                );
-            }
-            WindowEvent::ModifiersChanged(modifiers) =&gt; {
-                <span class="self">self</span>.app.modifiers_changed(Modifiers {
-                    shift: modifiers.state().contains(ModifiersState::SHIFT),
-                    ctrl: modifiers.state().contains(ModifiersState::CONTROL),
-                    alt: modifiers.state().contains(ModifiersState::ALT),
-                    meta: modifiers.state().contains(ModifiersState::SUPER),
-                });
-            }
-            <span class="kw">_ </span>=&gt; {}
         }
     }
 
