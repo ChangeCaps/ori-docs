@@ -634,6 +634,17 @@
 <a href="#632" id="632">632</a>
 <a href="#633" id="633">633</a>
 <a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::{BTreeMap, HashMap},
     hash::{Hash, Hasher},
@@ -1010,6 +1021,17 @@
             .extend(overlay.primitives);
 
         result
+    }
+
+    <span class="doccomment">/// Draw a layer that does not affect the canvas.
+    </span><span class="kw">pub fn </span>void(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>)) {
+        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new();
+
+        f(<span class="kw-2">&amp;mut </span>canvas);
+
+        <span class="kw">for </span>(i, primitives) <span class="kw">in </span>canvas.overlays {
+            <span class="self">self</span>.overlays.entry(i).or_default().extend(primitives);
+        }
     }
 
     <span class="doccomment">/// Draw a layer.

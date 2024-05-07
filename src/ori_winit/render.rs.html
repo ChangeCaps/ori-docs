@@ -232,6 +232,10 @@
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::{
         BlendMode, Canvas, Curve, CurveSegment, FillRule, LineCap, LineJoin, Paint, Primitive,
@@ -322,6 +326,10 @@
 
             <span class="kw">match </span>layer_mask {
                 <span class="prelude-val">Some</span>(layer_mask) =&gt; {
+                    <span class="kw">if </span>layer_mask.curve.bounds().area().abs() &lt; <span class="number">1e-6 </span>{
+                        <span class="kw">return</span>;
+                    }
+
                     <span class="kw">let </span><span class="kw-2">mut </span>mask = <span class="kw">match </span>mask {
                         <span class="prelude-val">Some</span>(mask) =&gt; mask.clone(),
                         <span class="prelude-val">None </span>=&gt; tiny_skia::Mask::new(pixmap.width(), pixmap.height()).unwrap(),
