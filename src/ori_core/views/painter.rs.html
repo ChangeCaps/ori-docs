@@ -133,7 +133,7 @@
         _data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        space.min
+        space.max
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
