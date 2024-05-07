@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["ori","ori_app","ori_core","ori_font_awesome","ori_macro","ori_winit"];
+window.ALL_CRATES = ["ori","ori_app","ori_core","ori_font_awesome","ori_macro","ori_tiny_skia","ori_winit"];
