@@ -752,6 +752,11 @@
 <a href="#750" id="750">750</a>
 <a href="#751" id="751">751</a>
 <a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Affine, Point, Rect, Size, Vector};
@@ -885,8 +890,13 @@
     }
 
     <span class="kw">fn </span>push_point(<span class="kw-2">&amp;mut </span><span class="self">self</span>, point: Point) {
+        <span class="kw">if </span><span class="self">self</span>.points.is_empty() {
+            <span class="self">self</span>.bounds = Rect::new(point, point);
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.bounds = <span class="self">self</span>.bounds.include(point);
+        }
+
         <span class="self">self</span>.points.push(point);
-        <span class="self">self</span>.bounds = <span class="self">self</span>.bounds.include(point);
     }
 
     <span class="kw">fn </span>push_verb(<span class="kw-2">&amp;mut </span><span class="self">self</span>, verb: CurveVerb) {

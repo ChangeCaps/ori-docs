@@ -808,9 +808,9 @@
 
     <span class="kw">fn </span>render(<span class="kw-2">&amp;mut </span><span class="self">self</span>, window_id: ori_core::window::WindowId) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
-            <span class="kw">let </span><span class="kw-2">mut </span>buffer = state.surface.buffer_mut()<span class="question-mark">?</span>;
-
             <span class="kw">if let </span><span class="prelude-val">Some</span>(draw) = <span class="self">self</span>.app.draw_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>.data, window_id) {
+                <span class="kw">let </span><span class="kw-2">mut </span>buffer = state.surface.buffer_mut()<span class="question-mark">?</span>;
+
                 <span class="kw">let </span>data = <span class="kw">unsafe </span>{
                     slice::from_raw_parts_mut(
                         buffer.as_mut_ptr().cast::&lt;u8&gt;(),
@@ -818,11 +818,11 @@
                     )
                 };
 
-                <span class="kw">let </span><span class="kw-2">mut </span>buffer = ori_tiny_skia::Buffer::Argb8(data);
-                (state.renderer).render(<span class="kw-2">&amp;mut </span>buffer, draw.canvas, draw.clear_color);
-            }
+                <span class="kw">let </span><span class="kw-2">mut </span>data = ori_tiny_skia::Buffer::Argb8(data);
+                (state.renderer).render(<span class="kw-2">&amp;mut </span>data, draw.canvas, draw.clear_color);
 
-            buffer.present()<span class="question-mark">?</span>;
+                buffer.present()<span class="question-mark">?</span>;
+            }
         }
 
         <span class="prelude-val">Ok</span>(())
