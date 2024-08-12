@@ -341,7 +341,7 @@
     }
 
     <span class="doccomment">/// Fill a curve.
-    </span><span class="kw">pub fn </span>fill_curve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, fill: FillRule, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
+    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, fill: FillRule, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
         <span class="self">self</span>.canvas.fill(curve, fill, paint.into());
     }
 
@@ -391,12 +391,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
         curve.push_rect_with_radius(rect, radius);
 
-        <span class="self">self</span>.fill_curve(curve, FillRule::NonZero, paint);
+        <span class="self">self</span>.fill(curve, FillRule::Winding, paint);
 
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
         curve.push_rect_with_borders(rect, radius, width);
 
-        <span class="self">self</span>.fill_curve(curve, FillRule::NonZero, border_paint);
+        <span class="self">self</span>.fill(curve, FillRule::Winding, border_paint);
     }
 
     <span class="doccomment">/// Draw an overlay, at `index`.

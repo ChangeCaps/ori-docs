@@ -522,7 +522,7 @@
             * Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
         cx.layer(transform, |cx| {
-            cx.fill_curve(icon(), FillRule::NonZero, <span class="self">self</span>.icon_color);
+            cx.fill(icon(), FillRule::Winding, <span class="self">self</span>.icon_color);
         });
 
         <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data);

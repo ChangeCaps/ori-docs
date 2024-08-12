@@ -763,7 +763,7 @@
 </span><span class="kw">pub enum </span>FillRule {
     <span class="doccomment">/// A point is inside the shape if a ray from the point crosses a non-zero sum of signed edge
     /// crossings.
-    </span>NonZero,
+    </span>Winding,
 
     <span class="doccomment">/// A point is inside the shape if a ray from the point crosses an odd number of edges.
     </span>EvenOdd,
@@ -783,7 +783,7 @@
     <span class="kw">fn </span>from(value: Rect) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             curve: Curve::from(value),
-            fill: FillRule::NonZero,
+            fill: FillRule::Winding,
         }
     }
 }

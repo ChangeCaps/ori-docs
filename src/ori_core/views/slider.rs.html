@@ -237,6 +237,8 @@
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
 <a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::RangeInclusive;
 
 <span class="kw">use </span>ori_macro::Build;
@@ -452,28 +454,30 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
-        cx.quad(
-            cx.rect(),
-            <span class="self">self</span>.background,
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color,
-        );
+        cx.hoverable(|cx| {
+            cx.quad(
+                cx.rect(),
+                <span class="self">self</span>.background,
+                <span class="self">self</span>.border_radius,
+                <span class="self">self</span>.border_width,
+                <span class="self">self</span>.border_color,
+            );
 
-        <span class="kw">let </span>(length, width) = <span class="self">self</span>.axis.unpack(cx.size());
-        <span class="kw">let </span>value = normalize(<span class="self">self</span>.value, <span class="kw-2">&amp;</span><span class="self">self</span>.range);
+            <span class="kw">let </span>(length, width) = <span class="self">self</span>.axis.unpack(cx.size());
+            <span class="kw">let </span>value = normalize(<span class="self">self</span>.value, <span class="kw-2">&amp;</span><span class="self">self</span>.range);
 
-        <span class="kw">let </span>min_length = <span class="self">self</span>.border_radius.max_element() * <span class="number">2.0</span>;
-        <span class="kw">let </span>length = f32::max(length * value, min_length);
-        <span class="kw">let </span>size = <span class="self">self</span>.axis.pack(length, width);
+            <span class="kw">let </span>min_length = <span class="self">self</span>.border_radius.max_element() * <span class="number">2.0</span>;
+            <span class="kw">let </span>length = f32::max(length * value, min_length);
+            <span class="kw">let </span>size = <span class="self">self</span>.axis.pack(length, width);
 
-        cx.quad(
-            Rect::min_size(cx.rect().min, size),
-            <span class="self">self</span>.color,
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color,
-        );
+            cx.quad(
+                Rect::min_size(cx.rect().min, size),
+                <span class="self">self</span>.color,
+                <span class="self">self</span>.border_radius,
+                <span class="self">self</span>.border_width,
+                <span class="self">self</span>.border_color,
+            );
+        });
     }
 }
 </code></pre></div></section></main></body></html>
