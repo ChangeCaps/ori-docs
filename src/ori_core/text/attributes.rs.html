@@ -230,24 +230,42 @@
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::fontdb;
-
-<span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="doccomment">/// A font family, by default [`FontFamily::SansSerif`].
 </span><span class="attr">#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 </span><span class="kw">pub enum </span>FontFamily {
     <span class="doccomment">/// A font family by name, e.g. "Arial".
     </span>Name(String),
+
     <span class="doccomment">/// A serif font family.
     </span>Serif,
+
     <span class="doccomment">/// A sans-serif font family.
     </span><span class="attr">#[default]
     </span>SansSerif,
+
     <span class="doccomment">/// A monospace font family.
     </span>Monospace,
+
     <span class="doccomment">/// A cursive font family.
     </span>Cursive,
+
     <span class="doccomment">/// A fantasy font family.
     </span>Fantasy,
 }
@@ -320,21 +338,29 @@
 </span><span class="kw">pub enum </span>FontStretch {
     <span class="doccomment">/// Ultra-condensed font stretch.
     </span>UltraCondensed,
+
     <span class="doccomment">/// Extra-condensed font stretch.
     </span>ExtraCondensed,
+
     <span class="doccomment">/// Condensed font stretch.
     </span>Condensed,
+
     <span class="doccomment">/// Semi-condensed font stretch.
     </span>SemiCondensed,
+
     <span class="doccomment">/// Normal font stretch, the default.
     </span><span class="attr">#[default]
     </span>Normal,
+
     <span class="doccomment">/// Semi-expanded font stretch.
     </span>SemiExpanded,
+
     <span class="doccomment">/// Expanded font stretch.
     </span>Expanded,
+
     <span class="doccomment">/// Extra-expanded font stretch.
     </span>ExtraExpanded,
+
     <span class="doccomment">/// Ultra-expanded font stretch.
     </span>UltraExpanded,
 }
@@ -362,8 +388,10 @@
     <span class="doccomment">/// Normal font style, the default.
     </span><span class="attr">#[default]
     </span>Normal,
+
     <span class="doccomment">/// Italic font style.
     </span>Italic,
+
     <span class="doccomment">/// Oblique font style.
     </span>Oblique,
 }
@@ -386,8 +414,10 @@
     <span class="doccomment">/// Align text at the start.
     </span><span class="attr">#[default]
     </span>Start,
+
     <span class="doccomment">/// Align text in the center.
     </span>Center,
+
     <span class="doccomment">/// Align text at the end.
     </span>End,
 }
@@ -416,6 +446,7 @@
 </span><span class="kw">pub enum </span>TextWrap {
     <span class="doccomment">/// Do not wrap text.
     </span><span class="prelude-val">None</span>,
+
     <span class="doccomment">/// Wrap text at the word boundary.
     </span><span class="attr">#[default]
     </span>Word,
@@ -436,24 +467,23 @@
 </span><span class="kw">pub struct </span>TextAttributes {
     <span class="doccomment">/// The font family of the text.
     </span><span class="kw">pub </span>family: FontFamily,
+
     <span class="doccomment">/// The font size of the text.
     </span><span class="kw">pub </span>stretch: FontStretch,
+
     <span class="doccomment">/// The font weight of the text.
     </span><span class="kw">pub </span>weight: FontWeight,
+
     <span class="doccomment">/// The font style of the text.
     </span><span class="kw">pub </span>style: FontStyle,
-    <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
 }
 
 <span class="kw">impl </span>TextAttributes {
     <span class="doccomment">/// Convert the text attributes to a [`cosmic_text::Attrs`].
     </span><span class="kw">pub fn </span>to_cosmic_text(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; cosmic_text::Attrs&lt;<span class="lifetime">'_</span>&gt; {
-        <span class="kw">let </span>[r, g, b, a] = <span class="self">self</span>.color.to_rgba8();
-
         cosmic_text::Attrs {
             cache_key_flags: cosmic_text::CacheKeyFlags::empty(),
-            color_opt: <span class="prelude-val">Some</span>(cosmic_text::Color::rgba(r, g, b, a)),
+            color_opt: <span class="prelude-val">None</span>,
             family: <span class="self">self</span>.family.as_fontdb(),
             stretch: <span class="self">self</span>.stretch.to_fontdb(),
             style: <span class="self">self</span>.style.to_fontdb(),

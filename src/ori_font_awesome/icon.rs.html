@@ -147,7 +147,6 @@
 <a href="#147" id="147">147</a>
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::Color,
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
@@ -242,7 +241,6 @@
                 stretch: FontStretch::Normal,
                 weight: font.weight(),
                 style: FontStyle::Normal,
-                color: <span class="self">self</span>.color,
             },
         );
     }
@@ -295,7 +293,7 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span>offset = cx.rect().center() - state.buffer.rect().center();
-        cx.text(offset, <span class="kw-2">&amp;</span>state.buffer);
+        cx.text(<span class="kw-2">&amp;</span>state.buffer, <span class="self">self</span>.color, offset);
     }
 }
 </code></pre></div></section></main></body></html>

@@ -211,15 +211,9 @@
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, io, sync::Arc};
 
-<span class="kw">use </span>cosmic_text::{
-    fontdb::Source, Buffer, CacheKey, FontSystem, LayoutGlyph, SwashCache, SwashContent,
-};
+<span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, CacheKey, Command, FontSystem, SwashCache};
 
 <span class="kw">const </span>ROBOTO_BLACK: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-Black.ttf"</span>);
 <span class="kw">const </span>ROBOTO_BLACK_ITALIC: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../../font/Roboto-BlackItalic.ttf"</span>);
@@ -255,8 +249,9 @@
 ];
 
 <span class="kw">use crate</span>::{
+    canvas::{Canvas, Curve, FillRule, Paint},
+    image::Image,
     layout::{Point, Size, Vector},
-    prelude::{Canvas, Color, Image},
 };
 
 <span class="kw">use </span><span class="kw">super</span>::FontSource;
@@ -369,67 +364,64 @@
         Size::new(width, height).ceil()
     }
 
-    <span class="doccomment">/// Rasterize a glyph.
-    </span><span class="kw">pub fn </span>rasterize_glyph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, glyph: <span class="kw-2">&amp;</span>LayoutGlyph, scale: f32) -&gt; <span class="kw-2">&amp;</span>CachedGlyph {
-        <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
-
-        <span class="kw">if </span><span class="self">self</span>.glyph_cache.contains_key(<span class="kw-2">&amp;</span>physical.cache_key) {
-            <span class="kw">return </span><span class="self">self</span>.glyph_cache.get(<span class="kw-2">&amp;</span>physical.cache_key).unwrap();
-        }
-
-        <span class="kw">let </span>image = <span class="kw">match </span><span class="self">self
-            </span>.swash_cache
-            .get_image_uncached(<span class="kw-2">&amp;mut </span><span class="self">self</span>.font_system, physical.cache_key)
-        {
-            <span class="prelude-val">Some</span>(image) =&gt; image,
-            <span class="prelude-val">None </span>=&gt; <span class="macro">panic!</span>(<span class="string">"failed to rasterize glyph"</span>),
-        };
-
-        <span class="kw">let </span>data = <span class="kw">match </span>image.content {
-            SwashContent::Mask =&gt; image.data.into_iter().flat_map(|a| [a, a, a, a]).collect(),
-            SwashContent::SubpixelMask =&gt; <span class="macro">todo!</span>(),
-            SwashContent::Color =&gt; image.data,
-        };
-
-        <span class="kw">let </span>size = Size::new(image.placement.width <span class="kw">as </span>f32, image.placement.height <span class="kw">as </span>f32) / scale;
-        <span class="kw">let </span>offset = Vector::new(image.placement.left <span class="kw">as </span>f32, -image.placement.top <span class="kw">as </span>f32) / scale;
-
-        <span class="kw">let </span>image = Image::new(data, image.placement.width, image.placement.height);
-
-        <span class="kw">let </span>glyph = CachedGlyph {
-            image,
-            offset,
-            size,
-        };
-
-        <span class="self">self</span>.glyph_cache.insert(physical.cache_key, glyph);
-        <span class="self">self</span>.glyph_cache.get(<span class="kw-2">&amp;</span>physical.cache_key).unwrap()
-    }
-
     <span class="doccomment">/// Rasterize a buffer.
     </span><span class="kw">pub fn </span>draw_buffer(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         canvas: <span class="kw-2">&amp;mut </span>Canvas,
         buffer: <span class="kw-2">&amp;</span>Buffer,
+        paint: Paint,
         offset: Vector,
         scale: f32,
     ) {
+        <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
+
         <span class="kw">for </span>run <span class="kw">in </span>buffer.layout_runs() {
             <span class="kw">for </span>glyph <span class="kw">in </span>run.glyphs {
-                <span class="kw">let </span>cached = <span class="self">self</span>.rasterize_glyph(glyph, scale);
-                <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), <span class="number">1.0</span>);
+                <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
 
-                <span class="kw">let </span>point = Point::new(physical.x <span class="kw">as </span>f32, run.line_y + physical.y <span class="kw">as </span>f32);
+                <span class="kw">let </span>commands = <span class="self">self
+                    </span>.swash_cache
+                    .get_outline_commands(<span class="kw-2">&amp;mut </span><span class="self">self</span>.font_system, physical.cache_key);
 
-                <span class="kw">let </span><span class="kw-2">mut </span>image = cached.image.clone();
+                <span class="kw">let </span>offset = Vector::new(
+                    physical.x <span class="kw">as </span>f32 + offset.x,
+                    run.line_y + physical.y <span class="kw">as </span>f32 + offset.y,
+                );
 
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(color) = glyph.color_opt {
-                    image.color(Color::rgba8(color.r(), color.g(), color.b(), color.a()));
+                <span class="kw">for </span>command <span class="kw">in </span>commands.into_iter().flatten() {
+                    <span class="kw">match </span>command {
+                        Command::MoveTo(v) =&gt; {
+                            <span class="kw">let </span>p = Point::new(v.x, -v.y);
+
+                            curve.move_to(p + offset);
+                        }
+                        Command::LineTo(v) =&gt; {
+                            <span class="kw">let </span>p = Point::new(v.x, -v.y);
+
+                            curve.line_to(p + offset);
+                        }
+                        Command::QuadTo(v1, v2) =&gt; {
+                            <span class="kw">let </span>p1 = Point::new(v1.x, -v1.y);
+                            <span class="kw">let </span>p2 = Point::new(v2.x, -v2.y);
+
+                            curve.quad_to(p1 + offset, p2 + offset);
+                        }
+                        Command::CurveTo(v1, v2, v3) =&gt; {
+                            <span class="kw">let </span>p1 = Point::new(v1.x, -v1.y);
+                            <span class="kw">let </span>p2 = Point::new(v2.x, -v2.y);
+                            <span class="kw">let </span>p3 = Point::new(v3.x, -v3.y);
+
+                            curve.cubic_to(p1 + offset, p2 + offset, p3 + offset);
+                        }
+                        Command::Close =&gt; {
+                            curve.close();
+                        }
+                    }
                 }
-
-                canvas.image(point + cached.offset + offset, image);
             }
         }
+
+        canvas.fill(curve, FillRule::NonZero, paint.clone());
     }
 }
 </code></pre></div></section></main></body></html>

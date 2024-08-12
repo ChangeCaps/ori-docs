@@ -697,12 +697,6 @@
 <a href="#697" id="697">697</a>
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
-<a href="#703" id="703">703</a>
-<a href="#704" id="704">704</a>
-<a href="#705" id="705">705</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
 };
@@ -907,14 +901,12 @@
             stretch: <span class="self">self</span>.font_stretch,
             weight: <span class="self">self</span>.font_weight,
             style: <span class="self">self</span>.font_style,
-            color: <span class="self">self</span>.color,
         };
         <span class="kw">let </span>placeholder_attrs = TextAttributes {
             family: <span class="self">self</span>.font_family.clone(),
             stretch: <span class="self">self</span>.font_stretch,
             weight: <span class="self">self</span>.font_weight,
             style: <span class="self">self</span>.font_style,
-            color: <span class="self">self</span>.placeholder_color,
         };
         <span class="kw">let </span>metrics = Metrics {
             font_size: <span class="self">self</span>.font_size,
@@ -951,7 +943,6 @@
             stretch: <span class="self">self</span>.font_stretch,
             weight: <span class="self">self</span>.font_weight,
             style: <span class="self">self</span>.font_style,
-            color: <span class="self">self</span>.color,
         };
 
         <span class="kw">let </span>attrs_list = AttrsList::new(attrs.to_cosmic_text());
@@ -1105,8 +1096,7 @@
         <span class="kw">let </span>attrs_changed = <span class="self">self</span>.font_family != old.font_family
             || <span class="self">self</span>.font_weight != old.font_weight
             || <span class="self">self</span>.font_stretch != old.font_stretch
-            || <span class="self">self</span>.font_style != old.font_style
-            || <span class="self">self</span>.color != old.color;
+            || <span class="self">self</span>.font_style != old.font_style;
 
         <span class="kw">if </span><span class="self">self</span>.text != old.text &amp;&amp; attrs_changed {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>text) = <span class="self">self</span>.text.clone() {
@@ -1115,7 +1105,6 @@
                     stretch: <span class="self">self</span>.font_stretch,
                     weight: <span class="self">self</span>.font_weight,
                     style: <span class="self">self</span>.font_style,
-                    color: <span class="self">self</span>.color,
                 };
 
                 <span class="kw">if </span>text.ends_with(<span class="string">'\n'</span>) {
@@ -1146,7 +1135,6 @@
                     stretch: <span class="self">self</span>.font_stretch,
                     weight: <span class="self">self</span>.font_weight,
                     style: <span class="self">self</span>.font_style,
-                    color: <span class="self">self</span>.placeholder_color,
                 },
             );
 
@@ -1401,9 +1389,9 @@
 
             <span class="comment">/* draw the text */
             </span><span class="kw">if </span>!<span class="self">self</span>.get_text(state).is_empty() {
-                cx.text_raw(Vector::ZERO, state.buffer())
+                cx.text_raw(state.buffer(), <span class="self">self</span>.color, Vector::ZERO)
             } <span class="kw">else </span>{
-                cx.text(Vector::ZERO, <span class="kw-2">&amp;</span>state.placeholder)
+                cx.text(<span class="kw-2">&amp;</span>state.placeholder, <span class="self">self</span>.placeholder_color, Vector::ZERO)
             };
         });
     }

@@ -366,9 +366,6 @@
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
 <a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 <span class="kw">use </span>smol_str::SmolStr;
 
@@ -450,7 +447,7 @@
         <span class="self">Self </span>{
             delay: <span class="number">0.2</span>,
             padding: Padding::from([<span class="number">8.0</span>, <span class="number">4.0</span>]),
-            font_size: <span class="number">12.0</span>,
+            font_size: <span class="number">14.0</span>,
             font_family: text_style.font_family.clone(),
             font_weight: text_style.font_weight,
             font_stretch: text_style.font_stretch,
@@ -580,7 +577,6 @@
                 weight: <span class="self">self</span>.font_weight,
                 stretch: <span class="self">self</span>.font_stretch,
                 style: <span class="self">self</span>.font_style,
-                color: <span class="self">self</span>.color,
             },
         );
     }
@@ -598,7 +594,7 @@
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span><span class="kw-2">mut </span>state = TooltipState {
-            buffer: TextBuffer::new(cx.fonts(), <span class="number">12.0</span>, <span class="number">1.0</span>),
+            buffer: TextBuffer::new(cx.fonts(), <span class="self">self</span>.font_size, <span class="number">1.0</span>),
             timer: <span class="number">0.0</span>,
             position: Point::ZERO,
         };
@@ -634,7 +630,6 @@
             || <span class="self">self</span>.font_weight != old.font_weight
             || <span class="self">self</span>.font_stretch != old.font_stretch
             || <span class="self">self</span>.font_style != old.font_style
-            || <span class="self">self</span>.color != old.color
         {
             state.buffer.set_text(
                 cx.fonts(),
@@ -644,7 +639,6 @@
                     stretch: <span class="self">self</span>.font_stretch,
                     weight: <span class="self">self</span>.font_weight,
                     style: <span class="self">self</span>.font_style,
-                    color: <span class="self">self</span>.color,
                 },
             );
 
@@ -735,7 +729,7 @@
                     <span class="self">self</span>.border_color.fade(alpha),
                 );
 
-                cx.text(<span class="self">self</span>.padding.offset(), <span class="kw-2">&amp;</span>state.buffer);
+                cx.text(<span class="kw-2">&amp;</span>state.buffer, <span class="self">self</span>.color, <span class="self">self</span>.padding.offset());
             });
         });
     }

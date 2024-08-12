@@ -236,6 +236,11 @@
 <a href="#236" id="236">236</a>
 <a href="#237" id="237">237</a>
 <a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -351,19 +356,24 @@
     }
 
     <span class="doccomment">/// Draw a text buffer.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: Vector, buffer: <span class="kw-2">&amp;</span>TextBuffer) {
-        <span class="self">self</span>.text_raw(offset, buffer.raw());
+    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer, paint: <span class="kw">impl </span>Into&lt;Paint&gt;, offset: Vector) {
+        <span class="self">self</span>.text_raw(buffer.raw(), paint, offset);
     }
 
     <span class="doccomment">/// Draw a raw text buffer.
-    </span><span class="kw">pub fn </span>text_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: Vector, buffer: <span class="kw-2">&amp;</span>cosmic_text::Buffer) {
+    </span><span class="kw">pub fn </span>text_raw(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        buffer: <span class="kw-2">&amp;</span>cosmic_text::Buffer,
+        paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
+        offset: Vector,
+    ) {
         <span class="kw">let </span>contexts = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.base.contexts;
         <span class="kw">let </span>canvas = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.canvas;
         <span class="kw">let </span>scale = <span class="self">self</span>.window.scale;
 
         contexts
             .get_or_default::&lt;Fonts&gt;()
-            .draw_buffer(canvas, buffer, offset, scale);
+            .draw_buffer(canvas, buffer, paint.into(), offset, scale);
     }
 
     <span class="doccomment">/// Draw a rectangle with rounded corners and a border.
