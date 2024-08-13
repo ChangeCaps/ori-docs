@@ -21,7 +21,7 @@
     view: impl <a class="trait" href="https://doc.rust-lang.org/1.80.1/core/ops/function/trait.FnMut.html" title="trait core::ops::function::FnMut">FnMut</a>() -&gt; V + <a class="trait" href="https://doc.rust-lang.org/1.80.1/core/marker/trait.Send.html" title="trait core::marker::Send">Send</a> + 'static,
 ) -&gt; Self</h4></section></summary><div class="docblock"><p>Convenience method to open a window with a view.</p>
 <p>Note that <code>V</code> must implement <code>View&lt;()&gt;</code>, and therefore cannot access the data of the
-application.</p>
+application. If you need to access the data, you can implement a <a href="trait.Delegate.html" title="trait ori_app::Delegate"><code>Delegate</code></a> instead.</p>
 <h5 id="example-1"><a class="doc-anchor" href="#example-1">§</a>Example</h5>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>ui() -&gt; <span class="kw">impl </span>View {
     <span class="comment">// Here we create a button that opens a new window when clicked.
