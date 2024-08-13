@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["AppCommand","AppRequest"],"struct":["App","AppBuilder","DelegateCx","WindowRenderScene"],"trait":["Delegate"],"type":["UiBuilder"]};
+window.SIDEBAR_ITEMS = {"enum":["AppCommand","AppRequest"],"struct":["App","AppBuilder","DelegateCx","WindowRenderState"],"trait":["Delegate"],"type":["UiBuilder"]};

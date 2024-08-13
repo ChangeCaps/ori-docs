@@ -719,7 +719,7 @@
 <span class="kw">use crate</span>::{AppBuilder, AppCommand, AppRequest, Delegate, DelegateCx, UiBuilder};
 
 <span class="doccomment">/// Information needed to render a window.
-</span><span class="kw">pub struct </span>WindowRenderScene&lt;<span class="lifetime">'a</span>&gt; {
+</span><span class="kw">pub struct </span>WindowRenderState&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The canvas to render.
     </span><span class="kw">pub </span>canvas: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Canvas,
     <span class="doccomment">/// The size of the window.
@@ -1334,7 +1334,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         data: <span class="kw-2">&amp;mut </span>T,
         window_id: WindowId,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;WindowRenderScene&lt;<span class="lifetime">'_</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;WindowRenderState&lt;<span class="lifetime">'_</span>&gt;&gt; {
         <span class="macro">ori_core::log::trace!</span>(window = <span class="question-mark">?</span>window_id, <span class="string">"Draw window"</span>);
 
         <span class="comment">// animate the window before drawing it
@@ -1387,7 +1387,7 @@
             <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.style.palette().background,
         };
 
-        <span class="prelude-val">Some</span>(WindowRenderScene {
+        <span class="prelude-val">Some</span>(WindowRenderState {
             canvas: <span class="kw-2">&amp;</span>window_state.canvas,
             logical_size: window_state.window.size,
             clear_color,
