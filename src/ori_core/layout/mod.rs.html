@@ -25,6 +25,7 @@
 <a href="#25" id="25">25</a>
 <a href="#26" id="26">26</a>
 <a href="#27" id="27">27</a>
+<a href="#28" id="28">28</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Layout of [`View`](crate::view::View)s.
 
 </span><span class="kw">mod </span>affine;
@@ -51,5 +52,6 @@
 <span class="kw">pub use </span>space::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>vector::<span class="kw-2">*</span>;
 
-<span class="kw">pub use </span>std::f32::INFINITY <span class="kw">as </span>FILL;
+<span class="doccomment">/// A constant used to indicate that a dimension should fill the available space.
+</span><span class="kw">pub const </span>FILL: f32 = f32::INFINITY;
 </code></pre></div></section></main></body></html>
