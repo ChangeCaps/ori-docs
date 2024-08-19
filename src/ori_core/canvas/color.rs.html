@@ -1127,6 +1127,10 @@
 <a href="#1127" id="1127">1127</a>
 <a href="#1128" id="1128">1128</a>
 <a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::{Debug, Display},
     hash::{Hash, Hasher},
@@ -1836,6 +1840,10 @@
             <span class="kw">return </span>(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="self">self</span>.a);
         };
 
+        <span class="kw">if </span>a == <span class="number">0.0 </span>&amp;&amp; b == <span class="number">0.0 </span>{
+            <span class="kw">return </span>(<span class="number">0.0</span>, <span class="number">0.0</span>, l, <span class="self">self</span>.a);
+        };
+
         <span class="kw">let </span>c = f32::sqrt(a * a + b * b);
         <span class="kw">let </span>a = a / c;
         <span class="kw">let </span>b = b / c;
@@ -1872,12 +1880,12 @@
 
     <span class="doccomment">/// Convert a color from okhsv to sRGB.
     </span><span class="kw">pub fn </span>okhsva(h: f32, s: f32, v: f32, alpha: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">if </span>v == <span class="number">0.0 </span>{
-            <span class="kw">return </span><span class="self">Self</span>::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, alpha);
-        };
-
         <span class="kw">if </span>v == <span class="number">1.0 </span>{
             <span class="kw">return </span><span class="self">Self</span>::rgba(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, alpha);
+        };
+
+        <span class="kw">if </span>v == <span class="number">0.0 </span>{
+            <span class="kw">return </span><span class="self">Self</span>::rgba(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, alpha);
         };
 
         <span class="kw">let </span>(b, a) = h.to_radians().sin_cos();

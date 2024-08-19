@@ -541,6 +541,8 @@
 <a href="#541" id="541">541</a>
 <a href="#542" id="542">542</a>
 <a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     ffi, ptr,
     rc::Rc,
@@ -621,6 +623,8 @@
             EGL_SURFACE_TYPE,
             EGL_WINDOW_BIT,
             EGL_CONFORMANT,
+            EGL_OPENGL_BIT,
+            EGL_RENDERABLE_TYPE,
             EGL_OPENGL_BIT,
             EGL_RED_SIZE,
             <span class="number">8</span>,
@@ -718,7 +722,6 @@
     <span class="kw">pub fn </span>swap_interval(<span class="kw-2">&amp;</span><span class="self">self</span>, interval: i32) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
             egl_swap_interval(<span class="self">self</span>.cx.display, interval);
-            check_egl_error()<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -756,6 +759,7 @@
 <span class="kw">const </span>EGL_SURFACE_TYPE: i32 = <span class="number">0x3033</span>;
 <span class="kw">const </span>EGL_WINDOW_BIT: i32 = <span class="number">0x0004</span>;
 <span class="kw">const </span>EGL_CONFORMANT: i32 = <span class="number">0x3042</span>;
+<span class="kw">const </span>EGL_RENDERABLE_TYPE: i32 = <span class="number">0x3040</span>;
 <span class="kw">const </span>EGL_OPENGL_BIT: i32 = <span class="number">0x0008</span>;
 <span class="kw">const </span>EGL_RED_SIZE: i32 = <span class="number">0x3024</span>;
 <span class="kw">const </span>EGL_GREEN_SIZE: i32 = <span class="number">0x3023</span>;
