@@ -1057,7 +1057,7 @@
         <span class="kw">let </span>atoms = Atoms::new(<span class="kw-2">&amp;</span>conn)<span class="question-mark">?</span>.reply()<span class="question-mark">?</span>;
         <span class="kw">let </span>(clipboard_server, clipboard) = X11ClipboardServer::new(<span class="kw-2">&amp;</span>conn, atoms)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>egl_context = EglContext::new()<span class="question-mark">?</span>;
+        <span class="kw">let </span>egl_context = EglContext::new_x11()<span class="question-mark">?</span>;
 
         <span class="kw">let </span>(event_tx, event_rx) = std::sync::mpsc::channel();
 

@@ -433,57 +433,188 @@
 <a href="#433" id="433">433</a>
 <a href="#434" id="434">434</a>
 <a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
-    ffi,
+    ffi, ptr,
+    rc::Rc,
     sync::{Arc, LazyLock},
 };
 
 <span class="kw">use </span>libloading::Library;
 
-<span class="kw">static </span>LIB_EGL: LazyLock&lt;Library&gt; = LazyLock::new(|| {
+<span class="kw">static </span>LIB_EGL: LazyLock&lt;<span class="prelude-ty">Result</span>&lt;Library, Arc&lt;libloading::Error&gt;&gt;&gt; = LazyLock::new(|| {
     <span class="comment">// load libEGL.so
-    </span><span class="kw">unsafe </span>{ Library::new(<span class="string">"libEGL.so"</span>).unwrap() }
+    </span><span class="kw">unsafe </span>{ Library::new(<span class="string">"libEGL.so"</span>).map_err(Arc::new) }
 });
 
 <span class="attr">#[cfg(x11_platform)]
-</span><span class="kw">static </span>LIB_X11: LazyLock&lt;Library&gt; = LazyLock::new(|| {
+</span><span class="kw">static </span>LIB_X11: LazyLock&lt;<span class="prelude-ty">Result</span>&lt;Library, Arc&lt;libloading::Error&gt;&gt;&gt; = LazyLock::new(|| {
     <span class="comment">// load libX11.so
-    </span><span class="kw">unsafe </span>{ Library::new(<span class="string">"libX11.so"</span>).unwrap() }
+    </span><span class="kw">unsafe </span>{ Library::new(<span class="string">"libX11.so"</span>).map_err(Arc::new) }
 });
+
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">pub enum </span>EglNativeDisplay {
+    <span class="attr">#[cfg(x11_platform)]
+    </span>X11(<span class="kw-2">*mut </span>ffi::c_void),
+}
+
+<span class="kw">impl </span>EglNativeDisplay {
+    <span class="kw">fn </span>egl_platform(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; i32 {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="attr">#[cfg(x11_platform)]
+            </span><span class="self">Self</span>::X11(<span class="kw">_</span>) =&gt; EGL_PLATFORM_X11,
+        }
+    }
+
+    <span class="kw">fn </span>as_ptr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="attr">#[cfg(x11_platform)]
+            </span><span class="self">Self</span>::X11(ptr) =&gt; <span class="kw-2">*</span>ptr,
+        }
+    }
+}
 
 <span class="attr">#[allow(unused)]
 </span><span class="kw">struct </span>EglContextInner {
-    <span class="attr">#[cfg(x11_platform)]
-    </span>xdisplay: <span class="kw-2">*mut </span>ffi::c_void,
+    native: EglNativeDisplay,
     display: <span class="kw-2">*mut </span>ffi::c_void,
     config: <span class="kw-2">*mut </span>ffi::c_void,
     context: <span class="kw-2">*mut </span>ffi::c_void,
 }
 
-<span class="kw">unsafe impl </span>Send <span class="kw">for </span>EglContextInner {}
-<span class="kw">unsafe impl </span>Sync <span class="kw">for </span>EglContextInner {}
-
 <span class="kw">pub struct </span>EglContext {
-    inner: Arc&lt;EglContextInner&gt;,
+    inner: Rc&lt;EglContextInner&gt;,
 }
 
 <span class="kw">impl </span>EglContext {
-    <span class="kw">pub fn </span>new() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, EglError&gt; {
-        <span class="attr">#[cfg(x11_platform)]
-        </span><span class="kw">let </span>xdisplay = <span class="kw">unsafe </span>{ x_open_display(std::ptr::null()) };
-        <span class="kw">let </span>display = <span class="kw">unsafe </span>{ egl_get_display(xdisplay) };
+    <span class="attr">#[cfg(x11_platform)]
+    </span><span class="kw">pub fn </span>new_x11() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, EglError&gt; {
+        <span class="kw">let </span>xdisplay = <span class="kw">unsafe </span>{ x_open_display(ptr::null())<span class="question-mark">? </span>};
+        <span class="self">Self</span>::new(EglNativeDisplay::X11(xdisplay))
+    }
+
+    <span class="kw">pub fn </span>new(native_display: EglNativeDisplay) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, EglError&gt; {
+        <span class="kw">let </span>display = <span class="kw">unsafe </span>{
+            egl_get_platform_display(native_display.egl_platform(), native_display.as_ptr())<span class="question-mark">?
+        </span>};
 
         <span class="kw">let </span><span class="kw-2">mut </span>major = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>minor = <span class="number">0</span>;
 
         <span class="kw">unsafe </span>{
-            egl_initialize(display, <span class="kw-2">&amp;mut </span>major, <span class="kw-2">&amp;mut </span>minor);
-            check_egl_error()<span class="question-mark">?</span>;
+            egl_initialize(display, <span class="kw-2">&amp;mut </span>major, <span class="kw-2">&amp;mut </span>minor)<span class="question-mark">?</span>;
         };
 
         <span class="kw">unsafe </span>{
-            egl_bind_api(EGL_OPENGL_API);
-            check_egl_error()<span class="question-mark">?</span>;
+            egl_bind_api(EGL_OPENGL_API)<span class="question-mark">?</span>;
         }
 
         <span class="kw">let </span>config_attribs = [
@@ -504,7 +635,7 @@
             EGL_NONE,
         ];
 
-        <span class="kw">let </span><span class="kw-2">mut </span>config = std::ptr::null_mut();
+        <span class="kw">let </span><span class="kw-2">mut </span>config = ptr::null_mut();
         <span class="kw">let </span><span class="kw-2">mut </span>num_config = <span class="number">0</span>;
 
         <span class="kw">unsafe </span>{
@@ -513,8 +644,7 @@
                 config_attribs.as_ptr(),
                 <span class="kw-2">&amp;mut </span>config,
                 <span class="kw-2">&amp;mut </span>num_config,
-            );
-            check_egl_error()<span class="question-mark">?</span>;
+            )<span class="question-mark">?</span>;
         }
 
         <span class="kw">if </span>num_config != <span class="number">1 </span>{
@@ -532,17 +662,11 @@
         ];
 
         <span class="kw">let </span>context = <span class="kw">unsafe </span>{
-            egl_create_context(
-                display,
-                config,
-                std::ptr::null_mut(),
-                context_attribs.as_ptr(),
-            )
-        };
-        check_egl_error()<span class="question-mark">?</span>;
+            egl_create_context(display, config, ptr::null_mut(), context_attribs.as_ptr())<span class="question-mark">?
+        </span>};
 
-        <span class="kw">let </span>inner = Arc::new(EglContextInner {
-            xdisplay,
+        <span class="kw">let </span>inner = Rc::new(EglContextInner {
+            native: native_display,
             display,
             config,
             context,
@@ -555,21 +679,20 @@
 <span class="kw">impl </span>Drop <span class="kw">for </span>EglContextInner {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">unsafe </span>{
-            egl_make_current(
+            <span class="kw">let _ </span>= egl_make_current(
                 <span class="self">self</span>.display,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
+                ptr::null_mut(),
+                ptr::null_mut(),
+                ptr::null_mut(),
             );
             egl_destroy_context(<span class="self">self</span>.display, <span class="self">self</span>.context);
             egl_terminate(<span class="self">self</span>.display);
-            x_close_display(<span class="self">self</span>.xdisplay);
         }
     }
 }
 
 <span class="kw">pub struct </span>EglSurface {
-    cx: Arc&lt;EglContextInner&gt;,
+    cx: Rc&lt;EglContextInner&gt;,
     surface: <span class="kw-2">*mut </span>ffi::c_void,
 }
 
@@ -583,9 +706,8 @@
                 context.inner.config,
                 window,
                 surface_attribs.as_ptr(),
-            )
-        };
-        check_egl_error()<span class="question-mark">?</span>;
+            )<span class="question-mark">?
+        </span>};
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             cx: context.inner.clone(),
@@ -604,8 +726,7 @@
 
     <span class="kw">pub fn </span>make_current(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
-            egl_make_current(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface, <span class="self">self</span>.surface, <span class="self">self</span>.cx.context);
-            check_egl_error()<span class="question-mark">?</span>;
+            egl_make_current(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface, <span class="self">self</span>.surface, <span class="self">self</span>.cx.context)<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -613,8 +734,7 @@
 
     <span class="kw">pub fn </span>swap_buffers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
-            egl_swap_buffers(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface);
-            check_egl_error()<span class="question-mark">?</span>;
+            egl_swap_buffers(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface)<span class="question-mark">?</span>;
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -648,6 +768,9 @@
 <span class="kw">const </span>EGL_CONTEXT_OPENGL_PROFILE_MASK: i32 = <span class="number">0x30FD</span>;
 <span class="kw">const </span>EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT: i32 = <span class="number">0x00000001</span>;
 
+<span class="attr">#[cfg(x11_platform)]
+</span><span class="kw">const </span>EGL_PLATFORM_X11: i32 = <span class="number">0x31D5</span>;
+
 <span class="kw">const </span>EGL_SUCCESS: i32 = <span class="number">0x3000</span>;
 <span class="kw">const </span>EGL_NOT_INITIALIZED: i32 = <span class="number">0x3001</span>;
 <span class="kw">const </span>EGL_BAD_ACCESS: i32 = <span class="number">0x3002</span>;
@@ -664,28 +787,41 @@
 <span class="kw">const </span>EGL_BAD_NATIVE_WINDOW: i32 = <span class="number">0x300D</span>;
 <span class="kw">const </span>EGL_CONTEXT_LOST: i32 = <span class="number">0x300E</span>;
 
-<span class="attr">#[repr(i32)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+<span class="attr">#[derive(Debug)]
 </span><span class="kw">pub enum </span>EglError {
-    NotInitialized = EGL_NOT_INITIALIZED,
-    BadAccess = EGL_BAD_ACCESS,
-    BadAlloc = EGL_BAD_ALLOC,
-    BadAttribute = EGL_BAD_ATTRIBUTE,
-    BadContext = EGL_BAD_CONTEXT,
-    BadConfig = EGL_BAD_CONFIG,
-    BadCurrentSurface = EGL_BAD_CURRENT_SURFACE,
-    BadDisplay = EGL_BAD_DISPLAY,
-    BadSurface = EGL_BAD_SURFACE,
-    BadMatch = EGL_BAD_MATCH,
-    BadParameter = EGL_BAD_PARAMETER,
-    BadNativePixmap = EGL_BAD_NATIVE_PIXMAP,
-    BadNativeWindow = EGL_BAD_NATIVE_WINDOW,
-    ContextLost = EGL_CONTEXT_LOST,
+    Library(Arc&lt;libloading::Error&gt;),
+    NotInitialized,
+    BadAccess,
+    BadAlloc,
+    BadAttribute,
+    BadContext,
+    BadConfig,
+    BadCurrentSurface,
+    BadDisplay,
+    BadSurface,
+    BadMatch,
+    BadParameter,
+    BadNativePixmap,
+    BadNativeWindow,
+    ContextLost,
+}
+
+<span class="kw">impl </span>From&lt;libloading::Error&gt; <span class="kw">for </span>EglError {
+    <span class="kw">fn </span>from(err: libloading::Error) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Library(Arc::new(err))
+    }
+}
+
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>Arc&lt;libloading::Error&gt;&gt; <span class="kw">for </span>EglError {
+    <span class="kw">fn </span>from(err: <span class="kw-2">&amp;</span>Arc&lt;libloading::Error&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Library(err.clone())
+    }
 }
 
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>EglError {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
+            EglError::Library(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL library error: {}"</span>, err),
             EglError::NotInitialized =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL is not initialized"</span>),
             EglError::BadAccess =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad access"</span>),
             EglError::BadAlloc =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad alloc"</span>),
@@ -704,28 +840,37 @@
     }
 }
 
-<span class="kw">unsafe fn </span>x_open_display(name: <span class="kw-2">*const </span>ffi::c_char) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
+<span class="attr">#[cfg(x11_platform)]
+</span><span class="kw">fn </span>lib_x11() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Library, EglError&gt; {
+    <span class="prelude-val">Ok</span>(LIB_X11.as_ref()<span class="question-mark">?</span>)
+}
+
+<span class="kw">fn </span>lib_egl() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">'static </span>Library, EglError&gt; {
+    <span class="prelude-val">Ok</span>(LIB_EGL.as_ref()<span class="question-mark">?</span>)
+}
+
+<span class="kw">unsafe fn </span>lib_egl_symbol&lt;T&gt;(name: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;libloading::Symbol&lt;T&gt;, EglError&gt; {
+    <span class="prelude-val">Ok</span>(lib_egl()<span class="question-mark">?</span>.get(name)<span class="question-mark">?</span>)
+}
+
+<span class="attr">#[cfg(x11_platform)]
+</span><span class="kw">unsafe fn </span>x_open_display(name: <span class="kw-2">*const </span>ffi::c_char) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">*mut </span>ffi::c_void, EglError&gt; {
     <span class="kw">let </span>x_open_display: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*const </span>ffi::c_char) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
-    &gt; = LIB_X11.get(<span class="string">b"XOpenDisplay"</span>).unwrap();
-    x_open_display(name)
+    &gt; = lib_x11()<span class="question-mark">?</span>.get(<span class="string">b"XOpenDisplay"</span>).unwrap();
+    <span class="prelude-val">Ok</span>(x_open_display(name))
 }
 
-<span class="kw">unsafe fn </span>x_close_display(display: <span class="kw-2">*mut </span>ffi::c_void) {
-    <span class="kw">let </span>x_close_display: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void)&gt; =
-        LIB_X11.get(<span class="string">b"XCloseDisplay"</span>).unwrap();
-    x_close_display(display);
-}
-
-<span class="kw">unsafe fn </span>egl_get_error() -&gt; i32 {
+<span class="kw">unsafe fn </span>egl_get_error() -&gt; <span class="prelude-ty">Result</span>&lt;i32, EglError&gt; {
     <span class="kw">let </span>egl_get_error: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>() -&gt; i32&gt; =
-        LIB_EGL.get(<span class="string">b"eglGetError"</span>).unwrap();
-    egl_get_error()
+        lib_egl_symbol(<span class="string">b"eglGetError"</span>)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(egl_get_error())
 }
 
 <span class="attr">#[track_caller]
 </span><span class="kw">fn </span>check_egl_error() -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
-    <span class="kw">let </span>error = <span class="kw">unsafe </span>{ egl_get_error() };
+    <span class="kw">let </span>error = <span class="kw">unsafe </span>{ egl_get_error()<span class="question-mark">? </span>};
 
     <span class="kw">match </span>error {
         EGL_SUCCESS =&gt; <span class="prelude-val">Ok</span>(()),
@@ -747,44 +892,62 @@
     }
 }
 
-<span class="kw">unsafe fn </span>egl_get_display(xdisplay: <span class="kw-2">*mut </span>ffi::c_void) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
-    <span class="kw">let </span>egl_get_display: libloading::Symbol&lt;
-        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
-    &gt; = LIB_EGL.get(<span class="string">b"eglGetDisplay"</span>).unwrap();
-    egl_get_display(xdisplay)
+<span class="kw">unsafe fn </span>egl_get_platform_display(
+    platform: i32,
+    native_display: <span class="kw-2">*mut </span>ffi::c_void,
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">*mut </span>ffi::c_void, EglError&gt; {
+    <span class="kw">let </span>egl_get_platform_display: libloading::Symbol&lt;
+        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(i32, <span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*const </span>i32) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
+    &gt; = lib_egl_symbol(<span class="string">b"eglGetPlatformDisplay"</span>)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(egl_get_platform_display(
+        platform,
+        native_display,
+        ptr::null(),
+    ))
 }
 
-<span class="kw">unsafe fn </span>egl_initialize(display: <span class="kw-2">*mut </span>ffi::c_void, major: <span class="kw-2">*mut </span>i32, minor: <span class="kw-2">*mut </span>i32) -&gt; i32 {
+<span class="kw">unsafe fn </span>egl_initialize(
+    display: <span class="kw-2">*mut </span>ffi::c_void,
+    major: <span class="kw-2">*mut </span>i32,
+    minor: <span class="kw-2">*mut </span>i32,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
     <span class="kw">let </span>egl_initialize: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>i32, <span class="kw-2">*mut </span>i32) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglInitialize"</span>).unwrap();
-    egl_initialize(display, major, minor)
+    &gt; = lib_egl_symbol(<span class="string">b"eglInitialize"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>result = egl_initialize(display, major, minor);
+
+    <span class="kw">if </span>result == <span class="number">0 </span>{
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">unsafe fn </span>egl_terminate(display: <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32 {
-    <span class="kw">let </span>egl_terminate: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void) -&gt; i32&gt; =
-        LIB_EGL.get(<span class="string">b"eglTerminate"</span>).unwrap();
-    egl_terminate(display)
+<span class="kw">unsafe fn </span>egl_terminate(display: <span class="kw-2">*mut </span>ffi::c_void) {
+    <span class="kw">let </span>egl_terminate =
+        lib_egl_symbol::&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void) -&gt; i32&gt;(<span class="string">b"eglTerminate"</span>);
+
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(egl_terminate) = egl_terminate {
+        egl_terminate(display);
+    }
 }
 
-<span class="kw">unsafe fn </span>egl_bind_api(api: i32) -&gt; i32 {
-    <span class="kw">let </span>egl_bind_api: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(i32) -&gt; i32&gt; =
-        LIB_EGL.get(<span class="string">b"eglBindAPI"</span>).unwrap();
-    egl_bind_api(api)
-}
+<span class="kw">unsafe fn </span>egl_bind_api(api: i32) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
+    <span class="kw">let </span>egl_bind_api = lib_egl_symbol::&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(i32) -&gt; i32&gt;(<span class="string">b"eglBindAPI"</span>)<span class="question-mark">?</span>;
 
-<span class="kw">unsafe fn </span>egl_swap_interval(display: <span class="kw-2">*mut </span>ffi::c_void, interval: i32) -&gt; i32 {
-    <span class="kw">let </span>egl_swap_interval: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, i32) -&gt; i32&gt; =
-        LIB_EGL.get(<span class="string">b"eglSwapInterval"</span>).unwrap();
-    egl_swap_interval(display, interval)
+    egl_bind_api(api);
+
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">unsafe fn </span>egl_choose_config(
     display: <span class="kw-2">*mut </span>ffi::c_void,
-    attribs: <span class="kw-2">*const </span>i32,
+    attrib_list: <span class="kw-2">*const </span>i32,
     config: <span class="kw-2">*mut *mut </span>ffi::c_void,
     num_config: <span class="kw-2">*mut </span>i32,
-) -&gt; i32 {
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
     <span class="kw">let </span>egl_choose_config: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(
             <span class="kw-2">*mut </span>ffi::c_void,
@@ -793,16 +956,23 @@
             i32,
             <span class="kw-2">*mut </span>i32,
         ) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglChooseConfig"</span>).unwrap();
-    egl_choose_config(display, attribs, config, <span class="number">1</span>, num_config)
+    &gt; = lib_egl_symbol(<span class="string">b"eglChooseConfig"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>result = egl_choose_config(display, attrib_list, config, <span class="number">1</span>, num_config);
+
+    <span class="kw">if </span>result == <span class="number">0 </span>{
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">unsafe fn </span>egl_create_context(
     display: <span class="kw-2">*mut </span>ffi::c_void,
     config: <span class="kw-2">*mut </span>ffi::c_void,
-    share: <span class="kw-2">*mut </span>ffi::c_void,
-    attribs: <span class="kw-2">*const </span>i32,
-) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
+    share_context: <span class="kw-2">*mut </span>ffi::c_void,
+    attrib_list: <span class="kw-2">*const </span>i32,
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">*mut </span>ffi::c_void, EglError&gt; {
     <span class="kw">let </span>egl_create_context: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(
             <span class="kw-2">*mut </span>ffi::c_void,
@@ -810,23 +980,33 @@
             <span class="kw-2">*mut </span>ffi::c_void,
             <span class="kw-2">*const </span>i32,
         ) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
-    &gt; = LIB_EGL.get(<span class="string">b"eglCreateContext"</span>).unwrap();
-    egl_create_context(display, config, share, attribs)
+    &gt; = lib_egl_symbol(<span class="string">b"eglCreateContext"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>context = egl_create_context(display, config, share_context, attrib_list);
+
+    <span class="kw">if </span>context.is_null() {
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(context)
 }
 
-<span class="kw">unsafe fn </span>egl_destroy_context(display: <span class="kw-2">*mut </span>ffi::c_void, context: <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32 {
-    <span class="kw">let </span>egl_destroy_context: libloading::Symbol&lt;
-        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglDestroyContext"</span>).unwrap();
-    egl_destroy_context(display, context)
+<span class="kw">unsafe fn </span>egl_destroy_context(display: <span class="kw-2">*mut </span>ffi::c_void, context: <span class="kw-2">*mut </span>ffi::c_void) {
+    <span class="kw">let </span>egl_destroy_context = lib_egl_symbol::&lt;
+        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>ffi::c_void),
+    &gt;(<span class="string">b"eglDestroyContext"</span>);
+
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(egl_destroy_context) = egl_destroy_context {
+        egl_destroy_context(display, context);
+    }
 }
 
 <span class="kw">unsafe fn </span>egl_create_window_surface(
     display: <span class="kw-2">*mut </span>ffi::c_void,
     config: <span class="kw-2">*mut </span>ffi::c_void,
-    window: <span class="kw-2">*mut </span>ffi::c_void,
-    attribs: <span class="kw-2">*const </span>i32,
-) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
+    native_window: <span class="kw-2">*mut </span>ffi::c_void,
+    attrib_list: <span class="kw-2">*const </span>i32,
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">*mut </span>ffi::c_void, EglError&gt; {
     <span class="kw">let </span>egl_create_window_surface: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(
             <span class="kw-2">*mut </span>ffi::c_void,
@@ -834,15 +1014,25 @@
             <span class="kw-2">*mut </span>ffi::c_void,
             <span class="kw-2">*const </span>i32,
         ) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
-    &gt; = LIB_EGL.get(<span class="string">b"eglCreateWindowSurface"</span>).unwrap();
-    egl_create_window_surface(display, config, window, attribs)
+    &gt; = lib_egl_symbol(<span class="string">b"eglCreateWindowSurface"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>surface = egl_create_window_surface(display, config, native_window, attrib_list);
+
+    <span class="kw">if </span>surface.is_null() {
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(surface)
 }
 
-<span class="kw">unsafe fn </span>egl_destroy_surface(display: <span class="kw-2">*mut </span>ffi::c_void, surface: <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32 {
-    <span class="kw">let </span>egl_destroy_surface: libloading::Symbol&lt;
-        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglDestroySurface"</span>).unwrap();
-    egl_destroy_surface(display, surface)
+<span class="kw">unsafe fn </span>egl_destroy_surface(display: <span class="kw-2">*mut </span>ffi::c_void, surface: <span class="kw-2">*mut </span>ffi::c_void) {
+    <span class="kw">let </span>egl_destroy_surface = lib_egl_symbol::&lt;
+        <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>ffi::c_void),
+    &gt;(<span class="string">b"eglDestroySurface"</span>);
+
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(egl_destroy_surface) = egl_destroy_surface {
+        egl_destroy_surface(display, surface);
+    }
 }
 
 <span class="kw">unsafe fn </span>egl_make_current(
@@ -850,7 +1040,7 @@
     draw: <span class="kw-2">*mut </span>ffi::c_void,
     read: <span class="kw-2">*mut </span>ffi::c_void,
     context: <span class="kw-2">*mut </span>ffi::c_void,
-) -&gt; i32 {
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
     <span class="kw">let </span>egl_make_current: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(
             <span class="kw-2">*mut </span>ffi::c_void,
@@ -858,14 +1048,40 @@
             <span class="kw-2">*mut </span>ffi::c_void,
             <span class="kw-2">*mut </span>ffi::c_void,
         ) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglMakeCurrent"</span>).unwrap();
-    egl_make_current(display, draw, read, context)
+    &gt; = lib_egl_symbol(<span class="string">b"eglMakeCurrent"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>result = egl_make_current(display, draw, read, context);
+
+    <span class="kw">if </span>result == <span class="number">0 </span>{
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">unsafe fn </span>egl_swap_buffers(display: <span class="kw-2">*mut </span>ffi::c_void, surface: <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32 {
+<span class="kw">unsafe fn </span>egl_swap_interval(display: <span class="kw-2">*mut </span>ffi::c_void, interval: i32) {
+    <span class="kw">let </span>egl_swap_interval =
+        lib_egl_symbol::&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, i32)&gt;(<span class="string">b"eglSwapInterval"</span>);
+
+    <span class="kw">if let </span><span class="prelude-val">Ok</span>(egl_swap_interval) = egl_swap_interval {
+        egl_swap_interval(display, interval);
+    }
+}
+
+<span class="kw">unsafe fn </span>egl_swap_buffers(
+    display: <span class="kw-2">*mut </span>ffi::c_void,
+    surface: <span class="kw-2">*mut </span>ffi::c_void,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
     <span class="kw">let </span>egl_swap_buffers: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void, <span class="kw-2">*mut </span>ffi::c_void) -&gt; i32,
-    &gt; = LIB_EGL.get(<span class="string">b"eglSwapBuffers"</span>).unwrap();
-    egl_swap_buffers(display, surface)
+    &gt; = lib_egl_symbol(<span class="string">b"eglSwapBuffers"</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>result = egl_swap_buffers(display, surface);
+
+    <span class="kw">if </span>result == <span class="number">0 </span>{
+        check_egl_error()<span class="question-mark">?</span>;
+    }
+
+    <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div></section></main></body></html>
