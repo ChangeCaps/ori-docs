@@ -386,6 +386,53 @@
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
 <a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     ffi,
     sync::{Arc, LazyLock},
@@ -421,7 +468,7 @@
 }
 
 <span class="kw">impl </span>EglContext {
-    <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new() -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, EglError&gt; {
         <span class="attr">#[cfg(x11_platform)]
         </span><span class="kw">let </span>xdisplay = <span class="kw">unsafe </span>{ x_open_display(std::ptr::null()) };
         <span class="kw">let </span>display = <span class="kw">unsafe </span>{ egl_get_display(xdisplay) };
@@ -431,12 +478,12 @@
 
         <span class="kw">unsafe </span>{
             egl_initialize(display, <span class="kw-2">&amp;mut </span>major, <span class="kw-2">&amp;mut </span>minor);
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         };
 
         <span class="kw">unsafe </span>{
             egl_bind_api(EGL_OPENGL_API);
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         }
 
         <span class="kw">let </span>config_attribs = [
@@ -467,7 +514,7 @@
                 <span class="kw-2">&amp;mut </span>config,
                 <span class="kw-2">&amp;mut </span>num_config,
             );
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         }
 
         <span class="kw">if </span>num_config != <span class="number">1 </span>{
@@ -492,7 +539,7 @@
                 context_attribs.as_ptr(),
             )
         };
-        check_egl_error();
+        check_egl_error()<span class="question-mark">?</span>;
 
         <span class="kw">let </span>inner = Arc::new(EglContextInner {
             xdisplay,
@@ -501,7 +548,7 @@
             context,
         });
 
-        <span class="self">Self </span>{ inner }
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ inner })
     }
 }
 
@@ -514,13 +561,9 @@
                 std::ptr::null_mut(),
                 std::ptr::null_mut(),
             );
-            check_egl_error();
-
             egl_destroy_context(<span class="self">self</span>.display, <span class="self">self</span>.context);
-            check_egl_error();
-
             egl_terminate(<span class="self">self</span>.display);
-            check_egl_error();
+            x_close_display(<span class="self">self</span>.xdisplay);
         }
     }
 }
@@ -531,7 +574,7 @@
 }
 
 <span class="kw">impl </span>EglSurface {
-    <span class="kw">pub fn </span>new(context: <span class="kw-2">&amp;</span>EglContext, window: <span class="kw-2">*mut </span>ffi::c_void) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(context: <span class="kw-2">&amp;</span>EglContext, window: <span class="kw-2">*mut </span>ffi::c_void) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, EglError&gt; {
         <span class="kw">let </span>surface_attribs = [EGL_NONE];
 
         <span class="kw">let </span>surface = <span class="kw">unsafe </span>{
@@ -542,33 +585,39 @@
                 surface_attribs.as_ptr(),
             )
         };
-        check_egl_error();
+        check_egl_error()<span class="question-mark">?</span>;
 
-        <span class="self">Self </span>{
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             cx: context.inner.clone(),
             surface,
-        }
+        })
     }
 
-    <span class="kw">pub fn </span>swap_interval(<span class="kw-2">&amp;</span><span class="self">self</span>, interval: i32) {
+    <span class="kw">pub fn </span>swap_interval(<span class="kw-2">&amp;</span><span class="self">self</span>, interval: i32) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
             egl_swap_interval(<span class="self">self</span>.cx.display, interval);
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         }
+
+        <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>make_current(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+    <span class="kw">pub fn </span>make_current(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
             egl_make_current(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface, <span class="self">self</span>.surface, <span class="self">self</span>.cx.context);
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         }
+
+        <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub fn </span>swap_buffers(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+    <span class="kw">pub fn </span>swap_buffers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
         <span class="kw">unsafe </span>{
             egl_swap_buffers(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface);
-            check_egl_error();
+            check_egl_error()<span class="question-mark">?</span>;
         }
+
+        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -576,7 +625,6 @@
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">unsafe </span>{
             egl_destroy_surface(<span class="self">self</span>.cx.display, <span class="self">self</span>.surface);
-            check_egl_error();
         }
     }
 }
@@ -616,11 +664,57 @@
 <span class="kw">const </span>EGL_BAD_NATIVE_WINDOW: i32 = <span class="number">0x300D</span>;
 <span class="kw">const </span>EGL_CONTEXT_LOST: i32 = <span class="number">0x300E</span>;
 
+<span class="attr">#[repr(i32)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+</span><span class="kw">pub enum </span>EglError {
+    NotInitialized = EGL_NOT_INITIALIZED,
+    BadAccess = EGL_BAD_ACCESS,
+    BadAlloc = EGL_BAD_ALLOC,
+    BadAttribute = EGL_BAD_ATTRIBUTE,
+    BadContext = EGL_BAD_CONTEXT,
+    BadConfig = EGL_BAD_CONFIG,
+    BadCurrentSurface = EGL_BAD_CURRENT_SURFACE,
+    BadDisplay = EGL_BAD_DISPLAY,
+    BadSurface = EGL_BAD_SURFACE,
+    BadMatch = EGL_BAD_MATCH,
+    BadParameter = EGL_BAD_PARAMETER,
+    BadNativePixmap = EGL_BAD_NATIVE_PIXMAP,
+    BadNativeWindow = EGL_BAD_NATIVE_WINDOW,
+    ContextLost = EGL_CONTEXT_LOST,
+}
+
+<span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>EglError {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
+        <span class="kw">match </span><span class="self">self </span>{
+            EglError::NotInitialized =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL is not initialized"</span>),
+            EglError::BadAccess =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad access"</span>),
+            EglError::BadAlloc =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad alloc"</span>),
+            EglError::BadAttribute =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad attribute"</span>),
+            EglError::BadContext =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad context"</span>),
+            EglError::BadConfig =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad config"</span>),
+            EglError::BadCurrentSurface =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad current surface"</span>),
+            EglError::BadDisplay =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad display"</span>),
+            EglError::BadSurface =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad surface"</span>),
+            EglError::BadMatch =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad match"</span>),
+            EglError::BadParameter =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad parameter"</span>),
+            EglError::BadNativePixmap =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad native pixmap"</span>),
+            EglError::BadNativeWindow =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL bad native window"</span>),
+            EglError::ContextLost =&gt; <span class="macro">write!</span>(f, <span class="string">"EGL context lost"</span>),
+        }
+    }
+}
+
 <span class="kw">unsafe fn </span>x_open_display(name: <span class="kw-2">*const </span>ffi::c_char) -&gt; <span class="kw-2">*mut </span>ffi::c_void {
     <span class="kw">let </span>x_open_display: libloading::Symbol&lt;
         <span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*const </span>ffi::c_char) -&gt; <span class="kw-2">*mut </span>ffi::c_void,
     &gt; = LIB_X11.get(<span class="string">b"XOpenDisplay"</span>).unwrap();
     x_open_display(name)
+}
+
+<span class="kw">unsafe fn </span>x_close_display(display: <span class="kw-2">*mut </span>ffi::c_void) {
+    <span class="kw">let </span>x_close_display: libloading::Symbol&lt;<span class="kw">unsafe extern </span><span class="string">"C" </span><span class="kw">fn</span>(<span class="kw-2">*mut </span>ffi::c_void)&gt; =
+        LIB_X11.get(<span class="string">b"XCloseDisplay"</span>).unwrap();
+    x_close_display(display);
 }
 
 <span class="kw">unsafe fn </span>egl_get_error() -&gt; i32 {
@@ -630,26 +724,26 @@
 }
 
 <span class="attr">#[track_caller]
-</span><span class="kw">fn </span>check_egl_error() {
+</span><span class="kw">fn </span>check_egl_error() -&gt; <span class="prelude-ty">Result</span>&lt;(), EglError&gt; {
     <span class="kw">let </span>error = <span class="kw">unsafe </span>{ egl_get_error() };
 
     <span class="kw">match </span>error {
-        EGL_SUCCESS =&gt; {}
-        EGL_NOT_INITIALIZED =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_NOT_INITIALIZED"</span>),
-        EGL_BAD_ACCESS =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_ACCESS"</span>),
-        EGL_BAD_ALLOC =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_ALLOC"</span>),
-        EGL_BAD_ATTRIBUTE =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_ATTRIBUTE"</span>),
-        EGL_BAD_CONTEXT =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_CONTEXT"</span>),
-        EGL_BAD_CONFIG =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_CONFIG"</span>),
-        EGL_BAD_CURRENT_SURFACE =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_CURRENT_SURFACE"</span>),
-        EGL_BAD_DISPLAY =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_DISPLAY"</span>),
-        EGL_BAD_SURFACE =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_SURFACE"</span>),
-        EGL_BAD_MATCH =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_MATCH"</span>),
-        EGL_BAD_PARAMETER =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_PARAMETER"</span>),
-        EGL_BAD_NATIVE_PIXMAP =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_NATIVE_PIXMAP"</span>),
-        EGL_BAD_NATIVE_WINDOW =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_BAD_NATIVE_WINDOW"</span>),
-        EGL_CONTEXT_LOST =&gt; <span class="macro">panic!</span>(<span class="string">"EGL_CONTEXT_LOST"</span>),
-        <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">"unknown EGL error: {}"</span>, error),
+        EGL_SUCCESS =&gt; <span class="prelude-val">Ok</span>(()),
+        EGL_NOT_INITIALIZED =&gt; <span class="prelude-val">Err</span>(EglError::NotInitialized),
+        EGL_BAD_ACCESS =&gt; <span class="prelude-val">Err</span>(EglError::BadAccess),
+        EGL_BAD_ALLOC =&gt; <span class="prelude-val">Err</span>(EglError::BadAlloc),
+        EGL_BAD_ATTRIBUTE =&gt; <span class="prelude-val">Err</span>(EglError::BadAttribute),
+        EGL_BAD_CONTEXT =&gt; <span class="prelude-val">Err</span>(EglError::BadContext),
+        EGL_BAD_CONFIG =&gt; <span class="prelude-val">Err</span>(EglError::BadConfig),
+        EGL_BAD_CURRENT_SURFACE =&gt; <span class="prelude-val">Err</span>(EglError::BadCurrentSurface),
+        EGL_BAD_DISPLAY =&gt; <span class="prelude-val">Err</span>(EglError::BadDisplay),
+        EGL_BAD_SURFACE =&gt; <span class="prelude-val">Err</span>(EglError::BadSurface),
+        EGL_BAD_MATCH =&gt; <span class="prelude-val">Err</span>(EglError::BadMatch),
+        EGL_BAD_PARAMETER =&gt; <span class="prelude-val">Err</span>(EglError::BadParameter),
+        EGL_BAD_NATIVE_PIXMAP =&gt; <span class="prelude-val">Err</span>(EglError::BadNativePixmap),
+        EGL_BAD_NATIVE_WINDOW =&gt; <span class="prelude-val">Err</span>(EglError::BadNativeWindow),
+        EGL_CONTEXT_LOST =&gt; <span class="prelude-val">Err</span>(EglError::ContextLost),
+        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
     }
 }
 
