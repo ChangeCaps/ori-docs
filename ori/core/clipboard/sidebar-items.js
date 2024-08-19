@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ClipboardContext"],"trait":["Clipboard"]};
+window.SIDEBAR_ITEMS = {"struct":["Clipboard"],"trait":["ClipboardBackend"]};

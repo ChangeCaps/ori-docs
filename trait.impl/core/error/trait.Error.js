@@ -1,3 +1,4 @@
 (function() {var implementors = {
+"ori_shell":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.80.1/core/error/trait.Error.html\" title=\"trait core::error::Error\">Error</a> for <a class=\"enum\" href=\"ori_shell/enum.Error.html\" title=\"enum ori_shell::Error\">Error</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.80.1/core/error/trait.Error.html\" title=\"trait core::error::Error\">Error</a> for <a class=\"enum\" href=\"ori_shell/platform/x11/enum.X11Error.html\" title=\"enum ori_shell::platform::x11::X11Error\">X11Error</a>"]],
 "ori_winit":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.80.1/core/error/trait.Error.html\" title=\"trait core::error::Error\">Error</a> for <a class=\"enum\" href=\"ori_winit/enum.Error.html\" title=\"enum ori_winit::Error\">Error</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

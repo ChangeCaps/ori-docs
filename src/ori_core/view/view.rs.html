@@ -206,7 +206,6 @@
 <a href="#206" id="206">206</a>
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -241,8 +240,7 @@
 ///     should compute it's own size in accordance with the given [`Space`], and
 ///     return it. A container view should pass an appropriate [`Space`] to it's
 ///     contents and the compute it's own size based on the contents' size(s).
-/// - [`View::draw`] is called when the view needs to be drawn. See [`Canvas`]
-///     for more information on drawing.
+/// - [`View::draw`] is called when the view needs to be drawn.
 ///
 /// For examples see the implementation of views like [`Button`] or [`Checkbox`].
 ///

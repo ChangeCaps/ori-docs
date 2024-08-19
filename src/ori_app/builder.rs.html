@@ -92,7 +92,6 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
 
 <span class="kw">use </span>ori_core::{
@@ -100,11 +99,10 @@
     context::Contexts,
     style::Styles,
     text::{FontSource, Fonts},
-    view::{any, AnyView},
     window::Window,
 };
 
-<span class="kw">use crate</span>::{App, AppRequest, Delegate, UiBuilder};
+<span class="kw">use crate</span>::{App, AppRequest, Delegate, IntoUiBuilder};
 
 <span class="doccomment">/// A builder for an [`App`].
 </span><span class="kw">pub struct </span>AppBuilder&lt;T&gt; {
@@ -159,12 +157,12 @@
     </span>}
 
     <span class="doccomment">/// Add a window to the application.
-    </span><span class="kw">pub fn </span>window&lt;V: AnyView&lt;T&gt; + <span class="lifetime">'static</span>&gt;(
+    </span><span class="kw">pub fn </span>window&lt;V, P&gt;(
         <span class="kw-2">mut </span><span class="self">self</span>,
         window: Window,
-        <span class="kw-2">mut </span>ui: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>,
+        builder: <span class="kw">impl </span>IntoUiBuilder&lt;V, P, Data = T&gt;,
     ) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>builder: UiBuilder&lt;T&gt; = Box::new(<span class="kw">move </span>|data| any(ui(data)));
+        <span class="kw">let </span>builder = builder.into_ui_builder();
         (<span class="self">self</span>.requests).push(AppRequest::OpenWindow(window, builder));
         <span class="self">self
     </span>}

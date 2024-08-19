@@ -696,12 +696,13 @@
 <a href="#696" id="696">696</a>
 <a href="#697" id="697">697</a>
 <a href="#698" id="698">698</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
 <span class="kw">use </span>ori_core::{
     canvas::{Canvas, Color},
-    clipboard::{Clipboard, ClipboardContext},
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
@@ -742,6 +743,8 @@
 
 <span class="kw">impl</span>&lt;T&gt; WindowState&lt;T&gt; {
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
+        <span class="self">self</span>.view_state.prepare();
+
         <span class="kw">let </span><span class="kw-2">mut </span>cx = RebuildCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_view = (<span class="self">self</span>.ui)(data);
@@ -752,6 +755,7 @@
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx, rebuild: <span class="kw-2">&amp;mut </span>bool, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">let </span>hot = <span class="self">self</span>.window.is_hovered(<span class="self">self</span>.view_state.id());
         <span class="self">self</span>.view_state.set_hot(hot);
+        <span class="self">self</span>.view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
 
@@ -759,7 +763,6 @@
     }
 
     <span class="kw">fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
-        <span class="self">self</span>.view_state.prepare();
         <span class="self">self</span>.view_state.mark_layed_out();
 
         <span class="comment">// we need to calculate the max size of the window
@@ -787,7 +790,6 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
-        <span class="self">self</span>.view_state.prepare();
         <span class="self">self</span>.view_state.mark_drawn();
 
         <span class="self">self</span>.canvas.clear();
@@ -1068,9 +1070,9 @@
         <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id).map(|w| <span class="kw-2">&amp;mut </span>w.window)
     }
 
-    <span class="doccomment">/// Set the clipboard.
-    </span><span class="kw">pub fn </span>set_clipboard(<span class="kw-2">&amp;mut </span><span class="self">self</span>, clipboard: <span class="kw">impl </span>Clipboard + <span class="lifetime">'static</span>) {
-        <span class="self">self</span>.contexts.insert(ClipboardContext::new(clipboard));
+    <span class="doccomment">/// Add a context.
+    </span><span class="kw">pub fn </span>add_context(<span class="kw-2">&amp;mut </span><span class="self">self</span>, context: <span class="kw">impl </span>Any) {
+        <span class="self">self</span>.contexts.insert(context);
     }
 
     <span class="doccomment">/// Take all pending requests.
@@ -1144,6 +1146,7 @@
 
         <span class="kw">if </span>rebuild {
             <span class="self">self</span>.rebuild(data);
+            <span class="self">self</span>.handle_window_requests();
         }
     }
 
@@ -1160,6 +1163,7 @@
 
         <span class="kw">if </span>rebuild {
             <span class="self">self</span>.rebuild(data);
+            <span class="self">self</span>.handle_window_requests();
         }
     }
 
@@ -1363,7 +1367,7 @@
             <span class="comment">// since hover state is determined by the scene, and since draw modifies the scene,
             // we must update the hover state, and send an UpdateHovered event if needed
             </span><span class="kw">if </span><span class="self">self</span>.update_hovered(window_id) {
-                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::UpdateHovered);
+                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::Update);
             }
         }
 

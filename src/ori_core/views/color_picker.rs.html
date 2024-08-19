@@ -690,7 +690,7 @@
                 <span class="comment">// draw the wheel
                 </span>cx.fill(
                     Curve::circle(Point::ZERO, wheel_radius + <span class="self">self</span>.border_width),
-                    FillRule::Winding,
+                    FillRule::NonZero,
                     <span class="self">self</span>.border_color,
                 );
 
@@ -703,7 +703,7 @@
 
                 cx.fill(
                     Curve::circle(Point::ZERO, wheel_radius),
-                    FillRule::Winding,
+                    FillRule::NonZero,
                     pattern,
                 );
 

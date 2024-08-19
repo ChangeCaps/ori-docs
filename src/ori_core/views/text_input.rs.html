@@ -1144,9 +1144,9 @@
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">if </span>cx.is_hot() {
-            cx.view_state.set_cursor(<span class="prelude-val">Some</span>(Cursor::Text));
+            cx.set_cursor(<span class="prelude-val">Some</span>(Cursor::Text));
         } <span class="kw">else </span>{
-            cx.view_state.set_cursor(<span class="prelude-val">None</span>);
+            cx.set_cursor(<span class="prelude-val">None</span>);
         }
 
         <span class="kw">match </span>event {

@@ -274,6 +274,7 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -522,7 +523,7 @@
             * Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
         cx.layer(transform, |cx| {
-            cx.fill(icon(), FillRule::Winding, <span class="self">self</span>.icon_color);
+            cx.fill(icon(), FillRule::EvenOdd, <span class="self">self</span>.icon_color);
         });
 
         <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data);
@@ -547,6 +548,7 @@
     curve.move_to(Point::new(-d, -d * SQRT_2));
     curve.line_to(Point::new(d * SQRT_2, <span class="number">0.0</span>));
     curve.line_to(Point::new(-d, d * SQRT_2));
+    curve.close();
 
     curve
 }

@@ -124,12 +124,17 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     layout::{Point, Rect, Size},
     view::ViewState,
-    window::Window,
+    window::{Cursor, Window},
 };
 
 <span class="kw">use super</span>::{BaseCx, BuildCx, LayoutCx};
@@ -211,6 +216,11 @@
     <span class="doccomment">/// Request an animation frame.
     </span><span class="kw">pub fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.view_state.request_animate();
+    }
+
+    <span class="doccomment">/// Set the cursor of the view.
+    </span><span class="kw">pub fn </span>set_cursor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: <span class="prelude-ty">Option</span>&lt;Cursor&gt;) {
+        <span class="self">self</span>.view_state.set_cursor(cursor);
     }
 
     <span class="doccomment">/// Set whether the view is hot.

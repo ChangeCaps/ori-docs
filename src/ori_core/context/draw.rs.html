@@ -231,28 +231,18 @@
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     canvas::{FillRule, Mask, Paint, Stroke},
     layout::{Affine, Point, Rect, Size, Vector},
-    prelude::{BorderRadius, BorderWidth, Canvas, Curve, Image},
+    prelude::{BorderRadius, BorderWidth, Canvas, Curve},
     text::{Fonts, TextBuffer},
     view::ViewState,
     window::Window,
 };
 
-<span class="kw">use super</span>::{BaseCx, RebuildCx};
+<span class="kw">use </span><span class="kw">super</span>::BaseCx;
 
 <span class="doccomment">/// A context for drawing the view tree.
 </span><span class="kw">pub struct </span>DrawCx&lt;<span class="lifetime">'a</span>, <span class="lifetime">'b</span>&gt; {
@@ -305,11 +295,6 @@
         }
     }
 
-    <span class="doccomment">/// Get a rebuild context.
-    </span><span class="kw">pub fn </span>rebuild_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
-        RebuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state, <span class="self">self</span>.window)
-    }
-
     <span class="doccomment">/// Get the transform of the view.
     </span><span class="kw">pub fn </span>transform(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Affine {
         <span class="self">self</span>.transform
@@ -350,11 +335,6 @@
         <span class="self">self</span>.canvas.stroke(curve, stroke.into(), paint.into());
     }
 
-    <span class="doccomment">/// Draw an image.
-    </span><span class="kw">pub fn </span>image(<span class="kw-2">&amp;mut </span><span class="self">self</span>, point: Point, image: Image) {
-        <span class="self">self</span>.canvas.image(point, image);
-    }
-
     <span class="doccomment">/// Draw a text buffer.
     </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer, paint: <span class="kw">impl </span>Into&lt;Paint&gt;, offset: Vector) {
         <span class="self">self</span>.text_raw(buffer.raw(), paint, offset);
@@ -391,12 +371,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
         curve.push_rect_with_radius(rect, radius);
 
-        <span class="self">self</span>.fill(curve, FillRule::Winding, paint);
+        <span class="self">self</span>.fill(curve, FillRule::NonZero, paint);
 
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
         curve.push_rect_with_borders(rect, radius, width);
 
-        <span class="self">self</span>.fill(curve, FillRule::Winding, border_paint);
+        <span class="self">self</span>.fill(curve, FillRule::NonZero, border_paint);
     }
 
     <span class="doccomment">/// Draw an overlay, at `index`.

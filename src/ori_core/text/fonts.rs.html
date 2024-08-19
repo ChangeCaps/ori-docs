@@ -373,8 +373,6 @@
         offset: Vector,
         scale: f32,
     ) {
-        <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
-
         <span class="kw">for </span>run <span class="kw">in </span>buffer.layout_runs() {
             <span class="kw">for </span>glyph <span class="kw">in </span>run.glyphs {
                 <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
@@ -387,6 +385,8 @@
                     physical.x <span class="kw">as </span>f32 + offset.x,
                     run.line_y + physical.y <span class="kw">as </span>f32 + offset.y,
                 );
+
+                <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
 
                 <span class="kw">for </span>command <span class="kw">in </span>commands.into_iter().flatten() {
                     <span class="kw">match </span>command {
@@ -418,10 +418,10 @@
                         }
                     }
                 }
+
+                canvas.fill(curve, FillRule::NonZero, paint.clone());
             }
         }
-
-        canvas.fill(curve, FillRule::Winding, paint.clone());
     }
 }
 </code></pre></div></section></main></body></html>

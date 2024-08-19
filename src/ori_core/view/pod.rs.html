@@ -229,16 +229,6 @@
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -326,7 +316,6 @@
     <span class="doccomment">/// Build a pod view.
     </span><span class="kw">pub fn </span>build&lt;T&gt;(cx: <span class="kw-2">&amp;mut </span>BuildCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>BuildCx) -&gt; T) -&gt; (T, ViewState) {
         <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
-        view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
         new_cx.view_state = <span class="kw-2">&amp;mut </span>view_state;
@@ -387,23 +376,17 @@
         cx: <span class="kw-2">&amp;mut </span>LayoutCx,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>LayoutCx) -&gt; Size,
     ) -&gt; Size {
-        view_state.prepare();
         view_state.mark_layed_out();
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
         new_cx.view_state = view_state;
 
-        <span class="kw">let </span>size = f(<span class="kw-2">&amp;mut </span>new_cx);
-
-        view_state.size = size;
-        cx.view_state.propagate(view_state);
-
-        size
+        view_state.size = f(<span class="kw-2">&amp;mut </span>new_cx);
+        view_state.size
     }
 
     <span class="doccomment">/// Draw a pod view.
     </span><span class="kw">pub fn </span>draw(view_state: <span class="kw-2">&amp;mut </span>ViewState, cx: <span class="kw-2">&amp;mut </span>DrawCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx)) {
-        view_state.prepare();
         view_state.mark_drawn();
 
         <span class="comment">// create the draw context
@@ -412,9 +395,6 @@
 
         <span class="comment">// draw the content
         </span>new_cx.layer(new_cx.view_state.transform, f);
-
-        <span class="comment">// propagate the view state
-        </span>cx.view_state.propagate(view_state);
     }
 }
 

@@ -123,7 +123,7 @@
 };
 
 <span class="kw">use crate</span>::{
-    clipboard::{Clipboard, ClipboardContext},
+    clipboard::Clipboard,
     command::{Command, CommandProxy},
     text::Fonts,
 };
@@ -148,8 +148,8 @@
     }
 
     <span class="doccomment">/// Get the [`Clipboard`].
-    </span><span class="kw">pub fn </span>clipboard(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Clipboard {
-        <span class="self">self</span>.context_or_default::&lt;ClipboardContext&gt;()
+    </span><span class="kw">pub fn </span>clipboard(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Clipboard {
+        <span class="self">self</span>.context_or_default::&lt;Clipboard&gt;()
     }
 
     <span class="doccomment">/// Get the [`CommandProxy`].

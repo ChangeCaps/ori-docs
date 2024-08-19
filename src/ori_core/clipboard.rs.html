@@ -54,88 +54,60 @@
 <a href="#54" id="54">54</a>
 <a href="#55" id="55">55</a>
 <a href="#56" id="56">56</a>
-<a href="#57" id="57">57</a>
-<a href="#58" id="58">58</a>
-<a href="#59" id="59">59</a>
-<a href="#60" id="60">60</a>
-<a href="#61" id="61">61</a>
-<a href="#62" id="62">62</a>
-<a href="#63" id="63">63</a>
-<a href="#64" id="64">64</a>
-<a href="#65" id="65">65</a>
-<a href="#66" id="66">66</a>
-<a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-</pre></div><pre class="rust"><code><span class="doccomment">//! Types pertaining to the clipboard.
+</pre></div><pre class="rust"><code><span class="doccomment">//! Clipboard.
 
-/// A clipboard.
-</span><span class="kw">pub trait </span>Clipboard {
-    <span class="doccomment">/// Returns the contents of the clipboard.
-    </span><span class="kw">fn </span>get(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String;
+</span><span class="kw">use </span>std::fmt::Debug;
 
-    <span class="doccomment">/// Sets the contents of the clipboard.
-    </span><span class="kw">fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, contents: String);
+<span class="doccomment">/// A clipboard.
+</span><span class="kw">pub struct </span>Clipboard {
+    backend: Box&lt;<span class="kw">dyn </span>ClipboardBackend&gt;,
 }
 
-<span class="kw">struct </span>DummyClipboard;
+<span class="kw">impl </span>Clipboard {
+    <span class="doccomment">/// Create a new clipboard from a backend.
+    </span><span class="kw">pub fn </span>new(backend: Box&lt;<span class="kw">dyn </span>ClipboardBackend&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ backend }
+    }
 
-<span class="kw">impl </span>Clipboard <span class="kw">for </span>DummyClipboard {
-    <span class="kw">fn </span>get(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String {
-        <span class="macro">tracing::warn!</span>(<span class="string">"Clipboard context not set!"</span>);
+    <span class="doccomment">/// Get the clipboard text.
+    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String {
+        <span class="self">self</span>.backend.get_text()
+    }
+
+    <span class="doccomment">/// Set the clipboard text.
+    </span><span class="kw">pub fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, text: <span class="kw">impl </span>AsRef&lt;str&gt;) {
+        <span class="self">self</span>.backend.set_text(text.as_ref());
+    }
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>Clipboard {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new(Box::new(NoopClipboard))
+    }
+}
+
+<span class="kw">impl </span>Debug <span class="kw">for </span>Clipboard {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
+        f.debug_struct(<span class="string">"Clipboard"</span>).finish()
+    }
+}
+
+<span class="doccomment">/// A clipboard backend.
+</span><span class="kw">pub trait </span>ClipboardBackend {
+    <span class="doccomment">/// Get the clipboard text.
+    </span><span class="kw">fn </span>get_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String;
+
+    <span class="doccomment">/// Set the clipboard text.
+    </span><span class="kw">fn </span>set_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, text: <span class="kw-2">&amp;</span>str);
+}
+
+<span class="kw">struct </span>NoopClipboard;
+
+<span class="kw">impl </span>ClipboardBackend <span class="kw">for </span>NoopClipboard {
+    <span class="kw">fn </span>get_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String {
         String::new()
     }
 
-    <span class="kw">fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _contents: String) {
-        <span class="macro">tracing::warn!</span>(<span class="string">"Clipboard context not set!"</span>);
-    }
-}
-
-<span class="doccomment">/// The clipboard context.
-</span><span class="kw">pub struct </span>ClipboardContext {
-    provider: Box&lt;<span class="kw">dyn </span>Clipboard&gt;,
-}
-
-<span class="kw">impl </span>Default <span class="kw">for </span>ClipboardContext {
-    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::dummy()
-    }
-}
-
-<span class="kw">impl </span>ClipboardContext {
-    <span class="doccomment">/// Creates a dummy clipboard, that does nothing.
-    </span><span class="kw">pub fn </span>dummy() -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            provider: Box::new(DummyClipboard),
-        }
-    }
-
-    <span class="doccomment">/// Creates a new clipboard.
-    </span><span class="kw">pub fn </span>new(provider: <span class="kw">impl </span>Clipboard + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            provider: Box::new(provider),
-        }
-    }
-
-    <span class="doccomment">/// Returns the contents of the clipboard.
-    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.provider.get()
-    }
-
-    <span class="doccomment">/// Sets the contents of the clipboard.
-    </span><span class="kw">pub fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, contents: String) {
-        <span class="self">self</span>.provider.set(contents);
-    }
-}
-
-<span class="kw">impl </span>Clipboard <span class="kw">for </span>ClipboardContext {
-    <span class="kw">fn </span>get(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.get()
-    }
-
-    <span class="kw">fn </span>set(<span class="kw-2">&amp;mut </span><span class="self">self</span>, contents: String) {
-        <span class="self">self</span>.set(contents);
-    }
+    <span class="kw">fn </span>set_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _text: <span class="kw-2">&amp;</span>str) {}
 }
 </code></pre></div></section></main></body></html>

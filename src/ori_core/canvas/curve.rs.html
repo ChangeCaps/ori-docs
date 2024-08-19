@@ -824,6 +824,22 @@
 <a href="#824" id="824">824</a>
 <a href="#825" id="825">825</a>
 <a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Affine, Point, Rect, Size, Vector};
@@ -935,6 +951,16 @@
         <span class="self">self</span>.verbs.clear();
         <span class="self">self</span>.points.clear();
         <span class="self">self</span>.bounds = Rect::ZERO;
+    }
+
+    <span class="doccomment">/// Get the points in the curve.
+    </span><span class="kw">pub fn </span>points(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Point] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.points
+    }
+
+    <span class="doccomment">/// Get the verbs in the curve.
+    </span><span class="kw">pub fn </span>verbs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[CurveVerb] {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.verbs
     }
 
     <span class="doccomment">/// Get the last point in the curve.
@@ -1056,7 +1082,7 @@
         }
 
         <span class="kw">match </span>rule {
-            FillRule::Winding =&gt; <span class="self">self</span>.contains_even_odd(point),
+            FillRule::NonZero =&gt; <span class="self">self</span>.contains_even_odd(point),
             FillRule::EvenOdd =&gt; <span class="self">self</span>.contains_even_odd(point),
         }
     }
@@ -1189,6 +1215,8 @@
                 tl + Vector::new(s, (r + e) * <span class="number">0.45</span>),
                 tl + Vector::new(s, r),
             );
+
+            <span class="self">self</span>.close();
         }
 
         <span class="kw">let </span>[r, s, e] = <span class="self">Self</span>::border_data(radius, width, <span class="number">1</span>);
@@ -1209,6 +1237,8 @@
                 tr + Vector::new(-(r + e) * <span class="number">0.45</span>, s),
                 tr + Vector::new(-r, s),
             );
+
+            <span class="self">self</span>.close();
         }
 
         <span class="kw">let </span>[r, s, e] = <span class="self">Self</span>::border_data(radius, width, <span class="number">2</span>);
@@ -1229,6 +1259,8 @@
                 br + Vector::new(-s, -(r + e) * <span class="number">0.45</span>),
                 br + Vector::new(-s, -r),
             );
+
+            <span class="self">self</span>.close();
         }
 
         <span class="kw">let </span>[r, s, e] = <span class="self">Self</span>::border_data(radius, width, <span class="number">3</span>);
@@ -1249,9 +1281,9 @@
                 bl + Vector::new((r + e) * <span class="number">0.45</span>, -s),
                 bl + Vector::new(r, -s),
             );
-        }
 
-        <span class="self">self</span>.close();
+            <span class="self">self</span>.close();
+        }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>square_roots(a: f32, b: f32, c: f32) -&gt; [f32; <span class="number">2</span>] {

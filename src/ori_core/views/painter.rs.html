@@ -141,7 +141,7 @@
         <span class="kw">move </span>|cx, <span class="kw">_</span>| {
             cx.fill(
                 Curve::circle(cx.rect().center(), radius),
-                FillRule::Winding,
+                FillRule::NonZero,
                 paint.clone(),
             );
         }
@@ -155,7 +155,7 @@
         <span class="kw">let </span>paint = paint.into();
 
         <span class="kw">move </span>|cx, <span class="kw">_</span>| {
-            cx.fill(Curve::oval(cx.rect()), FillRule::Winding, paint.clone());
+            cx.fill(Curve::oval(cx.rect()), FillRule::NonZero, paint.clone());
         }
     })
     .size(size)
@@ -167,7 +167,7 @@
         <span class="kw">let </span>paint = paint.into();
 
         <span class="kw">move </span>|cx, <span class="kw">_</span>| {
-            cx.fill(Curve::rect(cx.rect()), FillRule::Winding, paint.clone());
+            cx.fill(Curve::rect(cx.rect()), FillRule::NonZero, paint.clone());
         }
     })
     .size(size)

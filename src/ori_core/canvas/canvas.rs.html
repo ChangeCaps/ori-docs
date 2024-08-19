@@ -558,68 +558,6 @@
 <a href="#558" id="558">558</a>
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
-<a href="#571" id="571">571</a>
-<a href="#572" id="572">572</a>
-<a href="#573" id="573">573</a>
-<a href="#574" id="574">574</a>
-<a href="#575" id="575">575</a>
-<a href="#576" id="576">576</a>
-<a href="#577" id="577">577</a>
-<a href="#578" id="578">578</a>
-<a href="#579" id="579">579</a>
-<a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
-<a href="#600" id="600">600</a>
-<a href="#601" id="601">601</a>
-<a href="#602" id="602">602</a>
-<a href="#603" id="603">603</a>
-<a href="#604" id="604">604</a>
-<a href="#605" id="605">605</a>
-<a href="#606" id="606">606</a>
-<a href="#607" id="607">607</a>
-<a href="#608" id="608">608</a>
-<a href="#609" id="609">609</a>
-<a href="#610" id="610">610</a>
-<a href="#611" id="611">611</a>
-<a href="#612" id="612">612</a>
-<a href="#613" id="613">613</a>
-<a href="#614" id="614">614</a>
-<a href="#615" id="615">615</a>
-<a href="#616" id="616">616</a>
-<a href="#617" id="617">617</a>
-<a href="#618" id="618">618</a>
-<a href="#619" id="619">619</a>
-<a href="#620" id="620">620</a>
-<a href="#621" id="621">621</a>
-<a href="#622" id="622">622</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::{BTreeMap, HashMap},
     hash::{BuildHasherDefault, Hash, Hasher},
@@ -750,7 +688,7 @@
 </span><span class="kw">pub enum </span>FillRule {
     <span class="doccomment">/// A point is inside the shape if a ray from the point crosses a non-zero sum of signed edge
     /// crossings.
-    </span>Winding,
+    </span>NonZero,
 
     <span class="doccomment">/// A point is inside the shape if a ray from the point crosses an odd number of edges.
     </span>EvenOdd,
@@ -770,7 +708,7 @@
     <span class="kw">fn </span>from(value: Rect) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             curve: Curve::from(value),
-            fill: FillRule::Winding,
+            fill: FillRule::NonZero,
         }
     }
 }
@@ -778,15 +716,6 @@
 <span class="doccomment">/// A primitive that can be drawn on a canvas.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
 </span><span class="kw">pub enum </span>Primitive {
-    <span class="doccomment">/// A rectangle.
-    </span>Rect {
-        <span class="doccomment">/// The rectangle to draw.
-        </span>rect: Rect,
-
-        <span class="doccomment">/// The paint to fill the rectangle with.
-        </span>paint: Paint,
-    },
-
     <span class="doccomment">/// A filled curve.
     </span>Fill {
         <span class="doccomment">/// The curve to draw.
@@ -811,15 +740,6 @@
         </span>paint: Paint,
     },
 
-    <span class="doccomment">/// An image.
-    </span>Image {
-        <span class="doccomment">/// The top-left corner of the image.
-        </span>point: Point,
-
-        <span class="doccomment">/// The image to draw.
-        </span>image: Image,
-    },
-
     <span class="doccomment">/// A layer that can be transformed and masked.
     </span>Layer {
         <span class="doccomment">/// The primitives of the layer.
@@ -840,10 +760,8 @@
     <span class="doccomment">/// Count the number of primitives.
     </span><span class="kw">pub fn </span>count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="kw">match </span><span class="self">self </span>{
-            Primitive::Rect { .. } =&gt; <span class="number">1</span>,
             Primitive::Fill { .. } =&gt; <span class="number">1</span>,
             Primitive::Stroke { .. } =&gt; <span class="number">1</span>,
-            Primitive::Image { .. } =&gt; <span class="number">1</span>,
             Primitive::Layer { primitives, .. } =&gt; primitives.iter().map(<span class="self">Self</span>::count).sum(),
         }
     }
@@ -895,19 +813,22 @@
 
     <span class="doccomment">/// Draw a rectangle.
     </span><span class="kw">pub fn </span>rect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect, paint: Paint) {
-        <span class="self">self</span>.primitives.push(Primitive::Rect { rect, paint });
+        <span class="kw">let </span>curve = Curve::rect(rect);
+        <span class="self">self</span>.fill(curve.clone(), FillRule::NonZero, paint);
     }
 
     <span class="doccomment">/// Draw a trigger rectangle.
     </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect) {
-        <span class="self">self</span>.primitives.push(Primitive::Rect {
-            rect,
-            paint: Paint {
+        <span class="kw">let </span>curve = Curve::rect(rect);
+        <span class="self">self</span>.fill(
+            curve,
+            FillRule::NonZero,
+            Paint {
                 shader: Shader::Solid(Color::TRANSPARENT),
                 blend: BlendMode::Destination,
                 anti_alias: <span class="bool-val">false</span>,
             },
-        });
+        );
     }
 
     <span class="doccomment">/// Fill a curve.
@@ -922,11 +843,6 @@
             stroke,
             paint,
         });
-    }
-
-    <span class="doccomment">/// Draw an image.
-    </span><span class="kw">pub fn </span>image(<span class="kw-2">&amp;mut </span><span class="self">self</span>, point: Point, image: Image) {
-        <span class="self">self</span>.primitives.push(Primitive::Image { point, image });
     }
 
     <span class="doccomment">/// Draw an overlay.
@@ -1007,27 +923,12 @@
         <span class="kw">fn </span>recurse(primitives: <span class="kw-2">&amp;</span>[Primitive], view: <span class="prelude-ty">Option</span>&lt;ViewId&gt;, point: Point) -&gt; <span class="prelude-ty">Option</span>&lt;ViewId&gt; {
             <span class="kw">for </span>primitive <span class="kw">in </span>primitives.iter().rev() {
                 <span class="kw">match </span>primitive {
-                    Primitive::Rect { rect, .. } =&gt; {
-                        <span class="kw">if </span>rect.contains(point) {
-                            <span class="kw">return </span>view;
-                        }
-                    }
                     Primitive::Fill { curve, fill, .. } =&gt; {
                         <span class="kw">if </span>curve.contains(point, <span class="kw-2">*</span>fill) {
                             <span class="kw">return </span>view;
                         }
                     }
                     Primitive::Stroke { .. } =&gt; {}
-                    Primitive::Image {
-                        point: image_point,
-                        image,
-                    } =&gt; {
-                        <span class="kw">let </span>rect = Rect::min_size(<span class="kw-2">*</span>image_point, image.size());
-
-                        <span class="kw">if </span>rect.contains(point) {
-                            <span class="kw">return </span>view;
-                        }
-                    }
                     Primitive::Layer {
                         primitives,
                         transform,
@@ -1077,18 +978,6 @@
 
     <span class="kw">fn </span>extract_primitive_rects(primitive: <span class="kw-2">&amp;</span>Primitive, transform: Affine, rects: <span class="kw-2">&amp;mut </span>Rects) {
         <span class="kw">match </span>primitive {
-            Primitive::Rect { rect, paint } =&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>hasher = SeaHasher::new();
-
-                hasher.write_u64(<span class="number">0</span>);
-                rect.hash(<span class="kw-2">&amp;mut </span>hasher);
-                paint.hash(<span class="kw-2">&amp;mut </span>hasher);
-                transform.hash(<span class="kw-2">&amp;mut </span>hasher);
-
-                <span class="kw">let </span>hash = hasher.finish();
-
-                rects.insert(hash, rect.transform(transform));
-            }
             Primitive::Fill { curve, fill, paint } =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>hasher = SeaHasher::new();
 
@@ -1118,19 +1007,6 @@
                 <span class="kw">let </span>hash = hasher.finish();
 
                 <span class="kw">let </span>rect = curve.bounds().expand(stroke.width / <span class="number">2.0</span>);
-                rects.insert(hash, rect.transform(transform));
-            }
-            Primitive::Image { point, image } =&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>hasher = SeaHasher::new();
-
-                hasher.write_u64(<span class="number">3</span>);
-                point.hash(<span class="kw-2">&amp;mut </span>hasher);
-                image.hash(<span class="kw-2">&amp;mut </span>hasher);
-                transform.hash(<span class="kw-2">&amp;mut </span>hasher);
-
-                <span class="kw">let </span>hash = hasher.finish();
-
-                <span class="kw">let </span>rect = Rect::min_size(<span class="kw-2">*</span>point, image.size());
                 rects.insert(hash, rect.transform(transform));
             }
             Primitive::Layer {
