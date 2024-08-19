@@ -442,7 +442,7 @@
 }
 
 <span class="kw">impl </span>Style <span class="kw">for </span>TooltipStyle {
-    <span class="kw">fn </span>style(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>styled(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>text_style = style.get::&lt;TextStyle&gt;();
         <span class="kw">let </span>palette = style.palette();
 
