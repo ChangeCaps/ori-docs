@@ -353,9 +353,6 @@
 <a href="#353" id="353">353</a>
 <a href="#354" id="354">354</a>
 <a href="#355" id="355">355</a>
-<a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -622,10 +619,7 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">let </span>space = Space::new(
-                <span class="self">self</span>.axis.pack(<span class="number">0.0</span>, min_minor),
-                <span class="self">self</span>.axis.pack(f32::INFINITY, max_minor),
-            );
+            <span class="kw">let </span>space = Space::new(Size::ZERO, <span class="self">self</span>.axis.pack(f32::INFINITY, max_minor));
 
             <span class="kw">let </span>size = <span class="self">self</span>.content.layout_nth(i, content, cx, data, space);
             state.majors[i] = <span class="self">self</span>.axis.major(size);
