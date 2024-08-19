@@ -692,14 +692,6 @@
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
 <a href="#694" id="694">694</a>
-<a href="#695" id="695">695</a>
-<a href="#696" id="696">696</a>
-<a href="#697" id="697">697</a>
-<a href="#698" id="698">698</a>
-<a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Shaping,
@@ -922,7 +914,7 @@
         buffer.set_wrap(<span class="kw-2">&amp;mut </span>fonts.font_system, <span class="self">self</span>.wrap.to_cosmic_text());
         buffer.set_metrics(<span class="kw-2">&amp;mut </span>fonts.font_system, metrics);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>text = <span class="self">self</span>.get_text(state);
+        <span class="kw">let </span><span class="kw-2">mut </span>text = state.text();
 
         <span class="kw">if </span>text.ends_with(<span class="string">'\n'</span>) {
             text.push(<span class="string">'\n'</span>);
@@ -953,14 +945,6 @@
 
         <span class="kw">for </span>line <span class="kw">in </span>buffer.lines.iter_mut() {
             line.set_attrs_list(attrs_list.clone());
-        }
-    }
-
-    <span class="kw">fn </span>get_text(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;</span>TextInputState) -&gt; String {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>text) = <span class="self">self</span>.text {
-            text.clone()
-        } <span class="kw">else </span>{
-            state.text()
         }
     }
 }
@@ -1104,7 +1088,7 @@
             || <span class="self">self</span>.font_stretch != old.font_stretch
             || <span class="self">self</span>.font_style != old.font_style;
 
-        <span class="kw">if </span><span class="self">self</span>.text != old.text &amp;&amp; attrs_changed {
+        <span class="kw">if </span><span class="self">self</span>.text != <span class="prelude-val">Some</span>(state.text()) &amp;&amp; <span class="self">self</span>.text.is_some() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>text) = <span class="self">self</span>.text.clone() {
                 <span class="kw">let </span>attrs = TextAttributes {
                     family: <span class="self">self</span>.font_family.clone(),
@@ -1332,7 +1316,7 @@
         </span>(state.editor).shape_as_needed(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, <span class="bool-val">true</span>);
 
         <span class="comment">// if the text is empty, we need to layout the placeholder
-        </span><span class="kw">let </span><span class="kw-2">mut </span>size = <span class="kw">if </span>!<span class="self">self</span>.get_text(state).is_empty() {
+        </span><span class="kw">let </span><span class="kw-2">mut </span>size = <span class="kw">if </span>!state.text().is_empty() {
             Fonts::buffer_size(state.buffer())
         } <span class="kw">else </span>{
             state.placeholder.size()
@@ -1394,7 +1378,7 @@
             }
 
             <span class="comment">/* draw the text */
-            </span><span class="kw">if </span>!<span class="self">self</span>.get_text(state).is_empty() {
+            </span><span class="kw">if </span>!state.text().is_empty() {
                 cx.text_raw(state.buffer(), <span class="self">self</span>.color, Vector::ZERO)
             } <span class="kw">else </span>{
                 cx.text(<span class="kw-2">&amp;</span>state.placeholder, <span class="self">self</span>.placeholder_color, Vector::ZERO)
