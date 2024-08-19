@@ -274,17 +274,15 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
 
 <span class="kw">use crate</span>::{
-    canvas::{BorderRadius, BorderWidth, Color},
+    canvas::{BorderRadius, BorderWidth, Color, Curve, FillRule},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Affine, Point, Rect, Size, Space, Vector},
-    prelude::{Curve, FillRule},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     transition::Transition,

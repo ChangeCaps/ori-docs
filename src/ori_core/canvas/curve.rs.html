@@ -910,7 +910,7 @@
     }
 
     <span class="doccomment">/// Create a curve from an oval.
-    </span><span class="kw">pub fn </span>oval(oval: Rect) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>ellipse(oval: Rect) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>curve = <span class="self">Self</span>::new();
         curve.push_oval(oval);
         curve
@@ -918,7 +918,7 @@
 
     <span class="doccomment">/// Create a curve from a cicrle.
     </span><span class="kw">pub fn </span>circle(center: Point, radius: f32) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::oval(Rect::center_size(center, Size::all(radius * <span class="number">2.0</span>)))
+        <span class="self">Self</span>::ellipse(Rect::center_size(center, Size::all(radius * <span class="number">2.0</span>)))
     }
 
     <span class="doccomment">/// Get the number of verbs in the curve.

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"derive":["Rebuild"],"macro":["debug","error","include_font","info","trace","warn"]};

@@ -356,12 +356,6 @@
 <a href="#356" id="356">356</a>
 <a href="#357" id="357">357</a>
 <a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -651,10 +645,7 @@
             <span class="kw">let </span>flex = content[i].flex();
             <span class="kw">let </span>major = per_flex * flex;
 
-            <span class="kw">let </span>space = Space::new(
-                <span class="self">self</span>.axis.pack(<span class="number">0.0</span>, min_minor),
-                <span class="self">self</span>.axis.pack(major, max_minor),
-            );
+            <span class="kw">let </span>space = Space::new(Size::ZERO, <span class="self">self</span>.axis.pack(major, max_minor));
 
             <span class="kw">let </span>size = <span class="self">self</span>.content.layout_nth(i, content, cx, data, space);
             state.majors[i] = <span class="self">self</span>.axis.major(size);
@@ -674,10 +665,7 @@
             <span class="kw">let </span>flex = content[i].flex();
             <span class="kw">let </span>major = per_flex * flex;
 
-            <span class="kw">let </span>space = Space::new(
-                <span class="self">self</span>.axis.pack(major, min_minor),
-                <span class="self">self</span>.axis.pack(major, max_minor),
-            );
+            <span class="kw">let </span>space = Space::new(<span class="self">self</span>.axis.pack(major, <span class="number">0.0</span>), <span class="self">self</span>.axis.pack(major, max_minor));
 
             <span class="kw">let </span>size = <span class="self">self</span>.content.layout_nth(i, content, cx, data, space);
             state.majors[i] = <span class="self">self</span>.axis.major(size);

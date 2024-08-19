@@ -119,10 +119,10 @@
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::Build;
 
 <span class="kw">use crate</span>::{
+    canvas::{Curve, FillRule, Paint},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    prelude::{Curve, FillRule, Paint},
     rebuild::Rebuild,
     style::Styles,
     view::View,
@@ -155,7 +155,7 @@
         <span class="kw">let </span>paint = paint.into();
 
         <span class="kw">move </span>|cx, <span class="kw">_</span>| {
-            cx.fill(Curve::oval(cx.rect()), FillRule::NonZero, paint.clone());
+            cx.fill(Curve::ellipse(cx.rect()), FillRule::NonZero, paint.clone());
         }
     })
     .size(size)

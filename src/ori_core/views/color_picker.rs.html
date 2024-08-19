@@ -368,11 +368,11 @@
 <span class="kw">use </span>ori_macro::Build;
 
 <span class="kw">use crate</span>::{
-    canvas::Color,
+    canvas::{Color, Curve, FillRule, Pattern},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
+    image::Image,
     layout::{Affine, Point, Rect, Size, Space, Vector},
-    prelude::{Curve, FillRule, Image, Pattern},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     view::View,

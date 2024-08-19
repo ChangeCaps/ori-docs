@@ -214,6 +214,8 @@
 <a href="#214" id="214">214</a>
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
 </pre></div><pre class="rust"><code><span class="attr">#![deny(missing_docs)]
 #![allow(clippy::module_inception)]
 
@@ -232,7 +234,9 @@
 <span class="kw">use </span>libloading::{Library, Symbol};
 <span class="kw">use </span>ori_core::{
     command::CommandProxy,
-    prelude::{BuildCx, DrawCx, Event, EventCx, LayoutCx, RebuildCx, Size, Space},
+    context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
+    event::Event,
+    layout::{Size, Space},
     view::View,
 };
 
