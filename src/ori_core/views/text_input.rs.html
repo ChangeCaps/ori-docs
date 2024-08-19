@@ -697,8 +697,12 @@
 <a href="#697" id="697">697</a>
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
-    Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, Metrics, Motion, Shaping,
+    Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
+    Motion, Shaping,
 };
 <span class="kw">use </span>ori_macro::{example, Build};
 
@@ -1001,6 +1005,7 @@
     <span class="kw">fn </span>clear_text(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.buffer_mut().lines = <span class="macro">vec!</span>[BufferLine::new(
             <span class="string">""</span>,
+            LineEnding::None,
             AttrsList::new(Attrs {
                 cache_key_flags: cosmic_text::CacheKeyFlags::empty(),
                 color_opt: <span class="prelude-val">None</span>,
@@ -1009,6 +1014,7 @@
                 style: cosmic_text::Style::Normal,
                 weight: cosmic_text::Weight::NORMAL,
                 metadata: <span class="number">0</span>,
+                metrics_opt: <span class="prelude-val">None</span>,
             }),
             Shaping::Advanced,
         )];
@@ -1317,8 +1323,8 @@
     ) -&gt; Size {
         state.buffer_mut().set_size(
             <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
-            space.max.width,
-            space.max.height,
+            <span class="prelude-val">Some</span>(space.max.width),
+            <span class="prelude-val">Some</span>(space.max.height),
         );
         state.placeholder.set_bounds(cx.fonts(), space.max);
 

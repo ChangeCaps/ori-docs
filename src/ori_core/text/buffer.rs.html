@@ -109,6 +109,13 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{Buffer, Shaping};
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Point, Rect, Size};
@@ -181,15 +188,22 @@
     <span class="doccomment">/// Get the bounds of the text buffer.
     </span><span class="kw">pub fn </span>bounds(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Size {
         <span class="kw">let </span>(width, height) = <span class="self">self</span>.buffer.size();
-        Size::new(width, height)
+        Size::new(
+            width.unwrap_or(f32::INFINITY),
+            height.unwrap_or(f32::INFINITY),
+        )
     }
 
     <span class="doccomment">/// Set the bounds of the text buffer.
     </span><span class="kw">pub fn </span>set_bounds(<span class="kw-2">&amp;mut </span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, bounds: Size) {
         <span class="kw">let </span>(width, height) = <span class="self">self</span>.buffer.size();
 
-        <span class="kw">if </span>width != bounds.width || height != bounds.height {
-            (<span class="self">self</span>.buffer).set_size(<span class="kw-2">&amp;mut </span>fonts.font_system, bounds.width, bounds.height);
+        <span class="kw">if </span>width != <span class="prelude-val">Some</span>(bounds.width) || height != <span class="prelude-val">Some</span>(bounds.height) {
+            (<span class="self">self</span>.buffer).set_size(
+                <span class="kw-2">&amp;mut </span>fonts.font_system,
+                <span class="prelude-val">Some</span>(bounds.width),
+                <span class="prelude-val">Some</span>(bounds.height),
+            );
         }
     }
 
