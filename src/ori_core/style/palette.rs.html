@@ -296,9 +296,9 @@
 
         <span class="kw">fn </span>low(color: Color, is_light: bool) -&gt; Color {
             <span class="kw">if </span>is_light {
-                color.lighten(<span class="number">0.3</span>).desaturate(<span class="number">0.2</span>)
+                color.lighten(<span class="number">0.15</span>).desaturate(<span class="number">0.1</span>)
             } <span class="kw">else </span>{
-                color.darken(<span class="number">0.3</span>).desaturate(<span class="number">0.2</span>)
+                color.darken(<span class="number">0.15</span>).desaturate(<span class="number">0.1</span>)
             }
         }
 
@@ -306,12 +306,12 @@
 
         <span class="self">Self </span>{
             background,
-            surface_lower: emphasize(surface, is_light, -<span class="number">0.2</span>),
-            surface_low: emphasize(surface, is_light, -<span class="number">0.1</span>),
+            surface_lower: emphasize(surface, is_light, -<span class="number">0.1</span>),
+            surface_low: emphasize(surface, is_light, -<span class="number">0.05</span>),
             surface,
-            surface_high: emphasize(surface, is_light, <span class="number">0.1</span>),
-            surface_higher: emphasize(surface, is_light, <span class="number">0.2</span>),
-            surface_highest: emphasize(surface, is_light, <span class="number">0.3</span>),
+            surface_high: emphasize(surface, is_light, <span class="number">0.05</span>),
+            surface_higher: emphasize(surface, is_light, <span class="number">0.1</span>),
+            surface_highest: emphasize(surface, is_light, <span class="number">0.15</span>),
             contrast,
             primary,
             primary_low: low(primary, is_light),
@@ -351,14 +351,14 @@
         <span class="self">Self</span>::derived(
             Color::hex(<span class="string">"#1e1e1e"</span>),
             Color::hex(<span class="string">"#242424"</span>),
-            Color::hex(<span class="string">"#deddda"</span>),
-            Color::hex(<span class="string">"#62a0ea"</span>),
-            Color::hex(<span class="string">"#4dd0e1"</span>),
-            Color::hex(<span class="string">"#f8e45c"</span>),
-            Color::hex(<span class="string">"#ff7b63"</span>),
-            Color::hex(<span class="string">"#8ff0a4"</span>),
-            Color::hex(<span class="string">"#f8e45c"</span>),
-            Color::hex(<span class="string">"#4dd0e1"</span>),
+            Color::hex(<span class="string">"#f9f9f8"</span>),
+            Color::hex(<span class="string">"#55b1f0"</span>),
+            Color::hex(<span class="string">"#8c8bed"</span>),
+            Color::hex(<span class="string">"#f4a151"</span>),
+            Color::hex(<span class="string">"#f05d51"</span>),
+            Color::hex(<span class="string">"#9af079"</span>),
+            Color::hex(<span class="string">"#f9e35f"</span>),
+            Color::hex(<span class="string">"#639ff7"</span>),
         )
     }
 }

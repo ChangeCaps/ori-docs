@@ -558,6 +558,28 @@
 <a href="#558" id="558">558</a>
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
+<a href="#571" id="571">571</a>
+<a href="#572" id="572">572</a>
+<a href="#573" id="573">573</a>
+<a href="#574" id="574">574</a>
+<a href="#575" id="575">575</a>
+<a href="#576" id="576">576</a>
+<a href="#577" id="577">577</a>
+<a href="#578" id="578">578</a>
+<a href="#579" id="579">579</a>
+<a href="#580" id="580">580</a>
+<a href="#581" id="581">581</a>
+<a href="#582" id="582">582</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::{BTreeMap, HashMap},
     hash::{BuildHasherDefault, Hash, Hasher},
@@ -633,6 +655,19 @@
     </span>DestinationOver,
 }
 
+<span class="doccomment">/// Ways to anti-alias a shape.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub enum </span>AntiAlias {
+    <span class="doccomment">/// No anti-aliasing.
+    </span><span class="prelude-val">None</span>,
+
+    <span class="doccomment">/// Fast anti-aliasing.
+    </span>Fast,
+
+    <span class="doccomment">/// Anti-aliasing.
+    </span>Full,
+}
+
 <span class="doccomment">/// A paint that can be used to fill or stroke a shape.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq, Hash)]
 </span><span class="kw">pub struct </span>Paint {
@@ -643,7 +678,7 @@
     </span><span class="kw">pub </span>blend: BlendMode,
 
     <span class="doccomment">/// Whether the paint should be anti-aliased.
-    </span><span class="kw">pub </span>anti_alias: bool,
+    </span><span class="kw">pub </span>anti_alias: AntiAlias,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Paint {
@@ -651,7 +686,7 @@
         <span class="self">Self </span>{
             shader: Shader::Solid(Color::BLACK),
             blend: BlendMode::SourceOver,
-            anti_alias: <span class="bool-val">true</span>,
+            anti_alias: AntiAlias::Fast,
         }
     }
 }
@@ -702,6 +737,13 @@
 
     <span class="doccomment">/// The fill rule of the mask.
     </span><span class="kw">pub </span>fill: FillRule,
+}
+
+<span class="kw">impl </span>Mask {
+    <span class="doccomment">/// Create a new mask.
+    </span><span class="kw">pub fn </span>new(curve: Curve, fill: FillRule) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ curve, fill }
+    }
 }
 
 <span class="kw">impl </span>From&lt;Rect&gt; <span class="kw">for </span>Mask {
@@ -818,17 +860,19 @@
     }
 
     <span class="doccomment">/// Draw a trigger rectangle.
-    </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect) {
-        <span class="kw">let </span>curve = Curve::rect(rect);
-        <span class="self">self</span>.fill(
-            curve,
-            FillRule::NonZero,
-            Paint {
-                shader: Shader::Solid(Color::TRANSPARENT),
-                blend: BlendMode::Destination,
-                anti_alias: <span class="bool-val">false</span>,
-            },
-        );
+    </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect, view: ViewId) {
+        <span class="self">self</span>.hoverable(view, |canvas| {
+            <span class="kw">let </span>curve = Curve::rect(rect);
+            canvas.fill(
+                curve,
+                FillRule::NonZero,
+                Paint {
+                    shader: Shader::Solid(Color::TRANSPARENT),
+                    blend: BlendMode::Destination,
+                    anti_alias: AntiAlias::None,
+                },
+            );
+        });
     }
 
     <span class="doccomment">/// Fill a curve.
@@ -914,7 +958,7 @@
     }
 
     <span class="doccomment">/// Draw a layer with a view.
-    </span><span class="kw">pub fn </span>view&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+    </span><span class="kw">pub fn </span>hoverable&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, view: ViewId, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
         <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(view), f)
     }
 

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["X11Error"],"struct":["X11App"]};

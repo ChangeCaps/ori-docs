@@ -251,6 +251,7 @@
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -425,7 +426,7 @@
         <span class="comment">// propagate event
         </span><span class="self">self</span>.content.event(content, cx, data, event);
 
-        <span class="kw">let </span>on = cx.has_hot() || cx.is_active() || state.scrollbar_hot;
+        <span class="kw">let </span>on = cx.is_hot() || cx.has_hot() || cx.is_active() || state.scrollbar_hot;
 
         <span class="kw">if </span>!<span class="self">self</span>.transition.complete(state.t, on) {
             cx.animate();
@@ -477,6 +478,7 @@
         state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
         content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
+        cx.trigger(cx.rect());
         cx.mask(cx.rect(), |cx| {
             <span class="self">self</span>.content.draw(content, cx, data);
         });

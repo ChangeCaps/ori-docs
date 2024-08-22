@@ -87,6 +87,35 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(clippy::module_inception)]
 #![warn(missing_docs)]
 
@@ -106,6 +135,10 @@
     </span><span class="attr">#[cfg(x11_platform)]
     </span>X11(platform::x11::X11Error),
 
+    <span class="doccomment">/// Wayland error.
+    </span><span class="attr">#[cfg(wayland_platform)]
+    </span>Wayland(platform::wayland::WaylandError),
+
     <span class="doccomment">/// No platform feature enabled.
     </span>NoPlatform,
 }
@@ -117,13 +150,25 @@
     }
 }
 
+<span class="attr">#[cfg(wayland_platform)]
+</span><span class="kw">impl </span>From&lt;platform::wayland::WaylandError&gt; <span class="kw">for </span>Error {
+    <span class="kw">fn </span>from(err: platform::wayland::WaylandError) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Wayland(err)
+    }
+}
+
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Error {
     <span class="attr">#[allow(unused_variables, unreachable_patterns)]
     </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="attr">#[cfg(x11_platform)]
             </span>Error::X11(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
+
+            <span class="attr">#[cfg(wayland_platform)]
+            </span>Error::Wayland(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
+
             Error::NoPlatform =&gt; <span class="macro">write!</span>(f, <span class="string">"no platform feature enabled"</span>),
+
             <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
         }
     }
@@ -156,6 +201,19 @@
 
     <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = tracing::subscriber::set_global_default(subscriber) {
         <span class="macro">eprintln!</span>(<span class="string">"Failed to set global default subscriber: {}"</span>, err);
+    }
+
+    <span class="attr">#[cfg(wayland_platform)]
+    </span>{
+        <span class="kw">match </span>platform::wayland::launch(app, data) {
+            <span class="prelude-val">Ok</span>(()) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(()),
+
+            <span class="comment">// if x11 is enabled and we fail to connect to the Wayland server, try X11
+            </span><span class="attr">#[cfg(x11_platform)]
+            </span><span class="prelude-val">Err</span>(platform::wayland::WaylandError::Conntect(<span class="kw">_</span>)) =&gt; {}
+
+            <span class="prelude-val">Err</span>(err) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(err.into()),
+        }
     }
 
     <span class="attr">#[cfg(x11_platform)]

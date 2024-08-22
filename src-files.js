@@ -5,7 +5,7 @@ var srcIndex = new Map(JSON.parse('[\
 ["ori_font_awesome",["",[],["icon.rs","kind.rs","lib.rs"]]],\
 ["ori_macro",["",[],["build.rs","entry.rs","example.rs","font.rs","lib.rs","rebuild.rs","reload.rs"]]],\
 ["ori_reload",["",[],["lib.rs"]]],\
-["ori_shell",["",[["platform",[["linux",[],["egl.rs","mod.rs","xkb.rs"]],["x11",[],["app.rs","clipboard.rs","error.rs","mod.rs"]]],["mod.rs"]]],["lib.rs"]]],\
+["ori_shell",["",[["platform",[],["mod.rs"]]],["lib.rs"]]],\
 ["ori_tiny_skia",["",[],["lib.rs"]]],\
 ["ori_winit",["",[],["clipboard.rs","convert.rs","error.rs","launch.rs","lib.rs","tracing.rs"]]]\
 ]'));

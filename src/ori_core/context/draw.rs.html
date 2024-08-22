@@ -322,7 +322,7 @@
 
     <span class="doccomment">/// Draw a trigger rectangle.
     </span><span class="kw">pub fn </span>trigger(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect) {
-        <span class="self">self</span>.canvas.trigger(rect);
+        <span class="self">self</span>.canvas.trigger(rect, <span class="self">self</span>.id());
     }
 
     <span class="doccomment">/// Fill a curve.
@@ -396,7 +396,7 @@
 
     <span class="doccomment">/// Draw a hoverable layer.
     </span><span class="kw">pub fn </span>hoverable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;)) {
-        <span class="self">self</span>.canvas.view(<span class="self">self</span>.id(), |canvas| {
+        <span class="self">self</span>.canvas.hoverable(<span class="self">self</span>.id(), |canvas| {
             <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx {
                 base: <span class="self">self</span>.base,
                 view_state: <span class="self">self</span>.view_state,

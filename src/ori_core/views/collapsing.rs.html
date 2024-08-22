@@ -274,6 +274,11 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -281,7 +286,7 @@
 <span class="kw">use crate</span>::{
     canvas::{BorderRadius, BorderWidth, Color, Curve, FillRule},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::Event,
+    event::{Event, PointerButton},
     layout::{Affine, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
     style::{style, Style, Styles},
@@ -453,7 +458,11 @@
         <span class="self">self</span>.content.event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
 
         <span class="kw">match </span>event {
-            Event::PointerPressed(<span class="kw">_</span>) <span class="kw">if </span>state.header.has_hot() =&gt; {
+            Event::PointerPressed(event) <span class="kw">if </span>state.header.has_hot() =&gt; {
+                <span class="kw">if </span>event.button != PointerButton::Primary {
+                    <span class="kw">return</span>;
+                }
+
                 state.open = !state.open;
                 cx.animate();
                 cx.request_layout();
@@ -524,6 +533,7 @@
             cx.fill(icon(), FillRule::EvenOdd, <span class="self">self</span>.icon_color);
         });
 
+        cx.canvas().trigger(state.header.rect(), state.header.id());
         <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data);
 
         <span class="kw">let </span>content_offset = Vector::new(<span class="number">0.0</span>, state.header.size().height);

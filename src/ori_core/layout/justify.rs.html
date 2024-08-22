@@ -96,6 +96,13 @@
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>core::slice;
 
 <span class="doccomment">/// The alignment of items along the cross axis.
@@ -104,20 +111,21 @@
 </span><span class="kw">pub enum </span>Align {
     <span class="doccomment">/// Items are packed toward the start of the stack.
     </span>Start,
+
     <span class="doccomment">/// Items are packed toward the end of the stack.
     </span>End,
+
     <span class="doccomment">/// Items are packed toward the center of the stack.
     </span>Center,
-    <span class="doccomment">/// Items are stretched to fill the stack.
+
+    <span class="doccomment">/// Items are stretched to all have the same size.
     </span>Stretch,
+
+    <span class="doccomment">/// Items are stretched to fill the available space.
+    </span>Fill,
 }
 
 <span class="kw">impl </span>Align {
-    <span class="doccomment">/// Returns true if the alignment is stretch.
-    </span><span class="kw">pub const fn </span>is_stretch(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="macro">matches!</span>(<span class="self">self</span>, <span class="self">Self</span>::Stretch)
-    }
-
     <span class="doccomment">/// Aligns an item within the given space.
     </span><span class="kw">pub fn </span>align(<span class="self">self</span>, available: f32, size: f32) -&gt; f32 {
         <span class="kw">match </span><span class="self">self </span>{
@@ -125,6 +133,7 @@
             <span class="self">Self</span>::End =&gt; available - size,
             <span class="self">Self</span>::Center =&gt; (available - size) / <span class="number">2.0</span>,
             <span class="self">Self</span>::Stretch =&gt; <span class="number">0.0</span>,
+            <span class="self">Self</span>::Fill =&gt; <span class="number">0.0</span>,
         }
     }
 }
@@ -135,14 +144,19 @@
 </span><span class="kw">pub enum </span>Justify {
     <span class="doccomment">/// Items are packed toward the start of the stack.
     </span>Start,
+
     <span class="doccomment">/// Items are packed toward the end of the stack.
     </span>End,
+
     <span class="doccomment">/// Items are packed toward the center of the stack.
     </span>Center,
+
     <span class="doccomment">/// Items are evenly distributed in the stack, with equal-size spaces between them.
     </span>SpaceBetween,
+
     <span class="doccomment">/// Items are evenly distributed in the stack, with half-size spaces on either end.
     </span>SpaceAround,
+
     <span class="doccomment">/// Items are evenly distributed in the stack.
     </span>SpaceEvenly,
 }

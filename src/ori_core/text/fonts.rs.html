@@ -211,6 +211,11 @@
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, CacheKey, Command, FontSystem, SwashCache};
@@ -249,7 +254,7 @@
 ];
 
 <span class="kw">use crate</span>::{
-    canvas::{Canvas, Curve, FillRule, Paint},
+    canvas::{AntiAlias, Canvas, Curve, FillRule, Paint},
     image::Image,
     layout::{Point, Size, Vector},
 };
@@ -373,6 +378,9 @@
         offset: Vector,
         scale: f32,
     ) {
+        <span class="kw">let </span><span class="kw-2">mut </span>paint = paint;
+        paint.anti_alias = AntiAlias::Full;
+
         <span class="kw">for </span>run <span class="kw">in </span>buffer.layout_runs() {
             <span class="kw">for </span>glyph <span class="kw">in </span>run.glyphs {
                 <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
@@ -385,6 +393,8 @@
                     physical.x <span class="kw">as </span>f32 + offset.x,
                     run.line_y + physical.y <span class="kw">as </span>f32 + offset.y,
                 );
+
+                <span class="kw">let </span>offset = offset.round();
 
                 <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
 

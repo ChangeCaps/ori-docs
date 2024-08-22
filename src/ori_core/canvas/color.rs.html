@@ -1121,16 +1121,6 @@
 <a href="#1121" id="1121">1121</a>
 <a href="#1122" id="1122">1122</a>
 <a href="#1123" id="1123">1123</a>
-<a href="#1124" id="1124">1124</a>
-<a href="#1125" id="1125">1125</a>
-<a href="#1126" id="1126">1126</a>
-<a href="#1127" id="1127">1127</a>
-<a href="#1128" id="1128">1128</a>
-<a href="#1129" id="1129">1129</a>
-<a href="#1130" id="1130">1130</a>
-<a href="#1131" id="1131">1131</a>
-<a href="#1132" id="1132">1132</a>
-<a href="#1133" id="1133">1133</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::{Debug, Display},
     hash::{Hash, Hasher},
@@ -2008,36 +1998,26 @@
 
     <span class="doccomment">/// Saturates the color by given `amount`.
     </span><span class="kw">pub fn </span>saturate(<span class="self">self</span>, amount: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>(l, c, h, alpha) = <span class="self">self</span>.to_oklcha();
-
-        <span class="kw">if </span>c.abs() &lt; <span class="number">0.0001 </span>{
-            <span class="kw">return </span><span class="self">self</span>;
-        }
-
-        <span class="self">Self</span>::oklcha(l, c + amount * <span class="number">0.2</span>, h, alpha)
+        <span class="kw">let </span>(h, s, l, alpha) = <span class="self">self</span>.to_okhsla();
+        <span class="self">Self</span>::okhsla(h, s + amount, l, alpha)
     }
 
     <span class="doccomment">/// Desaturates the color by given `amount`.
     </span><span class="kw">pub fn </span>desaturate(<span class="self">self</span>, amount: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>(l, c, h, alpha) = <span class="self">self</span>.to_oklcha();
-
-        <span class="kw">if </span>c.abs() &lt; <span class="number">0.0001 </span>{
-            <span class="kw">return </span><span class="self">self</span>;
-        }
-
-        <span class="self">Self</span>::oklcha(l, c - amount * <span class="number">0.2</span>, h, alpha)
+        <span class="kw">let </span>(h, s, l, alpha) = <span class="self">self</span>.to_okhsla();
+        <span class="self">Self</span>::okhsla(h, s - amount, l, alpha)
     }
 
     <span class="doccomment">/// Brighten the color by the given `amount`.
     </span><span class="kw">pub fn </span>lighten(<span class="self">self</span>, amount: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>(l, a, b, alpha) = <span class="self">self</span>.to_oklaba();
-        <span class="self">Self</span>::oklaba(l + amount * <span class="number">0.5</span>, a, b, alpha)
+        <span class="kw">let </span>(h, s, l, alpha) = <span class="self">self</span>.to_okhsla();
+        <span class="self">Self</span>::okhsla(h, s, l + amount, alpha)
     }
 
     <span class="doccomment">/// Darken the color by the given `amount`.
     </span><span class="kw">pub fn </span>darken(<span class="self">self</span>, amount: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>(l, a, b, alpha) = <span class="self">self</span>.to_oklaba();
-        <span class="self">Self</span>::oklaba(l - amount * <span class="number">0.5</span>, a, b, alpha)
+        <span class="kw">let </span>(h, s, l, alpha) = <span class="self">self</span>.to_okhsla();
+        <span class="self">Self</span>::okhsla(h, s, l - amount, alpha)
     }
 
     <span class="doccomment">/// Fade the color by the given `amount`.
