@@ -377,6 +377,10 @@
 <a href="#377" id="377">377</a>
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -629,6 +633,10 @@
     ) -&gt; Size {
         <span class="kw">let </span>(min_major, min_minor) = <span class="self">self</span>.axis.unpack(space.min);
         <span class="kw">let </span>(max_major, max_minor) = <span class="self">self</span>.axis.unpack(space.max);
+
+        <span class="comment">// this avoids a panic in later clamp calls
+        </span><span class="kw">let </span>min_major = min_major.min(max_major);
+        <span class="kw">let </span>min_minor = min_minor.min(max_minor);
 
         <span class="kw">let </span>total_gap = <span class="self">self</span>.gap * (<span class="self">self</span>.content.len() <span class="kw">as </span>f32 - <span class="number">1.0</span>);
 
