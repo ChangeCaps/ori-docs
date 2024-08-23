@@ -698,6 +698,18 @@
 <a href="#698" id="698">698</a>
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -745,10 +757,14 @@
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
         <span class="self">self</span>.view_state.prepare();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = RebuildCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = RebuildCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state);
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_view = (<span class="self">self</span>.ui)(data);
+
+        cx.insert_context(<span class="self">self</span>.window.clone());
         new_view.rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, <span class="kw-2">&amp;</span><span class="self">self</span>.view);
+        <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
+
         <span class="self">self</span>.view = new_view;
     }
 
@@ -757,9 +773,11 @@
         <span class="self">self</span>.view_state.set_hot(hot);
         <span class="self">self</span>.view_state.prepare();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild);
 
+        cx.insert_context(<span class="self">self</span>.window.clone());
         <span class="self">self</span>.view.event(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, event);
+        <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
     }
 
     <span class="kw">fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
@@ -773,9 +791,12 @@
         };
 
         <span class="kw">let </span>space = Space::new(Size::ZERO, max_size);
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = LayoutCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.window);
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = LayoutCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state);
 
+        cx.insert_context(<span class="self">self</span>.window.clone());
         <span class="kw">let </span>size = <span class="self">self</span>.view.layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, space);
+        <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
+
         <span class="self">self</span>.view_state.set_size(size);
 
         <span class="comment">// if the window is content sized we set the
@@ -794,14 +815,11 @@
 
         <span class="self">self</span>.canvas.clear();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(
-            base,
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state,
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>.window,
-            <span class="kw-2">&amp;mut </span><span class="self">self</span>.canvas,
-        );
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, <span class="kw-2">&amp;mut </span><span class="self">self</span>.canvas);
 
+        cx.insert_context(<span class="self">self</span>.window.clone());
         <span class="self">self</span>.view.draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data);
+        <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
     }
 
     <span class="kw">fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, animate: Instant) -&gt; Vec&lt;AppRequest&lt;T&gt;&gt; {
@@ -1036,8 +1054,14 @@
 
         <span class="kw">let </span>snapshot = window.snapshot();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(<span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>view_state, <span class="kw-2">&amp;mut </span>window);
-        <span class="kw">let </span>state = <span class="self">self</span>.style.as_context(|| view.build(<span class="kw-2">&amp;mut </span>cx, data));
+        <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(<span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>view_state);
+        <span class="kw">let </span>state = <span class="self">self</span>.style.as_context(|| {
+            cx.insert_context(window.clone());
+            <span class="kw">let </span>state = view.build(<span class="kw-2">&amp;mut </span>cx, data);
+            window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
+
+            state
+        });
 
         <span class="kw">let </span>window_id = window.id();
         <span class="kw">let </span>window_state = WindowState {

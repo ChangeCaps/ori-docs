@@ -209,16 +209,12 @@
 <a href="#209" id="209">209</a>
 <a href="#210" id="210">210</a>
 <a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     layout::{Affine, Point, Rect, Size},
     view::{ViewFlags, ViewState},
-    window::{Cursor, Window},
+    window::Cursor,
 };
 
 <span class="kw">use super</span>::{BaseCx, BuildCx, RebuildCx};
@@ -228,7 +224,6 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) base: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BaseCx&lt;<span class="lifetime">'b</span>&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) view_state: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ViewState,
     <span class="kw">pub</span>(<span class="kw">crate</span>) rebuild: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>bool,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) window: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Window,
     <span class="kw">pub</span>(<span class="kw">crate</span>) transform: Affine,
 }
 
@@ -252,7 +247,6 @@
         base: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>BaseCx&lt;<span class="lifetime">'b</span>&gt;,
         view_state: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>ViewState,
         rebuild: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>bool,
-        window: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw-2">mut </span>Window,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>transform = view_state.transform;
 
@@ -260,7 +254,6 @@
             base,
             view_state,
             rebuild,
-            window,
             transform,
         }
     }
@@ -271,19 +264,18 @@
             base: <span class="self">self</span>.base,
             view_state: <span class="self">self</span>.view_state,
             rebuild: <span class="self">self</span>.rebuild,
-            window: <span class="self">self</span>.window,
             transform: <span class="self">self</span>.transform,
         }
     }
 
     <span class="doccomment">/// Get a build context.
     </span><span class="kw">pub fn </span>build_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
-        BuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state, <span class="self">self</span>.window)
+        BuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state)
     }
 
     <span class="doccomment">/// Get a rebuild context.
     </span><span class="kw">pub fn </span>rebuild_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
-        RebuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state, <span class="self">self</span>.window)
+        RebuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state)
     }
 
     <span class="doccomment">/// Get the size of the view.
