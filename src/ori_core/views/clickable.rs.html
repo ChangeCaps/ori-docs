@@ -163,6 +163,7 @@
 <a href="#163" id="163">163</a>
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>ori_macro::Build;
@@ -239,6 +240,7 @@
     </span><span class="kw">pub </span>event: ClickEvent,
 
     <span class="doccomment">/// The callback.
+    </span><span class="attr">#[build(ignore)]
     </span><span class="kw">pub </span>callback: F,
 
     marker: PhantomData&lt;<span class="kw">fn</span>() -&gt; T&gt;,
