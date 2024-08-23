@@ -252,6 +252,10 @@
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -458,10 +462,14 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>minor_max = <span class="self">self</span>.axis.minor(space.max);
-        <span class="kw">let </span>max = <span class="self">self</span>.axis.pack(f32::INFINITY, minor_max);
+        <span class="kw">let </span>min_minor = <span class="self">self</span>.axis.minor(space.min);
+        <span class="kw">let </span>max_minor = <span class="self">self</span>.axis.minor(space.max);
 
-        <span class="kw">let </span>content_space = Space::new(Size::ZERO, max);
+        <span class="kw">let </span>content_space = Space::new(
+            <span class="self">self</span>.axis.pack(<span class="number">0.0</span>, min_minor),
+            <span class="self">self</span>.axis.pack(f32::INFINITY, max_minor),
+        );
+
         <span class="kw">let </span>content_size = <span class="self">self</span>.content.layout(content, cx, data, content_space);
 
         <span class="kw">let </span>size = space.fit(content_size);
