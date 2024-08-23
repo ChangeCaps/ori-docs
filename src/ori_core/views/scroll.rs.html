@@ -444,7 +444,7 @@
         }
 
         <span class="kw">if let </span>Event::PointerScrolled(e) = event {
-            <span class="kw">if </span>cx.has_hot() {
+            <span class="kw">if </span>on {
                 state.scroll -= e.delta.y * <span class="number">10.0</span>;
                 state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
 
