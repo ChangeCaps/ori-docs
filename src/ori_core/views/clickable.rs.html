@@ -161,9 +161,6 @@
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
 <a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>ori_macro::Build;
@@ -292,7 +289,6 @@
             Event::PointerPressed(e) <span class="kw">if </span>is_hot &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Press {
                     (<span class="self">self</span>.callback)(cx, data);
-                    cx.request_rebuild();
                 }
 
                 content.set_active(<span class="bool-val">true</span>);
@@ -300,12 +296,10 @@
             Event::PointerReleased(e) <span class="kw">if </span>content.is_active() &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
                     (<span class="self">self</span>.callback)(cx, data);
-                    cx.request_rebuild();
                 }
 
                 <span class="kw">if </span>e.clicked &amp;&amp; <span class="self">self</span>.event == ClickEvent::Click {
                     (<span class="self">self</span>.callback)(cx, data);
-                    cx.request_rebuild();
                 }
 
                 content.set_active(<span class="bool-val">false</span>);

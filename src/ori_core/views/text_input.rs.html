@@ -691,7 +691,6 @@
 <a href="#691" id="691">691</a>
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
-<a href="#694" id="694">694</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Shaping,
@@ -1232,7 +1231,6 @@
                 <span class="kw">if </span>submit {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_submit) = <span class="self">self</span>.on_submit {
                         on_submit(cx, data, text);
-                        cx.request_rebuild();
 
                         <span class="kw">if </span><span class="self">self</span>.text.is_none() {
                             state.clear_text();
