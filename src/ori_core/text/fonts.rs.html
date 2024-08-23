@@ -229,6 +229,7 @@
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{fontdb::Source, Buffer, CacheKey, Command, FontSystem, SwashCache};
@@ -421,6 +422,7 @@
                     .get_outline_commands(<span class="kw-2">&amp;mut </span><span class="self">self</span>.font_system, physical.cache_key);
 
                 <span class="kw">let </span>offset = Vector::new(physical.x <span class="kw">as </span>f32, run.line_y + physical.y <span class="kw">as </span>f32);
+                <span class="kw">let </span>offset = offset.floor();
 
                 <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
 
