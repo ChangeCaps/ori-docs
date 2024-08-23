@@ -163,9 +163,9 @@
 <a href="#163" id="163">163</a>
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::Build;
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
+
+<span class="kw">use </span>ori_macro::Build;
 
 <span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
@@ -175,38 +175,53 @@
     view::{Pod, State, View},
 };
 
-<span class="doccomment">/// Create a new [`Clickable`].
-</span><span class="kw">pub fn </span>clickable&lt;T, V&gt;(content: V) -&gt; Clickable&lt;T, V&gt; {
-    Clickable::new(content)
+<span class="doccomment">/// Create a new [`Clickable`], that calls `on_press` when pressed.
+</span><span class="kw">pub fn </span>on_press&lt;T, V, F&gt;(content: V, on_press: F) -&gt; Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
+    Clickable::new(content, ClickEvent::Press, on_press)
 }
 
-<span class="doccomment">/// Create a new [`Clickable`], with an [`on_press`](Clickable::on_press()) callback.
-</span><span class="kw">pub fn </span>on_press&lt;T, V&gt;(
-    content: V,
-    on_press: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; Clickable&lt;T, V&gt; {
-    clickable(content).on_press(on_press)
+<span class="doccomment">/// Create a new [`Clickable`], that calls `on_release` when released.
+</span><span class="kw">pub fn </span>on_release&lt;T, V, F&gt;(content: V, on_release: F) -&gt; Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
+    Clickable::new(content, ClickEvent::Release, on_release)
 }
 
-<span class="doccomment">/// Create a new [`Clickable`], with an [`on_release`](Clickable::on_release()) callback.
-</span><span class="kw">pub fn </span>on_release&lt;T, V&gt;(
-    content: V,
-    on_release: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; Clickable&lt;T, V&gt; {
-    clickable(content).on_release(on_release)
+<span class="doccomment">/// Create a new [`Clickable`], that calls `on_click` when clicked.
+</span><span class="kw">pub fn </span>on_click&lt;T, V, F&gt;(content: V, on_click: F) -&gt; Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
+    Clickable::new(content, ClickEvent::Click, on_click)
 }
 
-<span class="doccomment">/// Create a new [`Clickable`], with an [`on_click`](Clickable::on_click()) callback.
-</span><span class="kw">pub fn </span>on_click&lt;T, V&gt;(
-    content: V,
-    on_click: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; Clickable&lt;T, V&gt; {
-    clickable(content).on_click(on_click)
+<span class="doccomment">/// A click event.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub enum </span>ClickEvent {
+    <span class="doccomment">/// The press event.
+    </span>Press,
+
+    <span class="doccomment">/// The release event.
+    </span>Release,
+
+    <span class="doccomment">/// The click event.
+    </span>Click,
 }
 
 <span class="doccomment">/// A click handler.
 </span><span class="attr">#[derive(Build, Rebuild)]
-</span><span class="kw">pub struct </span>Clickable&lt;T, V&gt; {
+</span><span class="kw">pub struct </span>Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
     <span class="doccomment">/// The content.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
 
@@ -220,59 +235,42 @@
     /// If `Some` the callbacks will only be called when this button is pressed.
     </span><span class="kw">pub </span>button: <span class="prelude-ty">Option</span>&lt;PointerButton&gt;,
 
-    <span class="doccomment">/// The callback for when the button is pressed.
-    </span><span class="attr">#[build(ignore)]
-    #[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>on_press: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>&gt;&gt;,
+    <span class="doccomment">/// The event to listen for.
+    </span><span class="kw">pub </span>event: ClickEvent,
 
-    <span class="doccomment">/// The callback for when the button is released.
-    </span><span class="attr">#[build(ignore)]
-    #[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>on_release: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>&gt;&gt;,
+    <span class="doccomment">/// The callback.
+    </span><span class="kw">pub </span>callback: F,
 
-    <span class="doccomment">/// The callback for when the button is clicked.
-    </span><span class="attr">#[build(ignore)]
-    #[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>on_click: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>&gt;&gt;,
+    marker: PhantomData&lt;<span class="kw">fn</span>() -&gt; T&gt;,
 }
 
-<span class="kw">impl</span>&lt;T, V&gt; Clickable&lt;T, V&gt; {
+<span class="kw">impl</span>&lt;T, V, F&gt; Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
     <span class="doccomment">/// Create a new [`Clickable`].
-    </span><span class="kw">pub fn </span>new(content: V) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(content: V, event: ClickEvent, callback: F) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content: Pod::new(content),
             descendants: <span class="bool-val">true</span>,
             button: <span class="prelude-val">None</span>,
-            on_press: <span class="prelude-val">None</span>,
-            on_release: <span class="prelude-val">None</span>,
-            on_click: <span class="prelude-val">None</span>,
+            event,
+            callback,
+            marker: PhantomData,
         }
     }
-
-    <span class="doccomment">/// Set the callback for when the button is pressed.
-    </span><span class="kw">pub fn </span>on_press(<span class="kw-2">mut </span><span class="self">self</span>, on_press: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.on_press = <span class="prelude-val">Some</span>(Box::new(on_press));
-        <span class="self">self
-    </span>}
-
-    <span class="doccomment">/// Set the callback for when the button is released.
-    </span><span class="kw">pub fn </span>on_release(<span class="kw-2">mut </span><span class="self">self</span>, on_release: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.on_release = <span class="prelude-val">Some</span>(Box::new(on_release));
-        <span class="self">self
-    </span>}
-
-    <span class="doccomment">/// Set the callback for when the button is clicked.
-    </span><span class="kw">pub fn </span>on_click(<span class="kw-2">mut </span><span class="self">self</span>, on_click: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.on_click = <span class="prelude-val">Some</span>(Box::new(on_click));
-        <span class="self">self
-    </span>}
 
     <span class="kw">fn </span>is_button(<span class="kw-2">&amp;</span><span class="self">self</span>, button: PointerButton) -&gt; bool {
         <span class="self">self</span>.button.map_or(<span class="bool-val">true</span>, |b| b == button)
     }
 }
 
-<span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span>Clickable&lt;T, V&gt; {
+<span class="kw">impl</span>&lt;T, V, F&gt; View&lt;T&gt; <span class="kw">for </span>Clickable&lt;T, V, F&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+    F: FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
+{
     <span class="kw">type </span>State = State&lt;T, V&gt;;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
@@ -290,24 +288,22 @@
 
         <span class="kw">match </span>event {
             Event::PointerPressed(e) <span class="kw">if </span>is_hot &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_press) = <span class="self">self</span>.on_press {
-                    on_press(cx, data);
+                <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Press {
+                    (<span class="self">self</span>.callback)(cx, data);
                     cx.request_rebuild();
                 }
 
                 content.set_active(<span class="bool-val">true</span>);
             }
             Event::PointerReleased(e) <span class="kw">if </span>content.is_active() &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_release) = <span class="self">self</span>.on_release {
-                    on_release(cx, data);
+                <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
+                    (<span class="self">self</span>.callback)(cx, data);
                     cx.request_rebuild();
                 }
 
-                <span class="kw">if </span>e.clicked {
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_click) = <span class="self">self</span>.on_click {
-                        on_click(cx, data);
-                        cx.request_rebuild();
-                    }
+                <span class="kw">if </span>e.clicked &amp;&amp; <span class="self">self</span>.event == ClickEvent::Click {
+                    (<span class="self">self</span>.callback)(cx, data);
+                    cx.request_rebuild();
                 }
 
                 content.set_active(<span class="bool-val">false</span>);
