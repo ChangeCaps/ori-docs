@@ -580,9 +580,15 @@
 <a href="#580" id="580">580</a>
 <a href="#581" id="581">581</a>
 <a href="#582" id="582">582</a>
+<a href="#583" id="583">583</a>
+<a href="#584" id="584">584</a>
+<a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::{BTreeMap, HashMap},
     hash::{BuildHasherDefault, Hash, Hasher},
+    sync::Arc,
 };
 
 <span class="kw">use </span>seahash::SeaHasher;
@@ -761,7 +767,7 @@
     <span class="doccomment">/// A filled curve.
     </span>Fill {
         <span class="doccomment">/// The curve to draw.
-        </span>curve: Curve,
+        </span>curve: Arc&lt;Curve&gt;,
 
         <span class="doccomment">/// The fill rule of the curve.
         </span>fill: FillRule,
@@ -773,7 +779,7 @@
     <span class="doccomment">/// A stroked curve.
     </span>Stroke {
         <span class="doccomment">/// The curve to draw.
-        </span>curve: Curve,
+        </span>curve: Arc&lt;Curve&gt;,
 
         <span class="doccomment">/// The stroke properties of the curve.
         </span>stroke: Stroke,
@@ -876,14 +882,18 @@
     }
 
     <span class="doccomment">/// Fill a curve.
-    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, fill: FillRule, paint: Paint) {
-        <span class="self">self</span>.primitives.push(Primitive::Fill { curve, fill, paint });
+    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, fill: FillRule, paint: Paint) {
+        <span class="self">self</span>.primitives.push(Primitive::Fill {
+            curve: curve.into(),
+            fill,
+            paint,
+        });
     }
 
     <span class="doccomment">/// Stroke a curve.
-    </span><span class="kw">pub fn </span>stroke(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, stroke: Stroke, paint: Paint) {
+    </span><span class="kw">pub fn </span>stroke(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, stroke: Stroke, paint: Paint) {
         <span class="self">self</span>.primitives.push(Primitive::Stroke {
-            curve,
+            curve: curve.into(),
             stroke,
             paint,
         });
@@ -1050,7 +1060,7 @@
 
                 <span class="kw">let </span>hash = hasher.finish();
 
-                <span class="kw">let </span>rect = curve.bounds().expand(stroke.width / <span class="number">2.0</span>);
+                <span class="kw">let </span>rect = curve.bounds().inflate(stroke.width / <span class="number">2.0</span>);
                 rects.insert(hash, rect.transform(transform));
             }
             Primitive::Layer {

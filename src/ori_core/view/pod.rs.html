@@ -221,6 +221,10 @@
 <a href="#221" id="221">221</a>
 <a href="#222" id="222">222</a>
 <a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -440,6 +444,10 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="self">Self</span>::draw(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
+            <span class="kw">if </span>!cx.is_visible(cx.rect()) {
+                <span class="kw">return</span>;
+            }
+
             (<span class="self">self</span>.view).draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
         });
     }
