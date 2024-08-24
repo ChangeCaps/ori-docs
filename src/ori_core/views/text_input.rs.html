@@ -700,7 +700,7 @@
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Code, Event, KeyPressed},
+    event::{Code, Event, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
     style::{style, Palette, Style, Styles},
     text::{
@@ -1005,21 +1005,21 @@
 }
 
 <span class="kw">fn </span>move_key(e: <span class="kw-2">&amp;</span>KeyPressed) -&gt; <span class="prelude-ty">Option</span>&lt;Motion&gt; {
-    <span class="kw">match </span>e.code {
-        <span class="prelude-val">Some</span>(Code::Left) <span class="kw">if </span>e.modifiers.ctrl =&gt; <span class="prelude-val">Some</span>(Motion::LeftWord),
-        <span class="prelude-val">Some</span>(Code::Right) <span class="kw">if </span>e.modifiers.ctrl =&gt; <span class="prelude-val">Some</span>(Motion::RightWord),
-        <span class="prelude-val">Some</span>(Code::Left) =&gt; <span class="prelude-val">Some</span>(Motion::Left),
-        <span class="prelude-val">Some</span>(Code::Right) =&gt; <span class="prelude-val">Some</span>(Motion::Right),
-        <span class="prelude-val">Some</span>(Code::Up) =&gt; <span class="prelude-val">Some</span>(Motion::Up),
-        <span class="prelude-val">Some</span>(Code::Down) =&gt; <span class="prelude-val">Some</span>(Motion::Down),
+    <span class="kw">match </span>e.key {
+        Key::Left <span class="kw">if </span>e.modifiers.ctrl =&gt; <span class="prelude-val">Some</span>(Motion::LeftWord),
+        Key::Right <span class="kw">if </span>e.modifiers.ctrl =&gt; <span class="prelude-val">Some</span>(Motion::RightWord),
+        Key::Left =&gt; <span class="prelude-val">Some</span>(Motion::Left),
+        Key::Right =&gt; <span class="prelude-val">Some</span>(Motion::Right),
+        Key::Up =&gt; <span class="prelude-val">Some</span>(Motion::Up),
+        Key::Down =&gt; <span class="prelude-val">Some</span>(Motion::Down),
         <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
     }
 }
 
 <span class="kw">fn </span>delete_key(e: <span class="kw-2">&amp;</span>KeyPressed) -&gt; <span class="prelude-ty">Option</span>&lt;Action&gt; {
-    <span class="kw">match </span>e.code {
-        <span class="prelude-val">Some</span>(Code::Backspace) =&gt; <span class="prelude-val">Some</span>(Action::Backspace),
-        <span class="prelude-val">Some</span>(Code::Delete) =&gt; <span class="prelude-val">Some</span>(Action::Delete),
+    <span class="kw">match </span>e.key {
+        Key::Backspace =&gt; <span class="prelude-val">Some</span>(Action::Backspace),
+        Key::Delete =&gt; <span class="prelude-val">Some</span>(Action::Delete),
         <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
     }
 }
@@ -1168,20 +1168,20 @@
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(Code::Escape) {
+                <span class="kw">if </span>e.is(Key::Escape) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                     cx.set_focused(<span class="bool-val">false</span>);
                     cx.request_draw();
                 }
 
-                <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; <span class="self">self</span>.multiline {
+                <span class="kw">if </span>e.is(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
                     cx.request_layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(Code::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
+                <span class="kw">if </span>e.is(Key::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
                     cx.set_focused(<span class="bool-val">false</span>);
                     submit = <span class="bool-val">true</span>;
                 }

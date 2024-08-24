@@ -710,6 +710,9 @@
 <a href="#710" id="710">710</a>
 <a href="#711" id="711">711</a>
 <a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -718,9 +721,9 @@
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
-        CloseRequested, Code, Event, KeyPressed, KeyReleased, Modifiers, PointerButton, PointerId,
-        PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled, WindowResized,
-        WindowScaled,
+        CloseRequested, Code, Event, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
+        PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
+        WindowResized, WindowScaled,
     },
     layout::{Point, Size, Space, Vector},
     style::Styles,
@@ -1016,12 +1019,14 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         data: <span class="kw-2">&amp;mut </span>T,
         window_id: WindowId,
+        key: Key,
         code: <span class="prelude-ty">Option</span>&lt;Code&gt;,
         text: <span class="prelude-ty">Option</span>&lt;String&gt;,
         pressed: bool,
     ) {
         <span class="kw">if </span>pressed {
             <span class="kw">let </span>event = Event::KeyPressed(KeyPressed {
+                key,
                 code,
                 text,
                 modifiers: <span class="self">self</span>.modifiers,
@@ -1030,6 +1035,7 @@
             <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
         } <span class="kw">else </span>{
             <span class="kw">let </span>event = Event::KeyReleased(KeyReleased {
+                key,
                 code,
                 modifiers: <span class="self">self</span>.modifiers,
             });
