@@ -704,7 +704,7 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="comment">// make sure the tooltip is hoverable
-        </span>cx.trigger(cx.rect());
+        </span>cx.canvas().trigger(content.rect(), content.id());
 
         <span class="comment">// we need to set the view to be enable hit testing
         </span><span class="self">self</span>.content.draw(content, cx, data);
