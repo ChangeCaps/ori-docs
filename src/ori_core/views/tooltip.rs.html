@@ -703,6 +703,9 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
+        <span class="comment">// make sure the tooltip is hoverable
+        </span>cx.trigger(cx.rect());
+
         <span class="comment">// we need to set the view to be enable hit testing
         </span><span class="self">self</span>.content.draw(content, cx, data);
 
@@ -711,9 +714,6 @@
         <span class="kw">if </span>alpha &lt;= <span class="number">0.0 </span>{
             <span class="kw">return</span>;
         }
-
-        <span class="comment">// make sure the tooltip is hoverable
-        </span>cx.trigger(cx.rect());
 
         <span class="comment">// we need to try to move the tooltip so it fits on the screen
         </span><span class="kw">let </span>window_rect = Rect::min_size(Point::ZERO, cx.window().size);
