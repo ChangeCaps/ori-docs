@@ -107,7 +107,6 @@
 <a href="#107" id="107">107</a>
 <a href="#108" id="108">108</a>
 <a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(clippy::module_inception)]
 #![warn(missing_docs)]
 
@@ -170,7 +169,7 @@
 
 <span class="doccomment">/// Launch an Ori application.
 </span><span class="attr">#[allow(unused_variables, unreachable_code)]
-</span><span class="kw">pub fn </span>launch&lt;T&gt;(app: AppBuilder&lt;T&gt;, data: T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+</span><span class="kw">pub fn </span>launch&lt;T&gt;(app: AppBuilder&lt;T&gt;, <span class="kw-2">mut </span>data: T) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>filter = EnvFilter::default().add_directive(tracing::Level::DEBUG.into());
 
     <span class="kw">if let </span><span class="prelude-val">Ok</span>(env) = std::env::var(<span class="string">"RUST_LOG"</span>) {
@@ -197,13 +196,12 @@
 
     <span class="attr">#[cfg(wayland_platform)]
     </span>{
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::wayland::launch(app, data)<span class="question-mark">?</span>);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::wayland::launch(app, <span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>);
     }
 
     <span class="attr">#[cfg(x11_platform)]
     </span>{
-        <span class="kw">let </span>app = platform::x11::X11App::new(app, data)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(app.run()<span class="question-mark">?</span>);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::x11::launch(app, <span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>);
     }
 
     <span class="attr">#[allow(unreachable_code)]
