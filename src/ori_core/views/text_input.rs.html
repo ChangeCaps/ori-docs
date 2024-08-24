@@ -700,7 +700,7 @@
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Code, Event, Key, KeyPressed},
+    event::{Event, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
     style::{style, Palette, Style, Styles},
     text::{
@@ -1192,13 +1192,13 @@
                     state.blink = <span class="number">0.0</span>;
                 }
 
-                <span class="kw">if </span>e.is(Code::C) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is(<span class="string">'c'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
                     }
                 }
 
-                <span class="kw">if </span>e.is(Code::X) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is(<span class="string">'x'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
                         cx.request_layout();
@@ -1208,7 +1208,7 @@
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(Code::V) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is(<span class="string">'v'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">let </span>text = cx.clipboard().get();
                     state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
 
