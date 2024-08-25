@@ -382,7 +382,11 @@
         new_cx.view_state = view_state;
 
         <span class="comment">// draw the content
-        </span>new_cx.layer(new_cx.view_state.transform, f);
+        </span>new_cx.layer(new_cx.view_state.transform, |cx| {
+            <span class="kw">if </span>cx.is_visible(cx.rect()) {
+                f(cx);
+            }
+        });
     }
 }
 
@@ -444,10 +448,6 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="self">Self</span>::draw(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
-            <span class="kw">if </span>!cx.is_visible(cx.rect()) {
-                <span class="kw">return</span>;
-            }
-
             (<span class="self">self</span>.view).draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
         });
     }
