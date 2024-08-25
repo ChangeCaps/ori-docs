@@ -1168,20 +1168,20 @@
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(Key::Escape) {
+                <span class="kw">if </span>e.is_key(Key::Escape) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                     cx.set_focused(<span class="bool-val">false</span>);
                     cx.request_draw();
                 }
 
-                <span class="kw">if </span>e.is(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
+                <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
                     cx.request_layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(Key::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
+                <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
                     cx.set_focused(<span class="bool-val">false</span>);
                     submit = <span class="bool-val">true</span>;
                 }
@@ -1192,13 +1192,13 @@
                     state.blink = <span class="number">0.0</span>;
                 }
 
-                <span class="kw">if </span>e.is(<span class="string">'c'</span>) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is_key(<span class="string">'c'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
                     }
                 }
 
-                <span class="kw">if </span>e.is(<span class="string">'x'</span>) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is_key(<span class="string">'x'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
                         cx.request_layout();
@@ -1208,7 +1208,7 @@
                     changed = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is(<span class="string">'v'</span>) &amp;&amp; e.modifiers.ctrl {
+                <span class="kw">if </span>e.is_key(<span class="string">'v'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">let </span>text = cx.clipboard().get();
                     state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
 

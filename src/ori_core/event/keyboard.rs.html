@@ -395,6 +395,14 @@
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
 <a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Modifiers;
 
 <span class="doccomment">/// A trait for checking if something is a certain key.
@@ -405,23 +413,31 @@
 
 <span class="kw">impl </span>IsKey <span class="kw">for </span>char {
     <span class="kw">fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: Key, <span class="kw">_</span>: <span class="prelude-ty">Option</span>&lt;Code&gt;) -&gt; bool {
-        <span class="kw">if let </span>Key::Character(c) = key {
-            c == <span class="kw-2">*</span><span class="self">self
-        </span>} <span class="kw">else </span>{
-            <span class="bool-val">false
-        </span>}
+        Key::Character(<span class="kw-2">*</span><span class="self">self</span>) == key
     }
 }
 
 <span class="kw">impl </span>IsKey <span class="kw">for </span>Key {
     <span class="kw">fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: Key, <span class="kw">_</span>: <span class="prelude-ty">Option</span>&lt;Code&gt;) -&gt; bool {
-        <span class="self">self </span>== <span class="kw-2">&amp;</span>key
+        <span class="kw-2">*</span><span class="self">self </span>== key
     }
 }
 
 <span class="kw">impl </span>IsKey <span class="kw">for </span>Code {
     <span class="kw">fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: Key, code: <span class="prelude-ty">Option</span>&lt;Code&gt;) -&gt; bool {
-        <span class="self">self </span>== <span class="kw-2">&amp;</span>code.unwrap()
+        <span class="prelude-val">Some</span>(<span class="self">self</span>) == code.as_ref()
+    }
+}
+
+<span class="kw">impl</span>&lt;T: IsKey&gt; IsKey <span class="kw">for </span><span class="kw-2">&amp;</span>T {
+    <span class="kw">fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: Key, code: <span class="prelude-ty">Option</span>&lt;Code&gt;) -&gt; bool {
+        T::is(<span class="self">self</span>, key, code)
+    }
+}
+
+<span class="kw">impl</span>&lt;T: IsKey&gt; IsKey <span class="kw">for </span><span class="kw-2">&amp;mut </span>T {
+    <span class="kw">fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: Key, code: <span class="prelude-ty">Option</span>&lt;Code&gt;) -&gt; bool {
+        T::is(<span class="self">self</span>, key, code)
     }
 }
 
@@ -443,7 +459,7 @@
 
 <span class="kw">impl </span>KeyPressed {
     <span class="doccomment">/// Check if the `key` is pressed.
-    </span><span class="kw">pub fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw">impl </span>IsKey) -&gt; bool {
+    </span><span class="kw">pub fn </span>is_key(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw">impl </span>IsKey) -&gt; bool {
         key.is(<span class="self">self</span>.key, <span class="self">self</span>.code)
     }
 }
@@ -463,7 +479,7 @@
 
 <span class="kw">impl </span>KeyReleased {
     <span class="doccomment">/// Check if the `key` is released.
-    </span><span class="kw">pub fn </span>is(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw">impl </span>IsKey) -&gt; bool {
+    </span><span class="kw">pub fn </span>is_key(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw">impl </span>IsKey) -&gt; bool {
         key.is(<span class="self">self</span>.key, <span class="self">self</span>.code)
     }
 }
