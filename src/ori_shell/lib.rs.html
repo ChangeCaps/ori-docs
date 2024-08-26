@@ -195,7 +195,7 @@
     }
 
     <span class="attr">#[cfg(wayland_platform)]
-    </span>{
+    </span><span class="kw">if </span>platform::wayland::is_available() {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::wayland::launch(app, data)<span class="question-mark">?</span>);
     }
 
