@@ -1983,7 +1983,7 @@
 
     <span class="doccomment">/// Get the luminocity.
     </span><span class="kw">pub fn </span>luminocity(<span class="self">self</span>) -&gt; f32 {
-        <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, l, <span class="kw">_</span>) = <span class="self">self</span>.to_hsla();
+        <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, l) = <span class="self">self</span>.to_okhsl();
         l
     }
 
