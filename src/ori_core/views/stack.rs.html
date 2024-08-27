@@ -381,6 +381,10 @@
 <a href="#381" id="381">381</a>
 <a href="#382" id="382">382</a>
 <a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -394,6 +398,8 @@
 };
 
 <span class="kw">pub use crate</span>::{hstack, vstack};
+
+<span class="kw">use </span><span class="kw">super</span>::Flex;
 
 <span class="doccomment">/// Create a horizontal [`Stack`].
 </span><span class="attr">#[macro_export]
@@ -702,8 +708,8 @@
     <span class="comment">/* measure the non-flex content */
 
     </span><span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..stack.content.len() {
-        <span class="kw">if </span>content[i].is_flex() {
-            state.flex_sum += content[i].flex();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(flex) = content[i].get_property::&lt;Flex&gt;() {
+            state.flex_sum += flex.amount;
             state.majors[i] = <span class="number">0.0</span>;
             <span class="kw">continue</span>;
         }
@@ -724,12 +730,15 @@
     <span class="kw">let </span>per_flex = remaining / state.flex_sum;
 
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..stack.content.len() {
-        <span class="kw">if </span>!content[i].is_flex() || content[i].is_tight() {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(flex) = content[i].get_property::&lt;Flex&gt;() <span class="kw">else </span>{
+            <span class="kw">continue</span>;
+        };
+
+        <span class="kw">if </span>!flex.is_tight {
             <span class="kw">continue</span>;
         }
 
-        <span class="kw">let </span>flex = content[i].flex();
-        <span class="kw">let </span>major = per_flex * flex;
+        <span class="kw">let </span>major = per_flex * flex.amount;
 
         <span class="kw">let </span>space = Space::new(
             stack.axis.pack(<span class="number">0.0</span>, min_minor),
@@ -747,12 +756,11 @@
     <span class="kw">let </span>per_flex = remaining / state.flex_sum;
 
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..stack.content.len() {
-        <span class="kw">if </span>!content[i].is_flex() || !content[i].is_tight() {
+        <span class="kw">let </span><span class="prelude-val">Some</span>(flex) = content[i].get_property::&lt;Flex&gt;() <span class="kw">else </span>{
             <span class="kw">continue</span>;
-        }
+        };
 
-        <span class="kw">let </span>flex = content[i].flex();
-        <span class="kw">let </span>major = per_flex * flex;
+        <span class="kw">let </span>major = per_flex * flex.amount;
 
         <span class="kw">let </span>space = Space::new(
             stack.axis.pack(major, min_minor),

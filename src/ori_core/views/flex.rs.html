@@ -84,6 +84,22 @@
 <a href="#84" id="84">84</a>
 <a href="#85" id="85">85</a>
 <a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -94,29 +110,41 @@
     view::View,
 };
 
-<span class="doccomment">/// Create a new [`Flex`] view.
-</span><span class="kw">pub fn </span>flex&lt;V&gt;(content: V) -&gt; Flex&lt;V&gt; {
-    Flex::new(<span class="number">1.0</span>, <span class="bool-val">false</span>, content)
+<span class="doccomment">/// The flex value of a view.
+</span><span class="attr">#[derive(Clone, Copy, Debug, Default)]
+</span><span class="kw">pub struct </span>Flex {
+    <span class="doccomment">/// The flex value.
+    </span><span class="kw">pub </span>amount: f32,
+
+    <span class="doccomment">/// Whether the view is tight.
+    </span><span class="kw">pub </span>is_tight: bool,
 }
 
-<span class="doccomment">/// Create a new expanded [`Flex`] view.
-</span><span class="kw">pub fn </span>expand&lt;V&gt;(content: V) -&gt; Flex&lt;V&gt; {
-    Flex::new(<span class="number">1.0</span>, <span class="bool-val">true</span>, content)
+<span class="doccomment">/// Create a new [`Flexible`] view.
+</span><span class="kw">pub fn </span>flex&lt;V&gt;(content: V) -&gt; Flexible&lt;V&gt; {
+    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">false</span>, content)
+}
+
+<span class="doccomment">/// Create a new expanded [`Flexible`] view.
+</span><span class="kw">pub fn </span>expand&lt;V&gt;(content: V) -&gt; Flexible&lt;V&gt; {
+    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">true</span>, content)
 }
 
 <span class="doccomment">/// A flexible view.
 </span><span class="attr">#[example(name = <span class="string">"flex"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
 #[derive(Rebuild)]
-</span><span class="kw">pub struct </span>Flex&lt;V&gt; {
+</span><span class="kw">pub struct </span>Flexible&lt;V&gt; {
     <span class="doccomment">/// The content of the view.
     </span><span class="kw">pub </span>content: V,
+
     <span class="doccomment">/// The flex value of the view.
     </span><span class="kw">pub </span>flex: f32,
+
     <span class="doccomment">/// Whether the view is tight.
     </span><span class="kw">pub </span>tight: bool,
 }
 
-<span class="kw">impl</span>&lt;V&gt; Flex&lt;V&gt; {
+<span class="kw">impl</span>&lt;V&gt; Flexible&lt;V&gt; {
     <span class="doccomment">/// Create a new flexible view.
     </span><span class="kw">pub fn </span>new(flex: f32, tight: bool, content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -127,20 +155,22 @@
     }
 
     <span class="doccomment">/// Set the flex value of the view.
-    </span><span class="kw">pub fn </span>factor(<span class="kw-2">mut </span><span class="self">self</span>, flex: f32) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>amount(<span class="kw-2">mut </span><span class="self">self</span>, flex: f32) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.flex = flex;
         <span class="self">self
     </span>}
 }
 
-<span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span>Flex&lt;V&gt; {
+<span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span>Flexible&lt;V&gt; {
     <span class="kw">type </span>State = V::State;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span>state = <span class="self">self</span>.content.build(cx, data);
 
-        cx.set_flex(<span class="self">self</span>.flex);
-        cx.set_tight(<span class="self">self</span>.tight);
+        cx.insert_property(Flex {
+            amount: <span class="self">self</span>.flex,
+            is_tight: <span class="self">self</span>.tight,
+        });
 
         state
     }
@@ -148,8 +178,10 @@
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="self">self</span>.content.rebuild(state, cx, data, <span class="kw-2">&amp;</span>old.content);
 
-        cx.set_flex(<span class="self">self</span>.flex);
-        cx.set_tight(<span class="self">self</span>.tight);
+        cx.insert_property(Flex {
+            amount: <span class="self">self</span>.flex,
+            is_tight: <span class="self">self</span>.tight,
+        });
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {

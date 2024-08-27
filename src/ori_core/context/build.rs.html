@@ -85,16 +85,6 @@
 <a href="#85" id="85">85</a>
 <a href="#86" id="86">86</a>
 <a href="#87" id="87">87</a>
-<a href="#88" id="88">88</a>
-<a href="#89" id="89">89</a>
-<a href="#90" id="90">90</a>
-<a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
-<a href="#95" id="95">95</a>
-<a href="#96" id="96">96</a>
-<a href="#97" id="97">97</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{view::ViewState, window::Cursor};
@@ -180,16 +170,6 @@
         <span class="kw">let </span>updated = <span class="self">self</span>.is_active() != active;
         <span class="self">self</span>.view_state.set_active(active);
         updated
-    }
-
-    <span class="doccomment">/// Set the flex of the view.
-    </span><span class="kw">pub fn </span>set_flex(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flex: f32) {
-        <span class="self">self</span>.view_state.set_flex(flex);
-    }
-
-    <span class="doccomment">/// Set whether the view is tight.
-    </span><span class="kw">pub fn </span>set_tight(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tight: bool) {
-        <span class="self">self</span>.view_state.set_tight(tight);
     }
 }
 </code></pre></div></section></main></body></html>
