@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["launch","launch_simple"],"mod":["platform"]};
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["run","run_simple"],"mod":["platform"]};
