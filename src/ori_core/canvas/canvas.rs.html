@@ -739,7 +739,7 @@
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
 </span><span class="kw">pub struct </span>Mask {
     <span class="doccomment">/// The curve of the mask.
-    </span><span class="kw">pub </span>curve: Curve,
+    </span><span class="kw">pub </span>curve: Arc&lt;Curve&gt;,
 
     <span class="doccomment">/// The fill rule of the mask.
     </span><span class="kw">pub </span>fill: FillRule,
@@ -747,17 +747,17 @@
 
 <span class="kw">impl </span>Mask {
     <span class="doccomment">/// Create a new mask.
-    </span><span class="kw">pub fn </span>new(curve: Curve, fill: FillRule) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ curve, fill }
+    </span><span class="kw">pub fn </span>new(curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, fill: FillRule) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            curve: curve.into(),
+            fill,
+        }
     }
 }
 
 <span class="kw">impl </span>From&lt;Rect&gt; <span class="kw">for </span>Mask {
     <span class="kw">fn </span>from(value: Rect) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            curve: Curve::from(value),
-            fill: FillRule::NonZero,
-        }
+        <span class="self">Self</span>::new(Curve::rect(value), FillRule::NonZero)
     }
 }
 
@@ -791,7 +791,7 @@
     <span class="doccomment">/// A layer that can be transformed and masked.
     </span>Layer {
         <span class="doccomment">/// The primitives of the layer.
-        </span>primitives: Vec&lt;Primitive&gt;,
+        </span>primitives: Arc&lt;[Primitive]&gt;,
 
         <span class="doccomment">/// The transformation of the layer.
         </span>transform: Affine,
@@ -948,7 +948,7 @@
         }
 
         <span class="self">self</span>.primitives.push(Primitive::Layer {
-            primitives: layer.primitives,
+            primitives: layer.primitives.into(),
             transform,
             mask,
             view,
@@ -1070,7 +1070,7 @@
             } =&gt; {
                 <span class="kw">let </span>transform = transform * <span class="kw-2">*</span>layer_transform;
 
-                <span class="kw">for </span>primitive <span class="kw">in </span>primitives {
+                <span class="kw">for </span>primitive <span class="kw">in </span>primitives.iter() {
                     <span class="self">Self</span>::extract_primitive_rects(primitive, transform, rects);
                 }
             }

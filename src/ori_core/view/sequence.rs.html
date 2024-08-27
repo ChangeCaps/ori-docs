@@ -464,6 +464,9 @@
 <a href="#464" id="464">464</a>
 <a href="#465" id="465">465</a>
 <a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -535,7 +538,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>view_states = Vec::with_capacity(<span class="self">self</span>.len());
 
         <span class="kw">for </span>view <span class="kw">in </span><span class="self">self</span>.iter_mut() {
-            <span class="kw">let </span>(state, view_state) = Pod::&lt;V&gt;::build(cx, |cx| view.build(cx, data));
+            <span class="kw">let </span>(state, view_state) = Pod::&lt;V&gt;::build_with(cx, |cx| view.build(cx, data));
             view_states.push(view_state);
             states.push(state);
         }
@@ -654,7 +657,10 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>view_states = Vec::with_capacity(<span class="self">self</span>.len());
 
                 <span class="kw">let </span>state = ($({
-                    <span class="kw">let </span>(state, view_state) = Pod::&lt;<span class="macro-nonterminal">$name</span>&gt;::build(cx, |cx| <span class="self">self</span>.<span class="macro-nonterminal">$index</span>.build(cx, data));
+                    <span class="kw">let </span>(state, view_state) = Pod::&lt;<span class="macro-nonterminal">$name</span>&gt;::build_with(cx, |cx| {
+                        <span class="self">self</span>.<span class="macro-nonterminal">$index</span>.build(cx, data)
+                    });
+
                     view_states.push(view_state);
                     state
                 },)<span class="kw-2">*</span>);
@@ -877,7 +883,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::rebuild(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
+        Pod::&lt;V&gt;::rebuild_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).rebuild_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.views);
         });
     }
@@ -893,7 +899,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::event(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, event, |cx, event| {
+        Pod::&lt;V&gt;::event_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, event, |cx, event| {
             (<span class="self">self</span>.views).event_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, event);
         });
     }
@@ -910,7 +916,7 @@
     <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::layout(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
+        Pod::&lt;V&gt;::layout_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).layout_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, space)
         })
     }
@@ -925,7 +931,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::draw(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
+        Pod::&lt;V&gt;::draw_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).draw_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data)
         });
     }

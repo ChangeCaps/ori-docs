@@ -225,9 +225,37 @@
 <a href="#225" id="225">225</a>
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
+    canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
@@ -239,6 +267,7 @@
 </span><span class="kw">pub struct </span>State&lt;T, V: View&lt;T&gt; + <span class="question-mark">?</span>Sized&gt; {
     content: V::State,
     view_state: ViewState,
+    canvas: Canvas,
 }
 
 <span class="kw">impl</span>&lt;T, V: View&lt;T&gt; + <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>State&lt;T, V&gt; {
@@ -301,8 +330,13 @@
         <span class="self">Self </span>{ view }
     }
 
-    <span class="doccomment">/// Build a pod view.
-    </span><span class="kw">pub fn </span>build&lt;T&gt;(cx: <span class="kw-2">&amp;mut </span>BuildCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>BuildCx) -&gt; T) -&gt; (T, ViewState) {
+    <span class="doccomment">/// Call a closure with the [`BuildCx`] provided by a pod.
+    ///
+    /// This will create both `T` and the new [`ViewState`].
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>build_with&lt;T&gt;(
+        cx: <span class="kw-2">&amp;mut </span>BuildCx,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>BuildCx) -&gt; T,
+    ) -&gt; (T, ViewState) {
         <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
@@ -315,8 +349,12 @@
         (state, view_state)
     }
 
-    <span class="doccomment">/// Rebuild a pod view.
-    </span><span class="kw">pub fn </span>rebuild(view_state: <span class="kw-2">&amp;mut </span>ViewState, cx: <span class="kw-2">&amp;mut </span>RebuildCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>RebuildCx)) {
+    <span class="doccomment">/// Call a closure with the [`RebuildCx`] provided by a pod.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rebuild_with(
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
+        cx: <span class="kw-2">&amp;mut </span>RebuildCx,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>RebuildCx),
+    ) {
         view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
@@ -327,8 +365,8 @@
         cx.view_state.propagate(view_state);
     }
 
-    <span class="doccomment">/// Handle an event.
-    </span><span class="kw">pub fn </span>event(
+    <span class="doccomment">/// Call a closure with the [`EventCx`] provided by a pod.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>event_with(
         view_state: <span class="kw-2">&amp;mut </span>ViewState,
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         event: <span class="kw-2">&amp;</span>Event,
@@ -358,8 +396,8 @@
         cx.view_state.propagate(view_state);
     }
 
-    <span class="doccomment">/// Layout a pod view.
-    </span><span class="kw">pub fn </span>layout(
+    <span class="doccomment">/// Call a closure with the [`LayoutCx`] provided by a pod.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>layout_with(
         view_state: <span class="kw-2">&amp;mut </span>ViewState,
         cx: <span class="kw-2">&amp;mut </span>LayoutCx,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>LayoutCx) -&gt; Size,
@@ -373,8 +411,12 @@
         view_state.size
     }
 
-    <span class="doccomment">/// Draw a pod view.
-    </span><span class="kw">pub fn </span>draw(view_state: <span class="kw-2">&amp;mut </span>ViewState, cx: <span class="kw-2">&amp;mut </span>DrawCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx)) {
+    <span class="doccomment">/// Call a closure with the [`DrawCx`] provided by a pod.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>draw_with(
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
+        cx: <span class="kw-2">&amp;mut </span>DrawCx,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx),
+    ) {
         view_state.mark_drawn();
 
         <span class="comment">// create the draw context
@@ -414,22 +456,23 @@
     <span class="kw">type </span>State = State&lt;T, V&gt;;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span>(content, view_state) = <span class="self">Self</span>::build(cx, |cx| <span class="self">self</span>.view.build(cx, data));
+        <span class="kw">let </span>(content, view_state) = <span class="self">Self</span>::build_with(cx, |cx| <span class="self">self</span>.view.build(cx, data));
 
         State {
             content,
             view_state,
+            canvas: Canvas::new(),
         }
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="self">Self</span>::rebuild(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
+        <span class="self">Self</span>::rebuild_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
             (<span class="self">self</span>.view).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.view);
         });
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="self">Self</span>::event(<span class="kw-2">&amp;mut </span>state.view_state, cx, event, |cx, event| {
+        <span class="self">Self</span>::event_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, event, |cx, event| {
             (<span class="self">self</span>.view).event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
         });
     }
@@ -441,14 +484,25 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="self">Self</span>::layout(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
+        <span class="self">Self</span>::layout_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
             (<span class="self">self</span>.view).layout(<span class="kw-2">&amp;mut </span>state.content, cx, data, space)
         })
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="self">Self</span>::draw(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
-            (<span class="self">self</span>.view).draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
+        <span class="comment">// we need to check if the view needs to be drawn here
+        // since the flag gets cleared in draw function
+        </span><span class="kw">let </span>needs_draw = state.view_state.needs_draw();
+
+        <span class="self">Self</span>::draw_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
+            <span class="kw">if </span>needs_draw {
+                <span class="comment">// if the view needs to be drawn we draw it and save the canvas
+                </span>(<span class="self">self</span>.view).draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
+                state.canvas = cx.canvas.clone();
+            } <span class="kw">else </span>{
+                <span class="comment">// if the view doesn't need to be drawn we just draw the saved canvas
+                </span><span class="kw-2">*</span>cx.canvas = state.canvas.clone();
+            }
         });
     }
 }
