@@ -463,8 +463,8 @@
             wrap: text_style.wrap,
             background: palette.surface_higher,
             border_radius: BorderRadius::all(<span class="number">4.0</span>),
-            border_width: BorderWidth::all(<span class="number">0.0</span>),
-            border_color: palette.surface_highest,
+            border_width: BorderWidth::all(<span class="number">1.0</span>),
+            border_color: palette.outline,
         }
     }
 }
@@ -669,20 +669,20 @@
             Event::PointerMoved(e) =&gt; {
                 state.timer = <span class="number">0.0</span>;
 
-                <span class="kw">if </span>content.has_hot() {
+                <span class="kw">if </span>content.is_hot() || content.has_hot() {
                     state.position = e.position;
                     cx.animate();
                 }
             }
             Event::Animate(dt) =&gt; {
-                <span class="kw">if </span>content.has_hot() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
+                <span class="kw">if </span>(content.is_hot() || content.has_hot()) &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
                     state.timer += dt / <span class="self">self</span>.delay;
                     cx.animate();
                 }
 
                 state.timer = f32::clamp(state.timer, <span class="number">0.0</span>, <span class="number">1.0</span>);
 
-                <span class="kw">if </span>state.timer &gt;= <span class="number">0.9 </span>{
+                <span class="kw">if </span>state.timer &gt;= <span class="number">0.9 </span>|| state.timer == <span class="number">0.0 </span>{
                     cx.request_draw();
                 }
             }
@@ -704,7 +704,7 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="comment">// make sure the tooltip is hoverable
-        </span>cx.canvas().trigger(content.rect(), content.id());
+        </span>cx.canvas().trigger(content.rect(), content.id);
 
         <span class="comment">// we need to set the view to be enable hit testing
         </span><span class="self">self</span>.content.draw(content, cx, data);
