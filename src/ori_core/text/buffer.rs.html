@@ -135,7 +135,7 @@
 <span class="kw">impl </span>TextBuffer {
     <span class="doccomment">/// Create a new text buffer.
     </span><span class="kw">pub fn </span>new(fonts: <span class="kw-2">&amp;mut </span>Fonts, font_size: f32, line_height: f32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>font_size = f32::round(font_size * (<span class="number">96.0 </span>/ <span class="number">72.0</span>));
+        <span class="kw">let </span>font_size = font_size * (<span class="number">96.0 </span>/ <span class="number">72.0</span>);
 
         <span class="kw">let </span>buffer = Buffer::new(
             <span class="kw-2">&amp;mut </span>fonts.font_system,
@@ -165,7 +165,7 @@
 
     <span class="doccomment">/// Set the metrics of the text buffer.
     </span><span class="kw">pub fn </span>set_metrics(<span class="kw-2">&amp;mut </span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, font_size: f32, line_height: f32) {
-        <span class="kw">let </span>font_size = f32::round(font_size * (<span class="number">96.0 </span>/ <span class="number">72.0</span>));
+        <span class="kw">let </span>font_size = font_size * (<span class="number">96.0 </span>/ <span class="number">72.0</span>);
 
         <span class="self">self</span>.buffer.set_metrics(
             <span class="kw-2">&amp;mut </span>fonts.font_system,
