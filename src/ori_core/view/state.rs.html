@@ -541,6 +541,11 @@
 <a href="#541" id="541">541</a>
 <a href="#542" id="542">542</a>
 <a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
     cell::UnsafeCell,
@@ -697,10 +702,10 @@
 <span class="kw">impl </span>WeakViewState {
     <span class="doccomment">/// # Safety
     /// - This may *never* be called as long as any reference is to the underlying [`ViewState`] is held.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">unsafe fn </span>upgrade(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>ViewState)) -&gt; bool {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>upgrade(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>ViewState)) -&gt; bool {
         <span class="kw">match </span><span class="self">self</span>.state.upgrade() {
             <span class="prelude-val">Some</span>(state) =&gt; {
-                f(state.get().as_mut().unwrap());
+                <span class="kw">unsafe </span>{ f(state.get().as_mut().unwrap()) };
                 <span class="bool-val">true
             </span>}
             <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
@@ -983,6 +988,13 @@
         <span class="self">self</span>.cursor = cursor;
     }
 
+    <span class="doccomment">/// Run a closure on each child of the view.
+    </span><span class="kw">pub fn </span>for_each_child(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>ViewState)) {
+        <span class="kw">for </span>child <span class="kw">in </span><span class="self">self</span>.children.iter_mut() {
+            child.upgrade(|child| f(child));
+        }
+    }
+
     <span class="doccomment">/// Update the view tree.
     ///
     /// This will set the flags and cursor of the view and its children.
@@ -993,16 +1005,14 @@
         <span class="self">self</span>.inherited_cursor = <span class="prelude-val">None</span>;
 
         <span class="kw">for </span>child <span class="kw">in </span><span class="self">self</span>.children.iter_mut() {
-            <span class="kw">unsafe </span>{
-                child.upgrade(|child| {
-                    <span class="kw">let </span>cursor = <span class="self">self</span>.cursor.or(<span class="self">self</span>.inherited_cursor).or(child.cursor());
+            child.upgrade(|child| {
+                <span class="kw">let </span>cursor = <span class="self">self</span>.cursor.or(<span class="self">self</span>.inherited_cursor).or(child.cursor());
 
-                    <span class="self">self</span>.flags |= child.flags.has();
-                    <span class="self">self</span>.inherited_cursor = cursor;
+                <span class="self">self</span>.flags |= child.flags.has();
+                <span class="self">self</span>.inherited_cursor = cursor;
 
-                    child.update_tree();
-                });
-            }
+                child.update_tree();
+            });
         }
     }
 }
