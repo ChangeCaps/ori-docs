@@ -357,17 +357,17 @@
 
     <span class="doccomment">/// Get whether a child view was hot last call.
     </span><span class="kw">pub fn </span>had_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::HAS_HOT)
+        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::HOT | ViewFlags::HAS_HOT)
     }
 
     <span class="doccomment">/// Get whether a child view was focused last call.
     </span><span class="kw">pub fn </span>had_focused(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::HAS_FOCUSED)
+        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::FOCUSED | ViewFlags::HAS_FOCUSED)
     }
 
     <span class="doccomment">/// Get whether a child view was active last call.
     </span><span class="kw">pub fn </span>had_active(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::HAS_ACTIVE)
+        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::ACTIVE | ViewFlags::HAS_ACTIVE)
     }
 
     <span class="doccomment">/// Get whether the view's hot state changed.

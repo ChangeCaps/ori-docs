@@ -453,9 +453,6 @@
 <a href="#453" id="453">453</a>
 <a href="#454" id="454">454</a>
 <a href="#455" id="455">455</a>
-<a href="#456" id="456">456</a>
-<a href="#457" id="457">457</a>
-<a href="#458" id="458">458</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
     fmt::{Debug, Display},
@@ -645,7 +642,6 @@
     <span class="doccomment">/// Set whether the view is hot.
     </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) {
         <span class="self">self</span>.flags.set(ViewFlags::HOT, hot);
-        <span class="self">self</span>.flags.set(ViewFlags::HAS_HOT, hot);
     }
 
     <span class="doccomment">/// Get whether the view is focused.
@@ -656,7 +652,6 @@
     <span class="doccomment">/// Set whether the view is focused.
     </span><span class="kw">pub fn </span>set_focused(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focused: bool) {
         <span class="self">self</span>.flags.set(ViewFlags::FOCUSED, focused);
-        <span class="self">self</span>.flags.set(ViewFlags::HAS_FOCUSED, focused);
     }
 
     <span class="doccomment">/// Get whether the view is active.
@@ -667,22 +662,21 @@
     <span class="doccomment">/// Set whether the view is active.
     </span><span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) {
         <span class="self">self</span>.flags.set(ViewFlags::ACTIVE, active);
-        <span class="self">self</span>.flags.set(ViewFlags::HAS_ACTIVE, active);
     }
 
     <span class="doccomment">/// Get whether the view has a hot child.
     </span><span class="kw">pub fn </span>has_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags.contains(ViewFlags::HAS_HOT)
+        <span class="self">self</span>.flags.contains(ViewFlags::HOT | ViewFlags::HAS_HOT)
     }
 
     <span class="doccomment">/// Get whether the view has a focused child.
     </span><span class="kw">pub fn </span>has_focused(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags.contains(ViewFlags::HAS_FOCUSED)
+        (<span class="self">self</span>.flags).contains(ViewFlags::FOCUSED | ViewFlags::HAS_FOCUSED)
     }
 
     <span class="doccomment">/// Get whether the view has an active child.
     </span><span class="kw">pub fn </span>has_active(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags.contains(ViewFlags::HAS_ACTIVE)
+        (<span class="self">self</span>.flags).contains(ViewFlags::ACTIVE | ViewFlags::HAS_ACTIVE)
     }
 
     <span class="doccomment">/// Get whether the view is focusable.
