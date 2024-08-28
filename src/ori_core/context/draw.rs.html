@@ -259,6 +259,7 @@
 <a href="#259" id="259">259</a>
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -418,6 +419,7 @@
     ) {
         <span class="kw">let </span>radius = border_radius.into();
         <span class="kw">let </span>width = border_width.into();
+        <span class="kw">let </span>rect = rect.round();
 
         <span class="kw">let </span><span class="kw-2">mut </span>curve = Curve::new();
         curve.push_rect_with_radius(rect, radius);

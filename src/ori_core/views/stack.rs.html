@@ -385,6 +385,10 @@
 <a href="#385" id="385">385</a>
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::Deref;
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -759,6 +763,10 @@
         <span class="kw">let </span><span class="prelude-val">Some</span>(flex) = content[i].get_property::&lt;Flex&gt;() <span class="kw">else </span>{
             <span class="kw">continue</span>;
         };
+
+        <span class="kw">if </span>flex.is_tight {
+            <span class="kw">continue</span>;
+        }
 
         <span class="kw">let </span>major = per_flex * flex.amount;
 

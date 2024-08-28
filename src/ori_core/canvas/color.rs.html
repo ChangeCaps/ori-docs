@@ -1492,7 +1492,7 @@
 
     <span class="kw">fn </span>to_linear(x: f32) -&gt; f32 {
         <span class="kw">if </span>x &lt; <span class="number">0.04045 </span>{
-            x * <span class="number">12.92
+            x / <span class="number">12.92
         </span>} <span class="kw">else </span>{
             f32::powf((x + <span class="number">0.055</span>) / <span class="number">1.055</span>, <span class="number">2.4</span>)
         }
@@ -1500,7 +1500,7 @@
 
     <span class="kw">fn </span>from_linear(x: f32) -&gt; f32 {
         <span class="kw">if </span>x &lt;= <span class="number">0.0031308 </span>{
-            x / <span class="number">12.92
+            x * <span class="number">12.92
         </span>} <span class="kw">else </span>{
             <span class="number">1.055 </span>* f32::powf(x, <span class="number">0.416_666_66</span>) - <span class="number">0.055
         </span>}
@@ -1853,7 +1853,7 @@
         };
 
         <span class="kw">if </span>a == <span class="number">0.0 </span>&amp;&amp; b == <span class="number">0.0 </span>{
-            <span class="kw">return </span>(<span class="number">0.0</span>, <span class="number">0.0</span>, l, <span class="self">self</span>.a);
+            <span class="kw">return </span>(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="self">Self</span>::toe(l), <span class="self">self</span>.a);
         };
 
         <span class="kw">let </span>c = f32::sqrt(a * a + b * b);
