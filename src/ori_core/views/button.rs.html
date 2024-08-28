@@ -471,7 +471,7 @@
         <span class="kw">let </span>content_space = space.shrink(<span class="self">self</span>.padding.size());
         <span class="kw">let </span>content_size = <span class="self">self</span>.content.layout(content, cx, data, content_space);
 
-        content.translate(<span class="self">self</span>.padding.offset());
+        cx[content].translate(<span class="self">self</span>.padding.offset());
 
         space.fit(content_size + <span class="self">self</span>.padding.size())
     }

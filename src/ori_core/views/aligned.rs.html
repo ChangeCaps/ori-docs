@@ -233,7 +233,7 @@
             .max(space.max.finite_or_zero());
 
         <span class="kw">let </span>align = <span class="self">self</span>.alignment.align(content_size, size);
-        state.translate(align);
+        cx[state].translate(align);
 
         size
     }

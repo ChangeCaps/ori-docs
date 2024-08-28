@@ -171,7 +171,7 @@
     ) -&gt; Size {
         <span class="kw">let </span>size = <span class="self">self</span>.content.layout(state, cx, data, space);
         <span class="kw">let </span>center = Affine::translate(size.to_vector() / <span class="number">2.0</span>);
-        state.set_transform(center * <span class="self">self</span>.transform * center.inverse());
+        cx[state].set_transform(center * <span class="self">self</span>.transform * center.inverse());
 
         size
     }

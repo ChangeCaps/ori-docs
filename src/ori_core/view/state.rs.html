@@ -494,76 +494,12 @@
 <a href="#494" id="494">494</a>
 <a href="#495" id="495">495</a>
 <a href="#496" id="496">496</a>
-<a href="#497" id="497">497</a>
-<a href="#498" id="498">498</a>
-<a href="#499" id="499">499</a>
-<a href="#500" id="500">500</a>
-<a href="#501" id="501">501</a>
-<a href="#502" id="502">502</a>
-<a href="#503" id="503">503</a>
-<a href="#504" id="504">504</a>
-<a href="#505" id="505">505</a>
-<a href="#506" id="506">506</a>
-<a href="#507" id="507">507</a>
-<a href="#508" id="508">508</a>
-<a href="#509" id="509">509</a>
-<a href="#510" id="510">510</a>
-<a href="#511" id="511">511</a>
-<a href="#512" id="512">512</a>
-<a href="#513" id="513">513</a>
-<a href="#514" id="514">514</a>
-<a href="#515" id="515">515</a>
-<a href="#516" id="516">516</a>
-<a href="#517" id="517">517</a>
-<a href="#518" id="518">518</a>
-<a href="#519" id="519">519</a>
-<a href="#520" id="520">520</a>
-<a href="#521" id="521">521</a>
-<a href="#522" id="522">522</a>
-<a href="#523" id="523">523</a>
-<a href="#524" id="524">524</a>
-<a href="#525" id="525">525</a>
-<a href="#526" id="526">526</a>
-<a href="#527" id="527">527</a>
-<a href="#528" id="528">528</a>
-<a href="#529" id="529">529</a>
-<a href="#530" id="530">530</a>
-<a href="#531" id="531">531</a>
-<a href="#532" id="532">532</a>
-<a href="#533" id="533">533</a>
-<a href="#534" id="534">534</a>
-<a href="#535" id="535">535</a>
-<a href="#536" id="536">536</a>
-<a href="#537" id="537">537</a>
-<a href="#538" id="538">538</a>
-<a href="#539" id="539">539</a>
-<a href="#540" id="540">540</a>
-<a href="#541" id="541">541</a>
-<a href="#542" id="542">542</a>
-<a href="#543" id="543">543</a>
-<a href="#544" id="544">544</a>
-<a href="#545" id="545">545</a>
-<a href="#546" id="546">546</a>
-<a href="#547" id="547">547</a>
-<a href="#548" id="548">548</a>
-<a href="#549" id="549">549</a>
-<a href="#550" id="550">550</a>
-<a href="#551" id="551">551</a>
-<a href="#552" id="552">552</a>
-<a href="#553" id="553">553</a>
-<a href="#554" id="554">554</a>
-<a href="#555" id="555">555</a>
-<a href="#556" id="556">556</a>
-<a href="#557" id="557">557</a>
-<a href="#558" id="558">558</a>
-<a href="#559" id="559">559</a>
-<a href="#560" id="560">560</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
-    cell::UnsafeCell,
+    cell::Cell,
     fmt::{Debug, Display},
     num::NonZeroU64,
-    rc::{Rc, Weak},
+    rc::Rc,
     sync::atomic::{AtomicU64, Ordering},
 };
 
@@ -669,83 +605,7 @@
     }
 }
 
-<span class="doccomment">/// Shared state associated with a [`View`](super::View).
-</span><span class="attr">#[derive(Default)]
-</span><span class="kw">pub struct </span>SharedViewState {
-    state: Rc&lt;UnsafeCell&lt;ViewState&gt;&gt;,
-}
-
-<span class="kw">impl </span>SharedViewState {
-    <span class="doccomment">/// Create a new [`SharedViewState`] with the given [`ViewState`].
-    </span><span class="kw">pub fn </span>new(state: ViewState) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            state: Rc::new(UnsafeCell::new(state)),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ViewState {
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.state.get().as_ref().unwrap() }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>ViewState {
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.state.get().as_mut().unwrap() }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>downgrade(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; WeakViewState {
-        <span class="macro">assert!</span>(
-            <span class="self">self</span>.get().children.is_empty(),
-            <span class="string">"view may not have circular references"
-        </span>);
-        <span class="macro">assert!</span>(
-            Rc::weak_count(<span class="kw-2">&amp;</span><span class="self">self</span>.state) == <span class="number">0</span>,
-            <span class="string">"view may not have circular references"
-        </span>);
-
-        WeakViewState {
-            state: Rc::downgrade(<span class="kw-2">&amp;</span><span class="self">self</span>.state),
-        }
-    }
-}
-
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>WeakViewState {
-    state: Weak&lt;UnsafeCell&lt;ViewState&gt;&gt;,
-}
-
-<span class="kw">impl </span>WeakViewState {
-    <span class="doccomment">/// # Safety
-    /// - This may *never* be called as long as any reference is to the underlying [`ViewState`] is held.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>upgrade(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;</span>ViewState)) -&gt; bool {
-        <span class="kw">match </span><span class="self">self</span>.state.upgrade() {
-            <span class="prelude-val">Some</span>(state) =&gt; {
-                <span class="kw">unsafe </span>{ f(state.get().as_ref().unwrap()) };
-                <span class="bool-val">true
-            </span>}
-            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
-        }
-    }
-
-    <span class="doccomment">/// # Safety
-    /// - This may *never* be called as long as any reference is to the underlying [`ViewState`] is held.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>upgrade_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>ViewState)) -&gt; bool {
-        <span class="kw">match </span><span class="self">self</span>.state.upgrade() {
-            <span class="prelude-val">Some</span>(state) =&gt; {
-                <span class="kw">unsafe </span>{ f(state.get().as_mut().unwrap()) };
-                <span class="bool-val">true
-            </span>}
-            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>strong_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.state.strong_count()
-    }
-}
-
-<span class="kw">impl </span>Debug <span class="kw">for </span>WeakViewState {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
-        f.debug_struct(<span class="string">"WeakViewState"</span>).finish()
-    }
-}
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>ViewTombstone = Rc&lt;Cell&lt;bool&gt;&gt;;
 
 <span class="doccomment">/// State associated with a [`View`](super::View).
 </span><span class="attr">#[derive(Debug)]
@@ -758,7 +618,8 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) update: Update,
 
     <span class="comment">/* hierarchy */
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) children: Vec&lt;WeakViewState&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) tombstone: ViewTombstone,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) children: Vec&lt;<span class="self">Self</span>&gt;,
 
     <span class="comment">/* properties */
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) properties: Properties,
@@ -793,7 +654,8 @@
             </span>children: Vec::new(),
 
             <span class="comment">/* properties */
-            </span>properties: Properties::new(),
+            </span>tombstone: Rc::new(Cell::new(<span class="bool-val">false</span>)),
+            properties: Properties::new(),
 
             <span class="comment">/* layout */
             </span>size: Size::ZERO,
@@ -805,10 +667,25 @@
         }
     }
 
-    <span class="doccomment">/// Propagate the state of a child view.
-    </span><span class="kw">pub fn </span>propagate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, child: <span class="kw-2">&amp;mut </span><span class="self">Self</span>) {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>propagate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, child: usize) {
+        <span class="kw">let </span>child = <span class="kw-2">&amp;mut </span><span class="self">self</span>.children[child];
+
         <span class="self">self</span>.update |= child.update;
         <span class="self">self</span>.flags |= child.flags.has();
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>child_index(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: ViewId) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="self">self</span>.children.iter().position(|child| child.id == id)
+    }
+
+    <span class="doccomment">/// Get a child view by its id.
+    </span><span class="kw">pub fn </span>child(<span class="kw-2">&amp;</span><span class="self">self</span>, id: ViewId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="self">Self</span>&gt; {
+        <span class="self">self</span>.children.iter().find(|child| child.id == id)
+    }
+
+    <span class="doccomment">/// Get a child view by its id mutably.
+    </span><span class="kw">pub fn </span>child_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: ViewId) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span><span class="self">Self</span>&gt; {
+        <span class="self">self</span>.children.iter_mut().find(|child| child.id == id)
     }
 
     <span class="doccomment">/// Get the id of the view.
@@ -1012,32 +889,27 @@
         <span class="self">self</span>.cursor = cursor;
     }
 
-    <span class="doccomment">/// Run a closure on each child of the view.
-    </span><span class="kw">pub fn </span>for_each_child(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;</span>ViewState)) {
-        <span class="kw">for </span>child <span class="kw">in </span><span class="self">self</span>.children.iter() {
-            child.upgrade(|child| f(child));
-        }
-    }
-
     <span class="doccomment">/// Update the view tree.
     ///
     /// This will set the flags and cursor of the view and its children.
     </span><span class="kw">pub fn </span>update_tree(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.children.retain_mut(|child| child.strong_count() &gt; <span class="number">0</span>);
-
         <span class="self">self</span>.flags &amp;= ViewFlags::IS;
         <span class="self">self</span>.inherited_cursor = <span class="prelude-val">None</span>;
 
-        <span class="kw">for </span>child <span class="kw">in </span><span class="self">self</span>.children.iter_mut() {
-            child.upgrade_mut(|child| {
-                <span class="kw">let </span>cursor = <span class="self">self</span>.cursor.or(<span class="self">self</span>.inherited_cursor).or(child.cursor());
+        <span class="self">self</span>.children.retain_mut(|child| {
+            <span class="kw">if </span>child.tombstone.get() {
+                <span class="kw">return </span><span class="bool-val">false</span>;
+            }
 
-                <span class="self">self</span>.flags |= child.flags.has();
-                <span class="self">self</span>.inherited_cursor = cursor;
+            <span class="kw">let </span>cursor = <span class="self">self</span>.cursor.or(<span class="self">self</span>.inherited_cursor).or(child.cursor());
 
-                child.update_tree();
-            });
-        }
+            <span class="self">self</span>.flags |= child.flags.has();
+            <span class="self">self</span>.inherited_cursor = cursor;
+
+            child.update_tree();
+
+            <span class="bool-val">true
+        </span>});
     }
 }
 
