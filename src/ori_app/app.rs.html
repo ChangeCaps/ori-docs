@@ -713,8 +713,6 @@
 <a href="#713" id="713">713</a>
 <a href="#714" id="714">714</a>
 <a href="#715" id="715">715</a>
-<a href="#716" id="716">716</a>
-<a href="#717" id="717">717</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -760,6 +758,8 @@
 
 <span class="kw">impl</span>&lt;T&gt; WindowState&lt;T&gt; {
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
+        <span class="self">self</span>.view_state.prepare();
+
         <span class="kw">let </span><span class="kw-2">mut </span>cx = RebuildCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state);
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_view = (<span class="self">self</span>.ui)(data);
@@ -769,20 +769,18 @@
         <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
 
         <span class="self">self</span>.view = new_view;
-        <span class="self">self</span>.view_state.update_tree();
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx, rebuild: <span class="kw-2">&amp;mut </span>bool, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">let </span>hot = <span class="self">self</span>.window.is_hovered(<span class="self">self</span>.view_state.id());
         <span class="self">self</span>.view_state.set_hot(hot);
+        <span class="self">self</span>.view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild);
 
         cx.insert_context(<span class="self">self</span>.window.clone());
         <span class="self">self</span>.view.event(<span class="kw-2">&amp;mut </span><span class="self">self</span>.state, <span class="kw-2">&amp;mut </span>cx, data, event);
         <span class="self">self</span>.window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
-
-        <span class="self">self</span>.view_state.update_tree();
     }
 
     <span class="kw">fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx) {
@@ -1070,8 +1068,6 @@
 
             state
         });
-
-        view_state.update_tree();
 
         <span class="kw">let </span>window_id = window.id();
         <span class="kw">let </span>window_state = WindowState {

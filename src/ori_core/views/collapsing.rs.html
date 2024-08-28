@@ -279,13 +279,6 @@
 <a href="#279" id="279">279</a>
 <a href="#280" id="280">280</a>
 <a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -465,7 +458,7 @@
         <span class="self">self</span>.content.event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
 
         <span class="kw">match </span>event {
-            Event::PointerPressed(event) <span class="kw">if </span>cx[state.header.id()].has_hot() =&gt; {
+            Event::PointerPressed(event) <span class="kw">if </span>state.header.has_hot() =&gt; {
                 <span class="kw">if </span>event.button != PointerButton::Primary {
                     <span class="kw">return</span>;
                 }
@@ -495,9 +488,6 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>header = state.header.id();
-        <span class="kw">let </span>content = state.content.id();
-
         <span class="kw">let </span>t = <span class="self">self</span>.transition.get(state.t);
 
         <span class="kw">let </span>header_space = space.loosen_height() - Size::new(<span class="self">self</span>.icon_size, <span class="number">0.0</span>);
@@ -507,12 +497,12 @@
         <span class="kw">let </span>header_height = header_size.height.max(<span class="self">self</span>.icon_size);
 
         <span class="kw">let </span>header_offset = (header_height - header_size.height) / <span class="number">2.0</span>;
-        cx[header].translate(Vector::new(<span class="self">self</span>.icon_size, header_offset));
+        (state.header).translate(Vector::new(<span class="self">self</span>.icon_size, header_offset));
 
         <span class="kw">let </span>content_space = space - Size::new(<span class="number">0.0</span>, header_size.height);
         <span class="kw">let </span>content_size = (<span class="self">self</span>.content).layout(<span class="kw-2">&amp;mut </span>state.content, cx, data, content_space);
 
-        cx[content].translate(Vector::new(<span class="number">0.0</span>, header_size.height));
+        (state.content).translate(Vector::new(<span class="number">0.0</span>, header_size.height));
 
         <span class="kw">let </span>width = f32::max(header_width, content_size.width);
         <span class="kw">let </span>height = header_height + content_size.height * t;
@@ -521,12 +511,9 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span>header = state.header.id();
-        <span class="kw">let </span>content = state.content.id();
-
         <span class="kw">let </span>t = <span class="self">self</span>.transition.get(state.t);
 
-        <span class="kw">let </span>header_height = <span class="self">self</span>.icon_size.max(cx[header].size().height);
+        <span class="kw">let </span>header_height = <span class="self">self</span>.icon_size.max(state.header.size().height);
         <span class="kw">let </span>header_size = Size::new(cx.rect().width(), header_height);
         <span class="kw">let </span>header_rect = Rect::min_size(cx.rect().top_left(), header_size);
 
@@ -546,16 +533,15 @@
             cx.fill(icon(), FillRule::EvenOdd, <span class="self">self</span>.icon_color);
         });
 
-        <span class="kw">let </span>header_rect = cx[header].rect();
-        cx.canvas().trigger(header_rect, state.header.id());
+        cx.canvas().trigger(state.header.rect(), state.header.id());
         <span class="self">self</span>.header.draw(<span class="kw-2">&amp;mut </span>state.header, cx, data);
 
-        <span class="kw">let </span>content_offset = Vector::new(<span class="number">0.0</span>, cx[header].size().height);
-        <span class="kw">let </span>content_height = Vector::new(<span class="number">0.0</span>, cx[content].size().height) * (<span class="number">1.0 </span>- t);
-        cx[content].translate(content_offset - content_height);
+        <span class="kw">let </span>content_offset = Vector::new(<span class="number">0.0</span>, state.header.size().height);
+        <span class="kw">let </span>content_height = Vector::new(<span class="number">0.0</span>, state.content.size().height) * (<span class="number">1.0 </span>- t);
+        state.content.translate(content_offset - content_height);
 
         <span class="kw">let </span>content_min = cx.rect().top_left() + content_offset;
-        <span class="kw">let </span>content_rect = Rect::min_size(content_min, cx[content].size());
+        <span class="kw">let </span>content_rect = Rect::min_size(content_min, state.content.size());
 
         cx.mask(content_rect, |cx| {
             <span class="self">self</span>.content.draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);

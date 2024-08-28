@@ -608,7 +608,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>run_minor = <span class="number">0.0</span>;
 
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.content.len() {
-            <span class="kw">let </span>(child_major, child_minor) = <span class="self">self</span>.axis.unpack(cx[i].size());
+            <span class="kw">let </span>(child_major, child_minor) = <span class="self">self</span>.axis.unpack(content[i].size());
             <span class="kw">let </span>gap = <span class="kw">if </span>run_major &gt; <span class="number">0.0 </span>{ major_gap } <span class="kw">else </span>{ <span class="number">0.0 </span>};
 
             <span class="kw">if </span>run_major + child_major + gap &lt;= max_major {
@@ -646,10 +646,10 @@
                 .layout(<span class="kw-2">&amp;</span>state.majors[run.clone()], major, major_gap)
                 .zip(run)
             {
-                <span class="kw">let </span>child_minor = <span class="self">self</span>.axis.minor(cx[j].size());
+                <span class="kw">let </span>child_minor = <span class="self">self</span>.axis.minor(content[j].size());
                 <span class="kw">let </span>child_align = <span class="self">self</span>.align.align(run_minor, child_minor);
                 <span class="kw">let </span>offset = <span class="self">self</span>.axis.pack(child_position, run_position + child_align);
-                cx[j].translate(offset);
+                content[j].translate(offset);
             }
         }
 

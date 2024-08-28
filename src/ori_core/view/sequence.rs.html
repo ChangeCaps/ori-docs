@@ -443,6 +443,30 @@
 <a href="#443" id="443">443</a>
 <a href="#444" id="444">444</a>
 <a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -451,7 +475,7 @@
     layout::{Size, Space},
 };
 
-<span class="kw">use super</span>::{Pod, View};
+<span class="kw">use super</span>::{Pod, View, ViewState};
 
 <span class="doccomment">/// A sequence of views.
 </span><span class="attr">#[allow(clippy::len_without_is_empty)]
@@ -463,7 +487,7 @@
     </span><span class="kw">fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize;
 
     <span class="doccomment">/// Build the sequence state.
-    </span><span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State;
+    </span><span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; (<span class="self">Self</span>::State, Vec&lt;ViewState&gt;);
 
     <span class="doccomment">/// Rebuild the sequence state.
     </span><span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>);
@@ -509,24 +533,25 @@
         <span class="self">self</span>.len()
     }
 
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; (<span class="self">Self</span>::State, Vec&lt;ViewState&gt;) {
         <span class="kw">let </span><span class="kw-2">mut </span>states = Vec::with_capacity(<span class="self">self</span>.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>view_states = Vec::with_capacity(<span class="self">self</span>.len());
 
-        <span class="kw">for </span>(i, view) <span class="kw">in </span><span class="self">self</span>.iter_mut().enumerate() {
-            <span class="kw">let </span>state = Pod::&lt;V&gt;::build_with(i, cx, |cx| view.build(cx, data));
+        <span class="kw">for </span>view <span class="kw">in </span><span class="self">self</span>.iter_mut() {
+            <span class="kw">let </span>(state, view_state) = Pod::&lt;V&gt;::build_with(cx, |cx| view.build(cx, data));
+            view_states.push(view_state);
             states.push(state);
         }
 
-        states
+        (states, view_states)
     }
 
-    <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, states: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T, _old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="kw">if </span><span class="self">self</span>.len() &lt; states.len() {
-            states.truncate(<span class="self">self</span>.len());
+    <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T, _old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
+        <span class="kw">if </span><span class="self">self</span>.len() &lt; state.len() {
+            state.truncate(<span class="self">self</span>.len());
         } <span class="kw">else </span>{
-            <span class="kw">for </span>(i, item) <span class="kw">in </span><span class="self">self</span>.iter_mut().enumerate().skip(states.len()) {
-                <span class="kw">let </span>state = Pod::&lt;V&gt;::build_with(i, cx, |cx| item.build(cx, data));
-                states.push(state);
+            <span class="kw">for </span>item <span class="kw">in </span><span class="self">self</span>.iter_mut().skip(state.len()) {
+                state.push(item.build(cx, data));
             }
         }
     }
@@ -578,7 +603,9 @@
         <span class="number">0
     </span>}
 
-    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {}
+    <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; (<span class="self">Self</span>::State, Vec&lt;ViewState&gt;) {
+        ((), Vec::new())
+    }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, _cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T, _old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
     }
@@ -626,20 +653,19 @@
                 <span class="number">0</span>$(.max(<span class="macro-nonterminal">$index </span>+ <span class="number">1</span>))*
             }
 
-            <span class="kw">fn </span>build(
-                <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-                cx: <span class="kw-2">&amp;mut </span>BuildCx,
-                data: <span class="kw-2">&amp;mut </span>T,
-            ) -&gt; <span class="self">Self</span>::State {
-
+            <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; (<span class="self">Self</span>::State, Vec&lt;ViewState&gt;) {
+                <span class="kw">let </span><span class="kw-2">mut </span>view_states = Vec::with_capacity(<span class="self">self</span>.len());
 
                 <span class="kw">let </span>state = ($({
-                    Pod::&lt;<span class="macro-nonterminal">$name</span>&gt;::build_with(<span class="macro-nonterminal">$index</span>, cx, |cx| {
+                    <span class="kw">let </span>(state, view_state) = Pod::&lt;<span class="macro-nonterminal">$name</span>&gt;::build_with(cx, |cx| {
                         <span class="self">self</span>.<span class="macro-nonterminal">$index</span>.build(cx, data)
-                    })
+                    });
+
+                    view_states.push(view_state);
+                    state
                 },)<span class="kw-2">*</span>);
 
-                state
+                (state, view_states)
             }
 
             <span class="kw">fn </span>rebuild(
@@ -738,6 +764,28 @@
 <span class="doccomment">/// The state of a [`PodSeq`].
 </span><span class="kw">pub struct </span>SeqState&lt;T, V: ViewSeq&lt;T&gt;&gt; {
     content: V::State,
+    view_state: Vec&lt;ViewState&gt;,
+}
+
+<span class="kw">impl</span>&lt;T, V: ViewSeq&lt;T&gt;&gt; SeqState&lt;T, V&gt; {
+    <span class="doccomment">/// Whether any of the views in the sequence are active.
+    </span><span class="kw">pub fn </span>has_active(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.view_state.iter().any(|state| state.has_active())
+    }
+}
+
+<span class="kw">impl</span>&lt;T, V: ViewSeq&lt;T&gt;&gt; Deref <span class="kw">for </span>SeqState&lt;T, V&gt; {
+    <span class="kw">type </span>Target = Vec&lt;ViewState&gt;;
+
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.view_state
+    }
+}
+
+<span class="kw">impl</span>&lt;T, V: ViewSeq&lt;T&gt;&gt; DerefMut <span class="kw">for </span>SeqState&lt;T, V&gt; {
+    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state
+    }
 }
 
 <span class="doccomment">/// Contents of a view, in a sequence.
@@ -801,12 +849,12 @@
     <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        cx.view_state.children.clear();
-        (cx.view_state.children).resize_with(<span class="self">self</span>.views.len(), Default::default);
+        <span class="kw">let </span>(content, view_state) = <span class="self">self</span>.views.build(cx, data);
 
-        <span class="kw">let </span>content = <span class="self">self</span>.views.build(cx, data);
-
-        SeqState { content }
+        SeqState {
+            content,
+            view_state,
+        }
     }
 
     <span class="doccomment">/// Rebuild the sequence state.
@@ -819,9 +867,9 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        (cx.view_state.children).resize_with(<span class="self">self</span>.views.len(), Default::default);
+        (state.view_state).resize_with(<span class="self">self</span>.views.len(), ViewState::default);
 
-        <span class="self">self</span>.views.rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.views);
+        (<span class="self">self</span>.views).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.views);
     }
 
     <span class="doccomment">/// Rebuild the nth view.
@@ -835,7 +883,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::rebuild_with(n, cx, |cx| {
+        Pod::&lt;V&gt;::rebuild_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).rebuild_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.views);
         });
     }
@@ -851,7 +899,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::event_with(n, cx, event, |cx, event| {
+        Pod::&lt;V&gt;::event_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, event, |cx, event| {
             (<span class="self">self</span>.views).event_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, event);
         });
     }
@@ -868,7 +916,7 @@
     <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::layout_with(n, cx, |cx| {
+        Pod::&lt;V&gt;::layout_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).layout_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, space)
         })
     }
@@ -883,7 +931,7 @@
     ) <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        Pod::&lt;V&gt;::draw_with(n, cx, |cx| {
+        Pod::&lt;V&gt;::draw_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, |cx| {
             (<span class="self">self</span>.views).draw_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data)
         });
     }

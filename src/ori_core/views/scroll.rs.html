@@ -393,7 +393,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
     ) {
-        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(cx[content.id()].size(), cx.size());
+        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(content.size(), cx.size());
 
         <span class="comment">// handle ponter event
         </span><span class="kw">if let </span>Event::PointerMoved(e) = event {
@@ -411,7 +411,7 @@
                 state.scroll = overflow * scroll_fract;
                 state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
 
-                cx[content.id()].translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
+                content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
                 cx.request_draw();
             }
@@ -448,7 +448,7 @@
                 state.scroll -= e.delta.y * <span class="number">10.0</span>;
                 state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
 
-                cx[content.id()].translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
+                content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
                 cx.request_draw();
             }
@@ -482,16 +482,16 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(cx[content.id()].size(), cx.size());
+        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(content.size(), cx.size());
         state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
-        cx[content.id()].translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
+        content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
         cx.trigger(cx.rect());
         cx.mask(cx.rect(), |cx| {
             <span class="self">self</span>.content.draw(content, cx, data);
         });
 
-        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(cx[content.id()].size(), cx.size());
+        <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(content.size(), cx.size());
 
         <span class="kw">if </span>overflow == <span class="number">0.0 </span>{
             <span class="kw">return</span>;

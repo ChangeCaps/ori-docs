@@ -257,9 +257,6 @@
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -269,21 +266,26 @@
     layout::{Size, Space},
 };
 
-<span class="kw">use super</span>::{View, ViewId, ViewState, ViewTombstone};
+<span class="kw">use super</span>::{View, ViewState};
 
 <span class="doccomment">/// The state of a [`Pod`].
-</span><span class="kw">pub struct </span>State&lt;T, V: View&lt;T&gt;&gt; {
+</span><span class="kw">pub struct </span>State&lt;T, V: View&lt;T&gt; + <span class="question-mark">?</span>Sized&gt; {
     content: V::State,
+    view_state: ViewState,
     canvas: Canvas,
-    <span class="attr">#[allow(dead_code)]
-    </span>tombstone: ViewTombstone,
-    id: ViewId,
 }
 
-<span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; State&lt;T, V&gt; {
-    <span class="doccomment">/// Get the id of the content view.
-    </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ViewId {
-        <span class="self">self</span>.id
+<span class="kw">impl</span>&lt;T, V: View&lt;T&gt; + <span class="question-mark">?</span>Sized&gt; Deref <span class="kw">for </span>State&lt;T, V&gt; {
+    <span class="kw">type </span>Target = ViewState;
+
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.view_state
+    }
+}
+
+<span class="kw">impl</span>&lt;T, V: View&lt;T&gt; + <span class="question-mark">?</span>Sized&gt; DerefMut <span class="kw">for </span>State&lt;T, V&gt; {
+    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state
     }
 }
 
@@ -337,42 +339,48 @@
     ///
     /// This will create both `T` and the new [`ViewState`].
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>build_with&lt;T&gt;(
-        child: usize,
         cx: <span class="kw-2">&amp;mut </span>BuildCx,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>BuildCx) -&gt; T,
-    ) -&gt; T {
+    ) -&gt; (T, ViewState) {
+        <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
+
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
-        new_cx.view_state = <span class="kw-2">&amp;mut </span>new_cx.view_state.children[child];
+        new_cx.view_state = <span class="kw-2">&amp;mut </span>view_state;
 
         <span class="kw">let </span>state = f(<span class="kw-2">&amp;mut </span>new_cx);
 
-        cx.view_state.propagate(child);
+        cx.view_state.propagate(<span class="kw-2">&amp;mut </span>view_state);
 
-        state
+        (state, view_state)
     }
 
     <span class="doccomment">/// Call a closure with the [`RebuildCx`] provided by a pod.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rebuild_with(child: usize, cx: <span class="kw-2">&amp;mut </span>RebuildCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>RebuildCx)) {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rebuild_with(
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
+        cx: <span class="kw-2">&amp;mut </span>RebuildCx,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>RebuildCx),
+    ) {
+        view_state.prepare();
+
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
-        new_cx.view_state = <span class="kw-2">&amp;mut </span>new_cx.view_state.children[child];
+        new_cx.view_state = view_state;
 
         f(<span class="kw-2">&amp;mut </span>new_cx);
 
-        cx.view_state.propagate(child);
+        cx.view_state.propagate(view_state);
     }
 
     <span class="doccomment">/// Call a closure with the [`EventCx`] provided by a pod.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>event_with(
-        child: usize,
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         event: <span class="kw-2">&amp;</span>Event,
         <span class="kw-2">mut </span>f: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;</span>Event),
     ) {
-        <span class="kw">let </span>view_state = <span class="kw-2">&amp;mut </span>cx.view_state.children[child];
-
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::Animate(<span class="kw">_</span>)) {
             <span class="kw">if </span>!view_state.needs_animate() {
-                cx.view_state.propagate(child);
+                cx.view_state.propagate(view_state);
+
                 <span class="kw">return</span>;
             }
 
@@ -384,44 +392,46 @@
             view_state.request_layout();
         }
 
-        <span class="kw">let </span>view_id = view_state.id();
-        <span class="kw">let </span>hovered = cx.window().is_hovered(view_id);
+        view_state.set_hot(cx.window().is_hovered(view_state.id()));
+        view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
-        new_cx.view_state = <span class="kw-2">&amp;mut </span>new_cx.view_state.children[child];
-
-        new_cx.view_state.set_hot(hovered);
-        new_cx.transform <span class="kw-2">*</span>= new_cx.view_state.transform;
+        new_cx.transform <span class="kw-2">*</span>= view_state.transform;
+        new_cx.view_state = view_state;
 
         f(<span class="kw-2">&amp;mut </span>new_cx, event);
 
-        new_cx.view_state.prev_flags = new_cx.view_state.flags;
+        view_state.prev_flags = view_state.flags;
 
-        cx.view_state.propagate(child);
+        cx.view_state.propagate(view_state);
     }
 
     <span class="doccomment">/// Call a closure with the [`LayoutCx`] provided by a pod.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>layout_with(
-        child: usize,
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
         cx: <span class="kw-2">&amp;mut </span>LayoutCx,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>LayoutCx) -&gt; Size,
     ) -&gt; Size {
+        view_state.mark_layed_out();
+
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
-        new_cx.view_state = <span class="kw-2">&amp;mut </span>new_cx.view_state.children[child];
+        new_cx.view_state = view_state;
 
-        new_cx.view_state.mark_layed_out();
-
-        new_cx.view_state.size = f(<span class="kw-2">&amp;mut </span>new_cx);
-        new_cx.view_state.size
+        view_state.size = f(<span class="kw-2">&amp;mut </span>new_cx);
+        view_state.size
     }
 
     <span class="doccomment">/// Call a closure with the [`DrawCx`] provided by a pod.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>draw_with(child: usize, cx: <span class="kw-2">&amp;mut </span>DrawCx, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx)) {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>draw_with(
+        view_state: <span class="kw-2">&amp;mut </span>ViewState,
+        cx: <span class="kw-2">&amp;mut </span>DrawCx,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx),
+    ) {
+        view_state.mark_drawn();
+
         <span class="comment">// create the draw context
         </span><span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
-        new_cx.view_state = <span class="kw-2">&amp;mut </span>new_cx.view_state.children[child];
-
-        new_cx.view_state.mark_drawn();
+        new_cx.view_state = view_state;
 
         <span class="comment">// draw the content
         </span>new_cx.layer(new_cx.view_state.transform, |cx| {
@@ -456,35 +466,23 @@
     <span class="kw">type </span>State = State&lt;T, V&gt;;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span>id = ViewId::new();
-        <span class="kw">let </span>view_state = ViewState::new(id);
-        <span class="kw">let </span>tombstone = view_state.tombstone.clone();
-
-        <span class="kw">let </span>child = cx.view_state.children.len();
-        cx.view_state.children.push(view_state);
-
-        <span class="kw">let </span>content = <span class="self">Self</span>::build_with(child, cx, |cx| <span class="self">self</span>.view.build(cx, data));
+        <span class="kw">let </span>(content, view_state) = <span class="self">Self</span>::build_with(cx, |cx| <span class="self">self</span>.view.build(cx, data));
 
         State {
             content,
+            view_state,
             canvas: Canvas::new(),
-            tombstone,
-            id,
         }
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="kw">let </span>child = cx.view_state.child_index(state.id()).unwrap();
-
-        <span class="self">Self</span>::rebuild_with(child, cx, |cx| {
+        <span class="self">Self</span>::rebuild_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
             (<span class="self">self</span>.view).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.view);
         });
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">let </span>child = cx.view_state.child_index(state.id()).unwrap();
-
-        <span class="self">Self</span>::event_with(child, cx, event, |cx, event| {
+        <span class="self">Self</span>::event_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, event, |cx, event| {
             (<span class="self">self</span>.view).event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
         });
     }
@@ -496,21 +494,17 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>child = cx.view_state.child_index(state.id()).unwrap();
-
-        <span class="self">Self</span>::layout_with(child, cx, |cx| {
+        <span class="self">Self</span>::layout_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
             (<span class="self">self</span>.view).layout(<span class="kw-2">&amp;mut </span>state.content, cx, data, space)
         })
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span>child = cx.view_state.child_index(state.id()).unwrap();
-
         <span class="comment">// we need to check if the view needs to be drawn here
         // since the flag gets cleared in draw function
-        </span><span class="kw">let </span>needs_draw = cx.view_state.children[child].needs_draw();
+        </span><span class="kw">let </span>needs_draw = state.view_state.needs_draw();
 
-        <span class="self">Self</span>::draw_with(child, cx, |cx| {
+        <span class="self">Self</span>::draw_with(<span class="kw-2">&amp;mut </span>state.view_state, cx, |cx| {
             <span class="kw">if </span>needs_draw {
                 <span class="comment">// if the view needs to be drawn we draw it and save the canvas
                 </span>(<span class="self">self</span>.view).draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
