@@ -199,6 +199,9 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -357,17 +360,20 @@
 
     <span class="doccomment">/// Get whether a child view was hot last call.
     </span><span class="kw">pub fn </span>had_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::HOT | ViewFlags::HAS_HOT)
+        <span class="kw">let </span>flags = <span class="self">self</span>.view_state.prev_flags &amp; (ViewFlags::HOT | ViewFlags::HAS_HOT);
+        flags != ViewFlags::empty()
     }
 
     <span class="doccomment">/// Get whether a child view was focused last call.
     </span><span class="kw">pub fn </span>had_focused(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::FOCUSED | ViewFlags::HAS_FOCUSED)
+        <span class="kw">let </span>flags = <span class="self">self</span>.view_state.prev_flags &amp; (ViewFlags::FOCUSED | ViewFlags::HAS_FOCUSED);
+        flags != ViewFlags::empty()
     }
 
     <span class="doccomment">/// Get whether a child view was active last call.
     </span><span class="kw">pub fn </span>had_active(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        (<span class="self">self</span>.view_state.prev_flags).contains(ViewFlags::ACTIVE | ViewFlags::HAS_ACTIVE)
+        <span class="kw">let </span>flags = <span class="self">self</span>.view_state.prev_flags &amp; (ViewFlags::ACTIVE | ViewFlags::HAS_ACTIVE);
+        flags != ViewFlags::empty()
     }
 
     <span class="doccomment">/// Get whether the view's hot state changed.
