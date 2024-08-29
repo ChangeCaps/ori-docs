@@ -378,7 +378,7 @@
     canvas::{BorderRadius, BorderWidth, Color},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
-    layout::{Padding, Point, Rect, Size, Space, Vector},
+    layout::{pt, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
     style::{style, Style, Styles},
     text::{
@@ -452,7 +452,7 @@
         <span class="self">Self </span>{
             delay: <span class="number">0.2</span>,
             padding: Padding::from([<span class="number">8.0</span>, <span class="number">4.0</span>]),
-            font_size: <span class="number">10.0</span>,
+            font_size: pt(<span class="number">10.0</span>),
             font_family: text_style.font_family.clone(),
             font_weight: text_style.font_weight,
             font_stretch: text_style.font_stretch,
