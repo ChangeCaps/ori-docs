@@ -137,6 +137,26 @@
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{mem::ManuallyDrop, ptr};
 
 <span class="kw">use crate</span>::{
@@ -198,24 +218,6 @@
             theme: Styles::snapshot(),
         }
     }
-
-    <span class="comment">// NOTE: this seems incredibly dodgy and i don't know if it's safe
-    </span><span class="kw">fn </span>data&lt;O&gt;(state: <span class="kw-2">&amp;mut </span>S, data: <span class="kw-2">&amp;mut </span>T, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>(T, S)) -&gt; O) -&gt; O {
-        <span class="kw">let </span><span class="kw-2">mut </span>data_state: ManuallyDrop&lt;(T, S)&gt; =
-            <span class="kw">unsafe </span>{ ManuallyDrop::new((ptr::read(data), ptr::read(state))) };
-
-        <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>data_state);
-
-        <span class="kw">unsafe </span>{
-            <span class="comment">// note that we don't drop the data and state here
-            // see ptr::write.
-            </span><span class="kw">let </span>(data_inner, state_inner): (T, S) = ManuallyDrop::into_inner(data_state);
-            ptr::write(data, data_inner);
-            ptr::write(state, state_inner);
-        }
-
-        result
-    }
 }
 
 <span class="kw">impl</span>&lt;T, U, V: View&lt;(T, U)&gt;&gt; View&lt;T&gt; <span class="kw">for </span>WithState&lt;T, U, V&gt; {
@@ -228,7 +230,7 @@
             (view, state)
         });
 
-        <span class="kw">let </span>content = <span class="self">Self</span>::data(<span class="kw-2">&amp;mut </span>state, data, |data| view.build(cx, data));
+        <span class="kw">let </span>content = with_data(<span class="kw-2">&amp;mut </span>state, data, |data| view.build(cx, data));
 
         (view, state, content)
     }
@@ -245,8 +247,8 @@
             </span>Pod::new((<span class="self">self</span>.view)(data, data_state))
         });
 
-        <span class="self">Self</span>::data(data_state, data, |data| {
-            new_view.rebuild(state, cx, data, view)
+        with_data(data_state, data, |data| {
+            new_view.rebuild(state, cx, data, view);
         });
 
         <span class="kw-2">*</span>view = new_view;
@@ -259,7 +261,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
     ) {
-        <span class="self">Self</span>::data(data_state, data, |data| view.event(state, cx, data, event));
+        with_data(data_state, data, |data| view.event(state, cx, data, event));
     }
 
     <span class="kw">fn </span>layout(
@@ -269,11 +271,49 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="self">Self</span>::data(data_state, data, |data| view.layout(state, cx, data, space))
+        with_data(data_state, data, |data| view.layout(state, cx, data, space))
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (view, data_state, state): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="self">Self</span>::data(data_state, data, |data| view.draw(state, cx, data));
+        with_data(data_state, data, |data| view.draw(state, cx, data));
     }
+}
+
+<span class="kw">fn </span>with_data&lt;S, T, O&gt;(state: <span class="kw-2">&amp;mut </span>S, data: <span class="kw-2">&amp;mut </span>T, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>(T, S)) -&gt; O) -&gt; O {
+    <span class="comment">// convert the state and data to raw pointers
+    </span><span class="kw">let </span>state_ptr = state <span class="kw">as </span><span class="kw-2">*mut </span>S;
+    <span class="kw">let </span>data_ptr = data <span class="kw">as </span><span class="kw-2">*mut </span>T;
+
+    <span class="comment">// data and state are dropped here, no mutable references are held
+    </span><span class="attr">#[allow(dropping_references)]
+    </span>{
+        drop(data);
+        drop(state);
+    }
+
+    <span class="comment">// SAFETY: data_ptr and state_ptr are created from mutable references and are thus
+    // - valid for reads
+    // - aligned
+    // - point to initialized values
+    //
+    // data_state is wrapped in ManuallyDrop to prevent it from being dropped since we don't own
+    // the values pointed to by data_ptr and state_ptr. the ManuallyDrop is necessary to prevent
+    // the case where `f` panics, which would lead to a double drop.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>data_state = <span class="kw">unsafe </span>{ ManuallyDrop::new((ptr::read(data_ptr), ptr::read(state_ptr))) };
+
+    <span class="comment">// here a mutable reference to data_state is created, as stated above, no other mutable
+    // references to the values pointed to by data_ptr and state_ptr exist.
+    </span><span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>data_state);
+
+    <span class="comment">// SAFETY: valid for the same reasons as above
+    //
+    // ptr::write moves the values and prevents them from being dropped
+    </span><span class="kw">unsafe </span>{
+        <span class="kw">let </span>(data_inner, state_inner): (T, S) = ManuallyDrop::into_inner(data_state);
+        ptr::write(data_ptr, data_inner);
+        ptr::write(state_ptr, state_inner);
+    }
+
+    result
 }
 </code></pre></div></section></main></body></html>

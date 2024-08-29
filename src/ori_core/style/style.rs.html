@@ -273,7 +273,7 @@
             <span class="kw">let </span>styles = ManuallyDrop::new(item);
 
             <span class="kw">unsafe </span>{
-                <span class="comment">// SAFETY: we know that the type is Style
+                <span class="comment">// SAFETY: we know that the type is Self
                 </span><span class="self">self</span>.extend(mem::transmute_copy(<span class="kw-2">&amp;</span>styles));
             }
 

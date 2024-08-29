@@ -256,6 +256,13 @@
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
 
 <span class="kw">use crate</span>::{
@@ -285,23 +292,30 @@
 </span><span class="kw">pub struct </span>Scroll&lt;V&gt; {
     <span class="doccomment">/// The content.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
+
     <span class="doccomment">/// The axis of the scroll.
     </span><span class="attr">#[rebuild(layout)]
     </span><span class="kw">pub </span>axis: Axis,
+
     <span class="doccomment">/// The transition of the scrollbar.
     </span><span class="kw">pub </span>transition: Transition,
+
     <span class="doccomment">/// The inset of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>inset: f32,
+
     <span class="doccomment">/// The width of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>width: f32,
+
     <span class="doccomment">/// The radius of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>border_radius: BorderRadius,
+
     <span class="doccomment">/// The color of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>color: Color,
+
     <span class="doccomment">/// The color of the scrollbar knob.
     </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>knob_color: Color,
