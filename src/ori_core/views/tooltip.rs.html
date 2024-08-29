@@ -647,7 +647,7 @@
                 },
             );
 
-            cx.request_layout();
+            cx.layout();
         }
 
         (<span class="self">self</span>.content).rebuild(content, cx, data, <span class="kw-2">&amp;</span>old.content);
@@ -664,7 +664,7 @@
 
         <span class="kw">match </span>event {
             Event::WindowResized(<span class="kw">_</span>) =&gt; {
-                cx.request_layout();
+                cx.layout();
             }
             Event::PointerMoved(e) =&gt; {
                 state.timer = <span class="number">0.0</span>;
@@ -683,7 +683,7 @@
                 state.timer = f32::clamp(state.timer, <span class="number">0.0</span>, <span class="number">1.0</span>);
 
                 <span class="kw">if </span>state.timer &gt;= <span class="number">0.9 </span>{
-                    cx.request_draw();
+                    cx.draw();
                 }
             }
             <span class="kw">_ </span>=&gt; {}

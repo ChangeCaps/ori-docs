@@ -1062,14 +1062,14 @@
 
             (state.placeholder).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
             (state.buffer_mut()).set_wrap(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, <span class="self">self</span>.wrap.to_cosmic_text());
             state.placeholder.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
@@ -1079,7 +1079,7 @@
 
             state.placeholder.set_align(<span class="self">self</span>.align);
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">let </span>attrs_changed = <span class="self">self</span>.font_family != old.font_family
@@ -1107,12 +1107,12 @@
                     Shaping::Advanced,
                 );
 
-                cx.request_layout();
+                cx.layout();
             }
         } <span class="kw">else if </span>attrs_changed {
             <span class="self">self</span>.set_attrs_list(state.buffer_mut());
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.placeholder != old.placeholder || attrs_changed {
@@ -1127,7 +1127,7 @@
                 },
             );
 
-            cx.request_layout();
+            cx.layout();
         }
     }
 
@@ -1155,7 +1155,7 @@
 
                         <span class="self">self</span>.set_attrs_list(state.buffer_mut());
 
-                        cx.request_layout();
+                        cx.layout();
                         state.blink = <span class="number">0.0</span>;
                         changed = <span class="bool-val">true</span>;
                     }
@@ -1163,7 +1163,7 @@
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(action) = delete_key(e) {
                     state.editor.action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, action);
-                    cx.request_layout();
+                    cx.layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
                 }
@@ -1171,12 +1171,12 @@
                 <span class="kw">if </span>e.is_key(Key::Escape) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                     cx.set_focused(<span class="bool-val">false</span>);
-                    cx.request_draw();
+                    cx.draw();
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
-                    cx.request_layout();
+                    cx.layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
                 }
@@ -1188,7 +1188,7 @@
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(motion) = move_key(e) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Motion(motion));
-                    cx.request_draw();
+                    cx.draw();
                     state.blink = <span class="number">0.0</span>;
                 }
 
@@ -1201,7 +1201,7 @@
                 <span class="kw">if </span>e.is_key(<span class="string">'x'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
-                        cx.request_layout();
+                        cx.layout();
                     }
 
                     state.editor.delete_selection();
@@ -1212,7 +1212,7 @@
                     <span class="kw">let </span>text = cx.clipboard().get();
                     state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
 
-                    cx.request_layout();
+                    cx.layout();
                     changed = <span class="bool-val">true</span>;
                 }
 
@@ -1245,7 +1245,7 @@
                     <span class="kw">if </span>cx.is_focused() {
                         (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                         cx.set_focused(<span class="bool-val">false</span>);
-                        cx.request_draw();
+                        cx.draw();
                     }
 
                     <span class="kw">return</span>;
@@ -1281,13 +1281,13 @@
                         },
                     );
 
-                    cx.request_draw();
+                    cx.draw();
                 }
             }
             Event::Animate(dt) =&gt; {
                 <span class="kw">if </span>cx.is_focused() {
                     cx.animate();
-                    cx.request_draw();
+                    cx.draw();
 
                     state.blink += <span class="kw-2">*</span>dt * <span class="number">10.0</span>;
                 }

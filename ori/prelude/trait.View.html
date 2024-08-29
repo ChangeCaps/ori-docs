@@ -47,7 +47,7 @@ are <em>very</em> likely to occur.</p>
 <li><a href="trait.View.html#tymethod.rebuild" title="method ori::prelude::View::rebuild"><code>View::rebuild</code></a> is called after a new <code>view-tree</code> has been built, on the
 new tree. The view can then compare itself to the old tree and update it’s
 state accordingly. When a view differs from the old tree, it should call
-<a href="struct.RebuildCx.html#method.request_layout" title="method ori::prelude::RebuildCx::request_layout"><code>RebuildCx::request_layout</code></a> or <a href="struct.RebuildCx.html#method.request_draw" title="method ori::prelude::RebuildCx::request_draw"><code>RebuildCx::request_draw</code></a> when applicable.
+[<code>RebuildCx::request_layout</code>] or [<code>RebuildCx::request_draw</code>] when applicable.
 This can be quite tedius to write out, so the <a href="trait.Rebuild.html" title="trait ori::prelude::Rebuild"><code>Rebuild</code></a> derive macro can be
 used to generate this code.</li>
 <li><a href="trait.View.html#tymethod.event" title="method ori::prelude::View::event"><code>View::event</code></a> is called when an event occurs. The should then handle the

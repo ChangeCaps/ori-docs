@@ -559,10 +559,10 @@
 
         <span class="kw">if </span><span class="self">self</span>.content.len() != old.content.len() {
             state.resize(<span class="self">self</span>.content.len());
-            cx.request_layout();
+            cx.layout();
         }
 
-        (<span class="self">self</span>.content).rebuild(content, <span class="kw-2">&amp;mut </span>cx.build_cx(), data, <span class="kw-2">&amp;</span>old.content);
+        (<span class="self">self</span>.content).rebuild(content, <span class="kw-2">&amp;mut </span>cx.as_build_cx(), data, <span class="kw-2">&amp;</span>old.content);
 
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.content.len() {
             <span class="self">self</span>.content.rebuild_nth(i, content, cx, data, <span class="kw-2">&amp;</span>old.content);

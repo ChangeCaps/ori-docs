@@ -223,11 +223,11 @@
         <span class="kw">let </span><span class="kw-2">mut </span>tokens = TokenStream::new();
 
         <span class="kw">if </span><span class="self">self</span>.layout {
-            tokens.extend(<span class="macro">quote!</span>(cx.request_layout();));
+            tokens.extend(<span class="macro">quote!</span>(cx.layout();));
         }
 
         <span class="kw">if </span><span class="self">self</span>.draw {
-            tokens.extend(<span class="macro">quote!</span>(cx.request_draw();));
+            tokens.extend(<span class="macro">quote!</span>(cx.draw();));
         }
 
         tokens

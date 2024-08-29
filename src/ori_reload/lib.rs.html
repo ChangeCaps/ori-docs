@@ -412,7 +412,7 @@
         event: <span class="kw-2">&amp;</span>Event,
     ) {
         <span class="kw">if </span>event.is_cmd::&lt;Modified&gt;() &amp;&amp; handle.is_finished() {
-            cx.request_rebuild();
+            cx.rebuild();
 
             <span class="kw-2">*</span>handle = <span class="self">self</span>.spawn(cx.proxy());
         }

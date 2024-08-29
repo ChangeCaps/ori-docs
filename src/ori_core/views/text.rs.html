@@ -430,19 +430,19 @@
         <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
             (state.buffer).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
             state.buffer.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
 
-            cx.request_draw();
+            cx.draw();
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
             state.buffer.set_align(<span class="self">self</span>.align);
 
-            cx.request_draw();
+            cx.draw();
         }
 
         <span class="kw">if </span><span class="self">self</span>.text != old.text
@@ -462,11 +462,11 @@
                 },
             );
 
-            cx.request_layout();
+            cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.color != old.color {
-            cx.request_draw();
+            cx.draw();
         }
     }
 

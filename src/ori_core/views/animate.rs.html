@@ -404,11 +404,11 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>new_view) = new_view {
             <span class="kw">match </span>state.view {
                 <span class="prelude-val">Some</span>((<span class="kw-2">ref mut </span>view_state, <span class="kw-2">ref mut </span>view)) =&gt; {
-                    new_view.rebuild(view_state, <span class="kw-2">&amp;mut </span>cx.rebuild_cx(), data, view);
+                    new_view.rebuild(view_state, <span class="kw-2">&amp;mut </span>cx.as_rebuild_cx(), data, view);
                     <span class="kw-2">*</span>view = new_view;
                 }
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="kw">let </span><span class="kw-2">mut </span>view_state = new_view.build(<span class="kw-2">&amp;mut </span>cx.build_cx(), data);
+                    <span class="kw">let </span><span class="kw-2">mut </span>view_state = new_view.build(<span class="kw-2">&amp;mut </span>cx.as_build_cx(), data);
                     new_view.event(<span class="kw-2">&amp;mut </span>view_state, cx, data, event);
                     state.view = <span class="prelude-val">Some</span>((view_state, new_view));
                 }

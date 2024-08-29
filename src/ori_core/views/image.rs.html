@@ -65,8 +65,8 @@
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span><span class="self">self </span>!= old {
-            cx.request_layout();
-            cx.request_draw();
+            cx.layout();
+            cx.draw();
         }
     }
 

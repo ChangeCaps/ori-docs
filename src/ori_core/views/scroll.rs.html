@@ -413,18 +413,18 @@
 
                 content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
-                cx.request_draw();
+                cx.draw();
             }
         }
 
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.scrollbar_hot {
             cx.set_active(<span class="bool-val">true</span>);
-            cx.request_draw();
+            cx.draw();
         }
 
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerReleased(<span class="kw">_</span>)) &amp;&amp; cx.is_active() {
             cx.set_active(<span class="bool-val">false</span>);
-            cx.request_draw();
+            cx.draw();
         }
 
         <span class="comment">// propagate event
@@ -439,7 +439,7 @@
         <span class="kw">if let </span>Event::Animate(dt) = event {
             <span class="kw">if </span>(<span class="self">self</span>.transition).step(<span class="kw-2">&amp;mut </span>state.t, on, <span class="kw-2">*</span>dt) {
                 cx.animate();
-                cx.request_draw();
+                cx.draw();
             }
         }
 
@@ -450,7 +450,7 @@
 
                 content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
-                cx.request_draw();
+                cx.draw();
             }
         }
     }

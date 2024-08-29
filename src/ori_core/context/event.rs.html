@@ -262,12 +262,12 @@
     }
 
     <span class="doccomment">/// Get a build context.
-    </span><span class="kw">pub fn </span>build_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
+    </span><span class="kw">pub fn </span>as_build_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
         BuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state)
     }
 
     <span class="doccomment">/// Get a rebuild context.
-    </span><span class="kw">pub fn </span>rebuild_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
+    </span><span class="kw">pub fn </span>as_rebuild_cx(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt; {
         RebuildCx::new(<span class="self">self</span>.base, <span class="self">self</span>.view_state)
     }
 
@@ -292,17 +292,17 @@
     }
 
     <span class="doccomment">/// Request a rebuild of the view tree.
-    </span><span class="kw">pub fn </span>request_rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw-2">*</span><span class="self">self</span>.rebuild = <span class="bool-val">true</span>;
     }
 
     <span class="doccomment">/// Request a layout of the view tree.
-    </span><span class="kw">pub fn </span>request_layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.view_state.request_layout();
     }
 
     <span class="doccomment">/// Request a draw of the view tree.
-    </span><span class="kw">pub fn </span>request_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.view_state.request_draw();
     }
 

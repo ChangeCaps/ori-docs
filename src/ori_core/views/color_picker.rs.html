@@ -610,7 +610,7 @@
 
         <span class="kw">if </span>(l - old_l).abs() &gt; <span class="number">1e-6 </span>|| (a - old_a).abs() &gt; <span class="number">1e-6 </span>{
             state.image = <span class="prelude-val">None</span>;
-            cx.request_draw();
+            cx.draw();
         }
     }
 

@@ -323,7 +323,7 @@
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(view) = <span class="self">self </span>{
             <span class="kw">if </span>state.is_none() {
-                <span class="kw-2">*</span>state = <span class="prelude-val">Some</span>(view.build(<span class="kw-2">&amp;mut </span>cx.build_cx(), data));
+                <span class="kw-2">*</span>state = <span class="prelude-val">Some</span>(view.build(<span class="kw-2">&amp;mut </span>cx.as_build_cx(), data));
             }
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(old_view) = old {
@@ -376,10 +376,10 @@
             (<span class="prelude-val">Ok</span>(view), <span class="prelude-val">Ok</span>(state), <span class="prelude-val">Ok</span>(old)) =&gt; view.rebuild(state, cx, data, old),
             (<span class="prelude-val">Err</span>(view), <span class="prelude-val">Err</span>(state), <span class="prelude-val">Err</span>(old)) =&gt; view.rebuild(state, cx, data, old),
             <span class="kw">_ </span>=&gt; {
-                <span class="kw-2">*</span>state = <span class="self">self</span>.build(<span class="kw-2">&amp;mut </span>cx.build_cx(), data);
+                <span class="kw-2">*</span>state = <span class="self">self</span>.build(<span class="kw-2">&amp;mut </span>cx.as_build_cx(), data);
                 <span class="kw-2">*</span>cx.view_state = Default::default();
 
-                cx.request_layout();
+                cx.layout();
             }
         }
     }
