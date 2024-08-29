@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Code","Event","Key","PointerButton"],"struct":["CloseRequested","KeyPressed","KeyReleased","Modifiers","PointerId","PointerLeft","PointerMoved","PointerPressed","PointerReleased","PointerScrolled","WindowResized","WindowScaled"],"trait":["IsKey"]};
+window.SIDEBAR_ITEMS = {"enum":["Code","Event","Key","PointerButton"],"struct":["CloseRequested","KeyPressed","KeyReleased","Modifiers","PointerId","PointerLeft","PointerMoved","PointerPressed","PointerReleased","PointerScrolled","WindowMaximized","WindowResized","WindowScaled"],"trait":["IsKey"]};

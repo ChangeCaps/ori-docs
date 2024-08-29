@@ -713,6 +713,23 @@
 <a href="#713" id="713">713</a>
 <a href="#714" id="714">714</a>
 <a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -723,7 +740,7 @@
     event::{
         CloseRequested, Code, Event, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
         PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
-        WindowResized, WindowScaled,
+        WindowMaximized, WindowResized, WindowScaled,
     },
     layout::{Point, Size, Space, Vector},
     style::Styles,
@@ -895,11 +912,28 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             window_state.view_state.request_layout();
             window_state.window.scale = scale;
+            window_state.snapshot.scale = scale;
         }
 
         <span class="kw">let </span>event = Event::WindowScaled(WindowScaled {
             window: window_id,
             scale_factor: scale,
+        });
+
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+    }
+
+    <span class="doccomment">/// The maximized state of a window changed.
+    </span><span class="kw">pub fn </span>window_maximized(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, maximized: bool) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
+            window_state.view_state.request_layout();
+            window_state.window.maximized = maximized;
+            window_state.snapshot.maximized = maximized;
+        }
+
+        <span class="kw">let </span>event = Event::WindowMaximized(WindowMaximized {
+            window: window_id,
+            maximized,
         });
 
         <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
