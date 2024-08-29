@@ -386,6 +386,16 @@
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
 <a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Modifiers;
 
 <span class="doccomment">/// A trait for checking if something is a certain key.
@@ -427,10 +437,10 @@
 <span class="doccomment">/// An event fired when a key is pressed.
 </span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>KeyPressed {
-    <span class="doccomment">/// The key that was pressed or released.
+    <span class="doccomment">/// The key that was pressed, ignoring modifiers.
     </span><span class="kw">pub </span>key: Key,
 
-    <span class="doccomment">/// The code of the key that was pressed or released.
+    <span class="doccomment">/// The code of the key that was pressed.
     </span><span class="kw">pub </span>code: <span class="prelude-ty">Option</span>&lt;Code&gt;,
 
     <span class="doccomment">/// The text that was entered.
@@ -450,10 +460,10 @@
 <span class="doccomment">/// An event fired when a key is released.
 </span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>KeyReleased {
-    <span class="doccomment">/// The key that was pressed or released.
+    <span class="doccomment">/// The key that was released, ignoring modifiers.
     </span><span class="kw">pub </span>key: Key,
 
-    <span class="doccomment">/// The code of the key that was pressed or released.
+    <span class="doccomment">/// The code of the key that was released.
     </span><span class="kw">pub </span>code: <span class="prelude-ty">Option</span>&lt;Code&gt;,
 
     <span class="doccomment">/// The modifiers that were active.
@@ -569,6 +579,16 @@
     Romaji,
     Zenkaku,
     ZenkakuHankaku,
+}
+
+<span class="kw">impl </span>Key {
+    <span class="doccomment">/// Get a character from the key.
+    </span><span class="kw">pub const fn </span>as_char(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;char&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="self">Self</span>::Character(c) =&gt; <span class="prelude-val">Some</span>(c),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
+    }
 }
 
 <span class="doccomment">/// A keyboard key-code.
