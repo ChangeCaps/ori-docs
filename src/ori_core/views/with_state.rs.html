@@ -150,13 +150,6 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
-<a href="#156" id="156">156</a>
-<a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{mem::ManuallyDrop, ptr};
 
 <span class="kw">use crate</span>::{
@@ -283,13 +276,6 @@
     <span class="comment">// convert the state and data to raw pointers
     </span><span class="kw">let </span>state_ptr = state <span class="kw">as </span><span class="kw-2">*mut </span>S;
     <span class="kw">let </span>data_ptr = data <span class="kw">as </span><span class="kw-2">*mut </span>T;
-
-    <span class="comment">// data and state are dropped here, no mutable references are held
-    </span><span class="attr">#[allow(dropping_references)]
-    </span>{
-        drop(data);
-        drop(state);
-    }
 
     <span class="comment">// SAFETY: data_ptr and state_ptr are created from mutable references and are thus
     // - valid for reads
