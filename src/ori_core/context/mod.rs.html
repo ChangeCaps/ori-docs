@@ -210,18 +210,18 @@
     }
 
     <span class="doccomment">/// Get the property `T` of the view or insert it with a value.
-    </span><span class="kw">pub fn </span>get_property_or_insert_with&lt;T: <span class="lifetime">'static</span>, F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: F) -&gt; <span class="kw-2">&amp;mut </span>T {
-        <span class="self">self</span>.view_state.get_property_or_insert_with(f)
+    </span><span class="kw">pub fn </span>property_or_insert_with&lt;T: <span class="lifetime">'static</span>, F: FnOnce() -&gt; T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: F) -&gt; <span class="kw-2">&amp;mut </span>T {
+        <span class="self">self</span>.view_state.property_or_insert_with(f)
     }
 
     <span class="doccomment">/// Get the property `T` of the view or insert it with a value.
-    </span><span class="kw">pub fn </span>get_property_or&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) -&gt; <span class="kw-2">&amp;mut </span>T {
-        <span class="self">self</span>.view_state.get_property_or(item)
+    </span><span class="kw">pub fn </span>property_or&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, item: T) -&gt; <span class="kw-2">&amp;mut </span>T {
+        <span class="self">self</span>.view_state.property_or(item)
     }
 
     <span class="doccomment">/// Get the property `T` of the view or insert it with a default value.
-    </span><span class="kw">pub fn </span>get_property_or_default&lt;T: <span class="lifetime">'static </span>+ Default&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
-        <span class="self">self</span>.view_state.get_property_or_default()
+    </span><span class="kw">pub fn </span>property_or_default&lt;T: <span class="lifetime">'static </span>+ Default&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
+        <span class="self">self</span>.view_state.property_or_default()
     }
 }}
 </code></pre></div></section></main></body></html>
