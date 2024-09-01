@@ -583,13 +583,10 @@
 <a href="#583" id="583">583</a>
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::{BTreeMap, HashMap},
     hash::{BuildHasherDefault, Hash, Hasher},
+    mem,
     sync::Arc,
 };
 
@@ -793,7 +790,7 @@
     <span class="doccomment">/// A layer that can be transformed and masked.
     </span>Layer {
         <span class="doccomment">/// The primitives of the layer.
-        </span>primitives: Arc&lt;[Primitive]&gt;,
+        </span>primitives: Arc&lt;Vec&lt;Primitive&gt;&gt;,
 
         <span class="doccomment">/// The transformation of the layer.
         </span>transform: Affine,
@@ -820,8 +817,8 @@
 <span class="doccomment">/// A canvas that can be drawn on.
 </span><span class="attr">#[derive(Clone, Debug, PartialEq)]
 </span><span class="kw">pub struct </span>Canvas {
-    overlays: BTreeMap&lt;i32, Vec&lt;Primitive&gt;&gt;,
-    primitives: Vec&lt;Primitive&gt;,
+    overlays: BTreeMap&lt;i32, Arc&lt;Vec&lt;Primitive&gt;&gt;&gt;,
+    primitives: Arc&lt;Vec&lt;Primitive&gt;&gt;,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Canvas {
@@ -835,18 +832,8 @@
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             overlays: BTreeMap::new(),
-            primitives: Vec::new(),
+            primitives: Arc::new(Vec::new()),
         }
-    }
-
-    <span class="doccomment">/// Count the number of primitives.
-    </span><span class="kw">pub fn </span>primitive_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="self">self</span>.primitives.iter().map(Primitive::count).sum::&lt;usize&gt;()
-            + <span class="self">self
-                </span>.overlays
-                .values()
-                .map(|p| p.iter().map(Primitive::count).sum::&lt;usize&gt;())
-                .sum::&lt;usize&gt;()
     }
 
     <span class="doccomment">/// Get the primitives of the canvas.
@@ -858,7 +845,7 @@
     <span class="doccomment">/// Clear the canvas.
     </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.overlays.clear();
-        <span class="self">self</span>.primitives.clear();
+        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives).clear();
     }
 
     <span class="doccomment">/// Draw a rectangle.
@@ -884,21 +871,33 @@
     }
 
     <span class="doccomment">/// Fill a curve.
-    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, fill: FillRule, paint: Paint) {
-        <span class="self">self</span>.primitives.push(Primitive::Fill {
+    </span><span class="kw">pub fn </span>fill(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, fill: FillRule, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
+        <span class="kw">let </span>primitives = Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives);
+        primitives.push(Primitive::Fill {
             curve: curve.into(),
             fill,
-            paint,
+            paint: paint.into(),
         });
     }
 
     <span class="doccomment">/// Stroke a curve.
-    </span><span class="kw">pub fn </span>stroke(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;, stroke: Stroke, paint: Paint) {
-        <span class="self">self</span>.primitives.push(Primitive::Stroke {
+    </span><span class="kw">pub fn </span>stroke(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;,
+        stroke: Stroke,
+        paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
+    ) {
+        <span class="kw">let </span>primitives = Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives);
+        primitives.push(Primitive::Stroke {
             curve: curve.into(),
             stroke,
-            paint,
+            paint: paint.into(),
         });
+    }
+
+    <span class="doccomment">/// Draw a canvas.
+    </span><span class="kw">pub fn </span>canvas(<span class="kw-2">&amp;mut </span><span class="self">self</span>, canvas: Canvas) {
+        <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, |ca| <span class="kw-2">*</span>ca = canvas);
     }
 
     <span class="doccomment">/// Draw an overlay.
@@ -907,32 +906,22 @@
 
         <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>overlay);
 
-        <span class="kw">for </span>(i, primitives) <span class="kw">in </span>overlay.overlays {
-            <span class="self">self</span>.overlays
-                .entry(i + index)
-                .or_default()
-                .extend(primitives);
+        <span class="kw">for </span>(i, <span class="kw-2">mut </span>others) <span class="kw">in </span>overlay.overlays {
+            <span class="kw">let </span>others = mem::take(Arc::make_mut(<span class="kw-2">&amp;mut </span>others));
+            <span class="kw">let </span>primitives = Arc::make_mut(<span class="self">self</span>.overlays.entry(i).or_default());
+            primitives.extend(others);
         }
 
-        <span class="self">self</span>.overlays
-            .entry(index)
-            .or_default()
-            .extend(overlay.primitives);
+        <span class="kw">let </span>other = mem::take(Arc::make_mut(<span class="kw-2">&amp;mut </span>overlay.primitives));
+        <span class="kw">let </span>primitives = Arc::make_mut(<span class="self">self</span>.overlays.entry(index).or_default());
+        primitives.extend(other);
 
         result
     }
 
     <span class="doccomment">/// Draw a layer that does not affect the canvas.
     </span><span class="kw">pub fn </span>void&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
-        <span class="kw">let </span><span class="kw-2">mut </span>canvas = Canvas::new();
-
-        <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>canvas);
-
-        <span class="kw">for </span>(i, primitives) <span class="kw">in </span>canvas.overlays {
-            <span class="self">self</span>.overlays.entry(i).or_default().extend(primitives);
-        }
-
-        result
+        f(<span class="kw-2">&amp;mut </span>Canvas::new())
     }
 
     <span class="doccomment">/// Draw a layer.
@@ -947,12 +936,15 @@
 
         <span class="kw">let </span>result = f(<span class="kw-2">&amp;mut </span>layer);
 
-        <span class="kw">for </span>(i, overlay) <span class="kw">in </span>layer.overlays {
-            <span class="self">self</span>.overlays.entry(i).or_default().extend(overlay);
+        <span class="kw">for </span>(i, <span class="kw-2">mut </span>other) <span class="kw">in </span>layer.overlays {
+            <span class="kw">let </span>other = mem::take(Arc::make_mut(<span class="kw-2">&amp;mut </span>other));
+            <span class="kw">let </span>primitives = Arc::make_mut(<span class="self">self</span>.overlays.entry(i).or_default());
+            primitives.extend(other);
         }
 
-        <span class="self">self</span>.primitives.push(Primitive::Layer {
-            primitives: layer.primitives.into(),
+        <span class="kw">let </span>primitives = Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives);
+        primitives.push(Primitive::Layer {
+            primitives: layer.primitives,
             transform,
             mask,
             view,
@@ -1120,23 +1112,23 @@
 
         <span class="comment">// collect new rects
         </span><span class="kw">for </span>primitives <span class="kw">in </span>new.overlays.values() {
-            <span class="kw">for </span>primitive <span class="kw">in </span>primitives {
+            <span class="kw">for </span>primitive <span class="kw">in </span>primitives.iter() {
                 Canvas::extract_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span><span class="self">self</span>.new_rects);
             }
         }
 
-        <span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span>new.primitives {
+        <span class="kw">for </span>primitive <span class="kw">in </span>new.primitives.iter() {
             Canvas::extract_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span><span class="self">self</span>.new_rects);
         }
 
         <span class="comment">// collect old rects
         </span><span class="kw">for </span>primitives <span class="kw">in </span>old.overlays.values() {
-            <span class="kw">for </span>primitive <span class="kw">in </span>primitives {
+            <span class="kw">for </span>primitive <span class="kw">in </span>primitives.iter() {
                 Canvas::extract_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span><span class="self">self</span>.old_rects);
             }
         }
 
-        <span class="kw">for </span>primitive <span class="kw">in </span><span class="kw-2">&amp;</span>old.primitives {
+        <span class="kw">for </span>primitive <span class="kw">in </span>old.primitives.iter() {
             Canvas::extract_primitive_rects(primitive, Affine::IDENTITY, <span class="kw-2">&amp;mut </span><span class="self">self</span>.old_rects);
         }
 
