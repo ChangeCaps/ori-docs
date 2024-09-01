@@ -1136,11 +1136,11 @@
     </span><span class="kw">pub fn </span>push_oval(<span class="kw-2">&amp;mut </span><span class="self">self</span>, oval: Rect) {
         <span class="kw">let </span>weight = SQRT_2 / <span class="number">2.0</span>;
 
-        <span class="self">self</span>.move_to(oval.top());
-        <span class="self">self</span>.conic_to(oval.top_left(), oval.left(), weight);
-        <span class="self">self</span>.conic_to(oval.bottom_left(), oval.bottom(), weight);
-        <span class="self">self</span>.conic_to(oval.bottom_right(), oval.right(), weight);
-        <span class="self">self</span>.conic_to(oval.top_right(), oval.top(), weight);
+        <span class="self">self</span>.move_to(oval.top_center());
+        <span class="self">self</span>.conic_to(oval.top_left(), oval.center_left(), weight);
+        <span class="self">self</span>.conic_to(oval.bottom_left(), oval.bottom_center(), weight);
+        <span class="self">self</span>.conic_to(oval.bottom_right(), oval.center_right(), weight);
+        <span class="self">self</span>.conic_to(oval.top_right(), oval.top_center(), weight);
         <span class="self">self</span>.close();
     }
 

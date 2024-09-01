@@ -554,29 +554,29 @@
 
 <span class="kw">use </span><span class="kw">super</span>::Curve;
 
-<span class="doccomment">/// Ways to draw the end of a line.
+<span class="doccomment">/// Ways to draw the end of a stroke.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-</span><span class="kw">pub enum </span>LineCap {
-    <span class="doccomment">/// The end of the line is squared off.
+</span><span class="kw">pub enum </span>StrokeCap {
+    <span class="doccomment">/// The end of the stoke is squared off.
     </span>Butt,
 
-    <span class="doccomment">/// The end of the line is rounded.
+    <span class="doccomment">/// The end of the stroke is rounded.
     </span>Round,
 
-    <span class="doccomment">/// The end of the line is squared off and extends past the end of the line.
+    <span class="doccomment">/// The end of the stroke is squared off and extends past the end of the line.
     </span>Square,
 }
 
-<span class="doccomment">/// Ways to join two lines.
+<span class="doccomment">/// Ways to join two segments of a stroke.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-</span><span class="kw">pub enum </span>LineJoin {
-    <span class="doccomment">/// The lines are joined with a sharp corner.
+</span><span class="kw">pub enum </span>StrokeJoin {
+    <span class="doccomment">/// The strokes are joined with a sharp corner.
     </span>Miter,
 
-    <span class="doccomment">/// The lines are joined with a rounded corner.
+    <span class="doccomment">/// The strokes are joined with a rounded corner.
     </span>Round,
 
-    <span class="doccomment">/// The lines are joined with a beveled corner.
+    <span class="doccomment">/// The strokes are joined with a beveled corner.
     </span>Bevel,
 }
 
@@ -590,10 +590,10 @@
     </span><span class="kw">pub </span>miter: f32,
 
     <span class="doccomment">/// The cap of the stroke.
-    </span><span class="kw">pub </span>cap: LineCap,
+    </span><span class="kw">pub </span>cap: StrokeCap,
 
     <span class="doccomment">/// The join of the stroke.
-    </span><span class="kw">pub </span>join: LineJoin,
+    </span><span class="kw">pub </span>join: StrokeJoin,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Stroke {
@@ -601,8 +601,8 @@
         <span class="self">Self </span>{
             width: <span class="number">1.0</span>,
             miter: <span class="number">4.0</span>,
-            cap: LineCap::Butt,
-            join: LineJoin::Miter,
+            cap: StrokeCap::Butt,
+            join: StrokeJoin::Miter,
         }
     }
 }
@@ -793,10 +793,10 @@
         <span class="kw">let </span>r = stroke.width / <span class="number">2.0</span>;
 
         <span class="kw">match </span>stroke.cap {
-            LineCap::Butt =&gt; {
+            StrokeCap::Butt =&gt; {
                 <span class="self">self</span>.line_to(p + n * r);
             }
-            LineCap::Round =&gt; {
+            StrokeCap::Round =&gt; {
                 <span class="kw">let </span>p0 = p - n * r;
                 <span class="kw">let </span>p1 = p + n * r;
 
@@ -808,7 +808,7 @@
                 <span class="self">self</span>.cubic_to(p0 + hat, c - nat, c);
                 <span class="self">self</span>.cubic_to(c + nat, p1 + hat, p1);
             }
-            LineCap::Square =&gt; {
+            StrokeCap::Square =&gt; {
                 <span class="kw">let </span>p0 = p - n * r;
                 <span class="kw">let </span>p1 = p + n * r;
 
@@ -827,7 +827,7 @@
         n0: Vector,
         n1: Vector,
         r: f32,
-        join: LineJoin,
+        join: StrokeJoin,
         miter_limit: f32,
     ) {
         <span class="kw">if </span>n0.cross(n1) * r &gt; <span class="number">0.0 </span>{
@@ -836,9 +836,9 @@
         }
 
         <span class="kw">match </span>join {
-            LineJoin::Miter =&gt; <span class="self">self</span>.stroke_miter(pivot, n0, n1, r, miter_limit),
-            LineJoin::Round =&gt; <span class="self">self</span>.stroke_round(pivot, n0, n1, r),
-            LineJoin::Bevel =&gt; <span class="self">self</span>.stroke_bevel(pivot, n1, r),
+            StrokeJoin::Miter =&gt; <span class="self">self</span>.stroke_miter(pivot, n0, n1, r, miter_limit),
+            StrokeJoin::Round =&gt; <span class="self">self</span>.stroke_round(pivot, n0, n1, r),
+            StrokeJoin::Bevel =&gt; <span class="self">self</span>.stroke_bevel(pivot, n1, r),
         }
     }
 
