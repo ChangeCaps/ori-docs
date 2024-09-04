@@ -244,7 +244,7 @@
     build: Box&lt;<span class="kw">dyn </span>Fn() -&gt; S&gt;,
     <span class="attr">#[allow(clippy::type_complexity)]
     </span>view: Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>S) -&gt; V&gt;,
-    theme: Styles,
+    styles: Styles,
 }
 
 <span class="kw">impl</span>&lt;T, S, V&gt; WithState&lt;T, S, V&gt; {
@@ -256,7 +256,7 @@
         <span class="self">Self </span>{
             build: Box::new(build),
             view: Box::new(view),
-            theme: Styles::snapshot(),
+            styles: Styles::snapshot(),
         }
     }
 }
@@ -265,7 +265,7 @@
     <span class="kw">type </span>State = (Pod&lt;V&gt;, U, State&lt;(T, U), V&gt;);
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span>(<span class="kw-2">mut </span>view, <span class="kw-2">mut </span>state) = <span class="self">self</span>.theme.as_context(|| {
+        <span class="kw">let </span>(<span class="kw-2">mut </span>view, <span class="kw-2">mut </span>state) = <span class="self">self</span>.styles.as_context(|| {
             <span class="kw">let </span><span class="kw-2">mut </span>state = (<span class="self">self</span>.build)();
             <span class="kw">let </span>view = Pod::new((<span class="self">self</span>.view)(data, <span class="kw-2">&amp;mut </span>state));
             (view, state)
@@ -283,8 +283,8 @@
         data: <span class="kw-2">&amp;mut </span>T,
         _old: <span class="kw-2">&amp;</span><span class="self">Self</span>,
     ) {
-        <span class="kw">let </span><span class="kw-2">mut </span>new_view = <span class="self">self</span>.theme.as_context(|| {
-            <span class="comment">// we need apply the global theme here
+        <span class="kw">let </span><span class="kw-2">mut </span>new_view = <span class="self">self</span>.styles.as_context(|| {
+            <span class="comment">// we need apply the styles here
             </span>Pod::new((<span class="self">self</span>.view)(data, data_state))
         });
 
