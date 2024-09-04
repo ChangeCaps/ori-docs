@@ -52,6 +52,9 @@ a winit based shell, and supports both a wgpu, and glow based renderer.</p>
 }
 
 <span class="kw">fn </span>main() {
+    <span class="comment">// We install the logger.
+    </span>ori::log::install().unwrap();
+
     <span class="kw">let </span>window = Window::new().title(<span class="string">"Counter (examples/counter.rs)"</span>);
 
     <span class="comment">// We create a new app with our `ui` function.
