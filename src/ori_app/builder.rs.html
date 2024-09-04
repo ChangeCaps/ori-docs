@@ -148,7 +148,7 @@
     </span>}
 
     <span class="doccomment">/// Add a font to the application.
-    </span><span class="kw">pub fn </span>font(<span class="kw-2">mut </span><span class="self">self</span>, font: <span class="kw">impl </span>Into&lt;FontSource&gt;) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>font&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">mut </span><span class="self">self</span>, font: <span class="kw">impl </span>Into&lt;FontSource&lt;<span class="lifetime">'a</span>&gt;&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">if let </span><span class="prelude-val">Err</span>(err) = <span class="self">self</span>.fonts.load_font(font) {
             <span class="macro">eprintln!</span>(<span class="string">"Failed to load font: {}"</span>, err);
         }

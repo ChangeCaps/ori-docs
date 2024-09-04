@@ -193,19 +193,10 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, hash::BuildHasherDefault, io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{Buffer, CacheKey, Command, FontSystem, SwashCache};
-
-<span class="kw">const </span>EMBEDDED_FONTS: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="macro">concat!</span>(<span class="macro">env!</span>(<span class="string">"OUT_DIR"</span>), <span class="string">"/fonts.bin"</span>));
+<span class="kw">use </span>ori_macro::include_font;
 
 <span class="kw">use crate</span>::{
     canvas::{AntiAlias, Canvas, Curve, FillRule, Paint},
@@ -240,53 +231,46 @@
 <span class="kw">impl </span>Fonts {
     <span class="doccomment">/// Creates a new font context.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>swash_cache = SwashCache::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>fonts = <span class="self">Self </span>{
+            swash_cache: SwashCache::new(),
+            font_system: FontSystem::new(),
+            glyph_cache: HashMap::default(),
+        };
 
-        <span class="kw">let </span>fonts = decompress_embedded_fonts();
-        <span class="kw">let </span><span class="kw-2">mut </span>font_system = FontSystem::new_with_fonts(fonts);
-        <span class="kw">let </span>db = font_system.db_mut();
+        fonts.load_font(<span class="macro">include_font!</span>(<span class="string">"font"</span>)).unwrap();
 
+        <span class="kw">let </span>db = fonts.font_system.db_mut();
         db.set_serif_family(<span class="string">"Roboto"</span>);
         db.set_sans_serif_family(<span class="string">"Roboto"</span>);
         db.set_monospace_family(<span class="string">"Roboto Mono"</span>);
         db.set_cursive_family(<span class="string">"Roboto"</span>);
         db.set_fantasy_family(<span class="string">"Roboto"</span>);
 
-        <span class="self">Self </span>{
-            swash_cache,
-            font_system,
-            glyph_cache: HashMap::default(),
-        }
+        fonts
     }
 
     <span class="doccomment">/// Loads a font from a [`FontSource`].
     ///
     /// This will usually either be a path to a font file or the font data itself, but can also
     /// be a [`Vec&lt;FontSource&gt;`] to load multiple fonts at once.
-    </span><span class="kw">pub fn </span>load_font(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw">impl </span>Into&lt;FontSource&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), io::Error&gt; {
+    </span><span class="kw">pub fn </span>load_font&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: <span class="kw">impl </span>Into&lt;FontSource&lt;<span class="lifetime">'a</span>&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(), io::Error&gt; {
         <span class="kw">match </span>source.into() {
             FontSource::Data(data) =&gt; {
-                <span class="self">self</span>.font_system.db_mut().load_font_data(data);
+                <span class="self">self</span>.font_system.db_mut().load_font_data(data.to_vec());
             }
             FontSource::Path(path) =&gt; {
                 <span class="self">self</span>.font_system.db_mut().load_font_file(path)<span class="question-mark">?</span>;
             }
-            FontSource::Set(sources) =&gt; {
-                <span class="kw">for </span>source <span class="kw">in </span>sources {
-                    <span class="self">self</span>.load_font(source)<span class="question-mark">?</span>;
+            FontSource::Bundle(data) =&gt; {
+                <span class="kw">let </span>fonts = decompress_font_bundle(data.as_ref());
+
+                <span class="kw">for </span>font <span class="kw">in </span>fonts {
+                    <span class="self">self</span>.font_system.db_mut().load_font_source(font);
                 }
             }
         }
 
         <span class="prelude-val">Ok</span>(())
-    }
-
-    <span class="doccomment">/// Loads the system fonts.
-    ///
-    /// This is a platform-specific operation, for more information see the
-    /// documentation for [`fontdb::Database::load_system_fonts`](cosmic_text::fontdb::Database::load_system_fonts).
-    </span><span class="kw">pub fn </span>load_system_fonts(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="self">self</span>.font_system.db_mut().load_system_fonts();
     }
 
     <span class="doccomment">/// Calculates the size of a text buffer.
@@ -383,10 +367,10 @@
     }
 }
 
-<span class="kw">fn </span>decompress_embedded_fonts() -&gt; Vec&lt;cosmic_text::fontdb::Source&gt; {
+<span class="kw">fn </span>decompress_font_bundle(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Vec&lt;cosmic_text::fontdb::Source&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>fonts = Vec::new();
 
-    <span class="kw">let </span>data = miniz_oxide::inflate::decompress_to_vec(EMBEDDED_FONTS).unwrap();
+    <span class="kw">let </span>data = miniz_oxide::inflate::decompress_to_vec(bytes).unwrap();
     <span class="kw">let </span><span class="kw-2">mut </span>i = data.as_slice();
 
     <span class="kw">let </span>num_fonts = u32::from_le_bytes([i[<span class="number">0</span>], i[<span class="number">1</span>], i[<span class="number">2</span>], i[<span class="number">3</span>]]) <span class="kw">as </span>usize;

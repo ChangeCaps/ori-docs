@@ -51,14 +51,52 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::{env, io, path::Path};
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+    env, fs,
+    hash::{DefaultHasher, Hasher},
+    io,
+    path::{Path, PathBuf},
+};
 
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::LitStr;
 
 <span class="kw">use </span><span class="kw">crate</span>::find_core;
 
-<span class="kw">fn </span>load_dir(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;String&gt;&gt; {
+<span class="kw">fn </span>load_dir(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;PathBuf&gt;&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>fonts = Vec::new();
 
     <span class="kw">for </span>entry <span class="kw">in </span>path.read_dir()<span class="question-mark">? </span>{
@@ -70,11 +108,11 @@
     <span class="prelude-val">Ok</span>(fonts)
 }
 
-<span class="kw">fn </span>load_file(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;String&gt;&gt; {
-    <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[path.to_string_lossy().into_owned()])
+<span class="kw">fn </span>load_file(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;PathBuf&gt;&gt; {
+    <span class="prelude-val">Ok</span>(<span class="macro">vec!</span>[path.to_owned()])
 }
 
-<span class="kw">fn </span>load_font(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;String&gt;&gt; {
+<span class="kw">fn </span>load_font(path: <span class="kw-2">&amp;</span>Path) -&gt; io::Result&lt;Vec&lt;PathBuf&gt;&gt; {
     <span class="kw">if </span>path.is_dir() {
         load_dir(path)
     } <span class="kw">else </span>{
@@ -94,12 +132,40 @@
         <span class="prelude-val">Err</span>(err) =&gt; <span class="macro">manyhow::bail!</span>(input, <span class="string">"io error: {}"</span>, err),
     };
 
+    <span class="kw">let </span><span class="kw-2">mut </span>compressed = Vec::new();
+
+    compressed.extend_from_slice(<span class="kw-2">&amp;</span>u32::to_le_bytes(fonts.len() <span class="kw">as </span>u32));
+
+    <span class="kw">for </span>font <span class="kw">in </span>fonts {
+        <span class="kw">let </span>data = fs::read(<span class="kw-2">&amp;</span>font).unwrap();
+
+        compressed.extend_from_slice(<span class="kw-2">&amp;</span>u32::to_le_bytes(data.len() <span class="kw">as </span>u32));
+        compressed.extend_from_slice(<span class="kw-2">&amp;</span>data);
+    }
+
+    <span class="kw">let </span>compressed = miniz_oxide::deflate::compress_to_vec(<span class="kw-2">&amp;</span>compressed, <span class="number">10</span>);
+
+    <span class="kw">let </span><span class="kw-2">mut </span>hasher = DefaultHasher::new();
+
+    hasher.write(<span class="kw-2">&amp;</span>compressed);
+
+    <span class="kw">let </span>file_name = <span class="macro">format!</span>(<span class="string">"font-{}.bin"</span>, hasher.finish());
+
+    <span class="kw">let </span>out_dir = <span class="macro">env!</span>(<span class="string">"OUT_DIR"</span>);
+    <span class="kw">let </span>bin_path = Path::new(<span class="kw-2">&amp;</span>out_dir).join(<span class="kw-2">&amp;</span>file_name);
+
+    <span class="kw">if </span>!bin_path.exists() {
+        fs::write(<span class="kw-2">&amp;</span>bin_path, <span class="kw-2">&amp;</span>compressed).unwrap();
+    }
+
+    <span class="kw">let </span>bin_path_str = bin_path.to_string_lossy();
+
     <span class="kw">let </span>ori_core = find_core();
 
     <span class="kw">let </span>expanded = <span class="macro">quote!</span> {
-        #ori_core::text::FontSource::Set(<span class="macro">::std::vec!</span>[#(
-            #ori_core::text::FontSource::Data(<span class="macro">::std::include_bytes!</span>(#fonts).to_vec())
-        ),<span class="kw-2">*</span>])
+        #ori_core::text::FontSource::Bundle(
+            ::std::borrow::Cow::Borrowed(<span class="macro">::std::include_bytes!</span>(#bin_path_str))
+        )
     };
 
     <span class="prelude-val">Ok</span>(expanded.into())

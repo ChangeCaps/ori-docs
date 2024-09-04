@@ -144,12 +144,6 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::Color,
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
@@ -160,13 +154,9 @@
     text::{FontStretch, FontStyle, TextAttributes, TextBuffer},
     view::View,
 };
-<span class="kw">use </span>ori_macro::Build;
+<span class="kw">use </span>ori_macro::{include_font, Build};
 
 <span class="kw">use crate</span>::{IconCode, IconFont};
-
-<span class="kw">const </span>REGULAR: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../font/Font Awesome 6 Free-Regular-400.otf"</span>);
-<span class="kw">const </span>SOLID: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../font/Font Awesome 6 Free-Solid-900.otf"</span>);
-<span class="kw">const </span>BRAND: <span class="kw-2">&amp;</span>[u8] = <span class="macro">include_bytes!</span>(<span class="string">"../font/Font Awesome 6 Brands-Regular-400.otf"</span>);
 
 <span class="doccomment">/// Create a new [`Icon`].
 </span><span class="kw">pub fn </span>icon(icon: <span class="kw">impl </span>Into&lt;IconCode&gt;) -&gt; Icon {
@@ -229,9 +219,7 @@
 
         <span class="comment">// ensure that all the fonts are loaded
         </span><span class="kw">if </span>!cx.contains_context::&lt;FontsLoaded&gt;() {
-            cx.fonts().load_font(REGULAR).unwrap();
-            cx.fonts().load_font(SOLID).unwrap();
-            cx.fonts().load_font(BRAND).unwrap();
+            cx.fonts().load_font(<span class="macro">include_font!</span>(<span class="string">"font"</span>)).unwrap();
 
             cx.insert_context(FontsLoaded);
         }

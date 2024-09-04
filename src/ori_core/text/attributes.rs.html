@@ -246,13 +246,20 @@
 <a href="#246" id="246">246</a>
 <a href="#247" id="247">247</a>
 <a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::fontdb;
+<span class="kw">use </span>smol_str::SmolStr;
 
 <span class="doccomment">/// A font family, by default [`FontFamily::SansSerif`].
 </span><span class="attr">#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 </span><span class="kw">pub enum </span>FontFamily {
     <span class="doccomment">/// A font family by name, e.g. "Arial".
-    </span>Name(String),
+    </span>Name(SmolStr),
 
     <span class="doccomment">/// A serif font family.
     </span>Serif,
@@ -278,8 +285,7 @@
             <span class="self">Self</span>::Name(name) =&gt; fontdb::Family::Name(name),
             <span class="self">Self</span>::Serif =&gt; fontdb::Family::Serif,
             <span class="self">Self</span>::SansSerif =&gt; fontdb::Family::SansSerif,
-            <span class="comment">// FIXME: this is a hack because performance is in the shitter otherwise.
-            </span><span class="self">Self</span>::Monospace =&gt; fontdb::Family::Name(<span class="string">"Roboto Mono"</span>),
+            <span class="self">Self</span>::Monospace =&gt; fontdb::Family::Monospace,
             <span class="self">Self</span>::Cursive =&gt; fontdb::Family::Cursive,
             <span class="self">Self</span>::Fantasy =&gt; fontdb::Family::Fantasy,
         }
@@ -288,12 +294,18 @@
 
 <span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>str&gt; <span class="kw">for </span>FontFamily {
     <span class="kw">fn </span>from(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::Name(name.to_owned())
+        <span class="self">Self</span>::Name(SmolStr::new(name))
     }
 }
 
 <span class="kw">impl </span>From&lt;String&gt; <span class="kw">for </span>FontFamily {
     <span class="kw">fn </span>from(name: String) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Name(SmolStr::new(name))
+    }
+}
+
+<span class="kw">impl </span>From&lt;SmolStr&gt; <span class="kw">for </span>FontFamily {
+    <span class="kw">fn </span>from(name: SmolStr) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Name(name)
     }
 }
