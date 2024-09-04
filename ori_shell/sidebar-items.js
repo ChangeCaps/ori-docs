@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["run","run_simple"],"mod":["platform"]};
+window.SIDEBAR_ITEMS = {"enum":["LogError","RunError"],"fn":["install_logger","run","run_simple"],"mod":["platform"]};
