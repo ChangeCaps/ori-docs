@@ -193,10 +193,20 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, hash::BuildHasherDefault, io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{Buffer, CacheKey, Command, FontSystem, SwashCache};
 <span class="kw">use </span>ori_macro::include_font;
+<span class="kw">use </span>tracing::debug;
 
 <span class="kw">use crate</span>::{
     canvas::{AntiAlias, Canvas, Curve, FillRule, Paint},
@@ -265,7 +275,15 @@
                 <span class="kw">let </span>fonts = decompress_font_bundle(data.as_ref());
 
                 <span class="kw">for </span>font <span class="kw">in </span>fonts {
-                    <span class="self">self</span>.font_system.db_mut().load_font_source(font);
+                    <span class="kw">let </span>ids = <span class="self">self</span>.font_system.db_mut().load_font_source(font);
+
+                    <span class="kw">for </span>id <span class="kw">in </span>ids {
+                        <span class="kw">let </span>face = <span class="self">self</span>.font_system.db_mut().face(id).unwrap();
+
+                        <span class="kw">for </span>(family, <span class="kw">_</span>) <span class="kw">in </span><span class="kw-2">&amp;</span>face.families {
+                            <span class="macro">debug!</span>(<span class="string">"Loaded font family: {}"</span>, family);
+                        }
+                    }
                 }
             }
         }
