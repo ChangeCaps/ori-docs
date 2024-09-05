@@ -261,12 +261,6 @@
 <a href="#261" id="261">261</a>
 <a href="#262" id="262">262</a>
 <a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -468,23 +462,12 @@
         })
     }
 
-    <span class="doccomment">/// Draw a layer that does not affect the canvas.
-    </span><span class="kw">pub fn </span>void&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T) -&gt; T {
-        <span class="self">self</span>.canvas.void(|canvas| {
-            <span class="kw">let </span><span class="kw-2">mut </span>cx = DrawCx {
-                base: <span class="self">self</span>.base,
-                view_state: <span class="self">self</span>.view_state,
-                transform: <span class="self">self</span>.transform,
-                canvas,
-                visible: Rect::ZERO,
-            };
-
-            f(<span class="kw-2">&amp;mut </span>cx)
-        })
-    }
-
-    <span class="doccomment">/// Draw a layer.
-    </span><span class="kw">pub fn </span>layer&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T) -&gt; T {
+    <span class="doccomment">/// Draw a layer with a transform.
+    </span><span class="kw">pub fn </span>transformed&lt;T&gt;(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        transform: Affine,
+        f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T,
+    ) -&gt; T {
         <span class="kw">let </span>visible = <span class="self">self</span>.visible.transform(transform.inverse());
 
         <span class="self">self</span>.canvas.layer(transform, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, |canvas| {
@@ -501,21 +484,26 @@
     }
 
     <span class="doccomment">/// Draw a layer with a translation.
-    </span><span class="kw">pub fn </span>translate&lt;T&gt;(
+    </span><span class="kw">pub fn </span>translated&lt;T&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         translation: Vector,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T,
     ) -&gt; T {
-        <span class="self">self</span>.layer(Affine::translate(translation), f)
+        <span class="self">self</span>.transformed(Affine::translate(translation), f)
     }
 
     <span class="doccomment">/// Draw a layer with a rotation.
-    </span><span class="kw">pub fn </span>rotate&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, angle: f32, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T) -&gt; T {
-        <span class="self">self</span>.layer(Affine::rotate(angle), f)
+    </span><span class="kw">pub fn </span>rotated&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, angle: f32, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T) -&gt; T {
+        <span class="self">self</span>.transformed(Affine::rotate(angle), f)
+    }
+
+    <span class="doccomment">/// Draw a layer with a scale.
+    </span><span class="kw">pub fn </span>scaled&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scale: Vector, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T) -&gt; T {
+        <span class="self">self</span>.transformed(Affine::scale(scale), f)
     }
 
     <span class="doccomment">/// Draw a layer with a mask.
-    </span><span class="kw">pub fn </span>mask&lt;T&gt;(
+    </span><span class="kw">pub fn </span>masked&lt;T&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         mask: <span class="kw">impl </span>Into&lt;Mask&gt;,
         f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>DrawCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'b</span>&gt;) -&gt; T,

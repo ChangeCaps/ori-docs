@@ -529,7 +529,7 @@
             * Affine::scale(Vector::all(<span class="self">self</span>.icon_size))
             * Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
-        cx.layer(transform, |cx| {
+        cx.transformed(transform, |cx| {
             cx.fill(icon(), FillRule::EvenOdd, <span class="self">self</span>.icon_color);
         });
 
@@ -543,7 +543,7 @@
         <span class="kw">let </span>content_min = cx.rect().top_left() + content_offset;
         <span class="kw">let </span>content_rect = Rect::min_size(content_min, state.content.size());
 
-        cx.mask(content_rect, |cx| {
+        cx.masked(content_rect, |cx| {
             <span class="self">self</span>.content.draw(<span class="kw-2">&amp;mut </span>state.content, cx, data);
         });
     }

@@ -445,7 +445,7 @@
         new_cx.view_state = view_state;
 
         <span class="comment">// draw the content
-        </span>new_cx.layer(new_cx.view_state.transform, |cx| {
+        </span>new_cx.transformed(new_cx.view_state.transform, |cx| {
             f(cx);
         });
     }

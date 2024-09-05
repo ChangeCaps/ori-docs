@@ -754,7 +754,7 @@
         offset -= Vector::max(br_delta, Vector::ZERO);
 
         cx.overlay(<span class="number">0</span>, |cx| {
-            cx.translate(Vector::from(state.position + offset), |cx| {
+            cx.translated(Vector::from(state.position + offset), |cx| {
                 cx.quad(
                     Rect::min_size(Point::ZERO, size),
                     <span class="self">self</span>.background.fade(alpha),

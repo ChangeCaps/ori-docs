@@ -512,7 +512,7 @@
 
             <span class="kw">let </span>float = Vector::NEG_Y * (<span class="number">1.0 </span>- active) * <span class="self">self</span>.fancy;
 
-            cx.translate(float, |cx| {
+            cx.translated(float, |cx| {
                 cx.quad(
                     cx.rect(),
                     face,

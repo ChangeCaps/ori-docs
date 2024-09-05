@@ -430,6 +430,16 @@
 <a href="#430" id="430">430</a>
 <a href="#431" id="431">431</a>
 <a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     collections::BTreeMap,
     hash::{Hash, Hasher},
@@ -439,7 +449,7 @@
 
 <span class="kw">use crate</span>::{
     image::Image,
-    layout::{Affine, Point, Rect},
+    layout::{Affine, Point, Rect, Vector},
     view::ViewId,
 };
 
@@ -694,7 +704,7 @@
     }
 
     <span class="doccomment">/// Draw a rectangle.
-    </span><span class="kw">pub fn </span>rect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect, paint: Paint) {
+    </span><span class="kw">pub fn </span>rect(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rect: Rect, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
         <span class="kw">let </span>curve = Curve::rect(rect);
         <span class="self">self</span>.fill(curve.clone(), FillRule::NonZero, paint);
     }
@@ -729,13 +739,13 @@
     </span><span class="kw">pub fn </span>stroke(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         curve: <span class="kw">impl </span>Into&lt;Arc&lt;Curve&gt;&gt;,
-        stroke: Stroke,
+        stroke: <span class="kw">impl </span>Into&lt;Stroke&gt;,
         paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
     ) {
         <span class="kw">let </span>primitives = Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives);
         primitives.push(Primitive::Stroke {
             curve: curve.into(),
-            stroke,
+            stroke: stroke.into(),
             paint: paint.into(),
         });
     }
@@ -762,11 +772,6 @@
         primitives.extend(other);
 
         result
-    }
-
-    <span class="doccomment">/// Draw a layer that does not affect the canvas.
-    </span><span class="kw">pub fn </span>void&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
-        f(<span class="kw-2">&amp;mut </span>Canvas::new())
     }
 
     <span class="doccomment">/// Draw a layer.
@@ -799,12 +804,27 @@
     }
 
     <span class="doccomment">/// Draw a layer with a transformation.
-    </span><span class="kw">pub fn </span>transform&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+    </span><span class="kw">pub fn </span>transformed&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transform: Affine, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
         <span class="self">self</span>.layer(transform, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, f)
     }
 
+    <span class="doccomment">/// Draw a layer with a translation.
+    </span><span class="kw">pub fn </span>translated&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, translation: Vector, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.transformed(Affine::translate(translation), f)
+    }
+
+    <span class="doccomment">/// Draw a layer with a rotation.
+    </span><span class="kw">pub fn </span>rotated&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, angle: f32, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.transformed(Affine::rotate(angle), f)
+    }
+
+    <span class="doccomment">/// Draw a layer with a scale.
+    </span><span class="kw">pub fn </span>scaled&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, scale: Vector, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+        <span class="self">self</span>.transformed(Affine::scale(scale), f)
+    }
+
     <span class="doccomment">/// Draw a layer with a mask.
-    </span><span class="kw">pub fn </span>mask&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: Mask, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
+    </span><span class="kw">pub fn </span>masked&lt;T&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mask: Mask, f: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span><span class="self">Self</span>) -&gt; T) -&gt; T {
         <span class="self">self</span>.layer(Affine::IDENTITY, <span class="prelude-val">Some</span>(mask), <span class="prelude-val">None</span>, f)
     }
 

@@ -348,7 +348,7 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>mask = Curve::new();
                 mask.push_rect_with_radius(cx.rect(), <span class="self">self</span>.border_radius);
 
-                cx.mask(Mask::new(mask, FillRule::NonZero), |cx| {
+                cx.masked(Mask::new(mask, FillRule::NonZero), |cx| {
                     <span class="self">self</span>.content.draw(state, cx, data);
                 });
             }

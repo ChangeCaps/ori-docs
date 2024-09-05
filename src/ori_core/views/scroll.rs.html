@@ -501,7 +501,7 @@
         content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
         cx.trigger(cx.rect());
-        cx.mask(cx.rect(), |cx| {
+        cx.masked(cx.rect(), |cx| {
             <span class="self">self</span>.content.draw(content, cx, data);
         });
 
