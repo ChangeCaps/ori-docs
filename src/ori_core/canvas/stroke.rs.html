@@ -547,6 +547,24 @@
 <a href="#547" id="547">547</a>
 <a href="#548" id="548">548</a>
 <a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::hash::{Hash, Hasher};
 
 <span class="kw">use crate</span>::{
@@ -892,6 +910,36 @@
         <span class="self">self</span>.line_to(p1);
     }
 
+    <span class="kw">fn </span>push_line(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        outside: <span class="kw-2">&amp;mut </span><span class="self">Self</span>,
+        p0: Point,
+        p1: Point,
+        n0: <span class="prelude-ty">Option</span>&lt;Vector&gt;,
+        r: f32,
+        stroke: Stroke,
+        first: <span class="kw-2">&amp;mut </span><span class="prelude-ty">Option</span>&lt;(Point, Vector)&gt;,
+    ) -&gt; (Point, Vector) {
+        <span class="kw">let </span>n1 = line_normal(p0, p1);
+
+        <span class="kw">match </span>n0 {
+            <span class="prelude-val">Some</span>(n0) =&gt; {
+                <span class="self">self</span>.stroke_join(p0, n0, n1, r, stroke.join, stroke.miter);
+                outside.stroke_join(p0, n0, n1, -r, stroke.join, stroke.miter);
+            }
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="self">self</span>.move_to(p0 + n1 * r);
+                outside.move_to(p0 - n1 * r);
+                <span class="kw-2">*</span>first = <span class="prelude-val">Some</span>((p0, n1));
+            }
+        }
+
+        <span class="self">self</span>.offset_line(p0, p1, r);
+        outside.offset_line(p0, p1, -r);
+
+        (p1, n1)
+    }
+
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>stroke_impl(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: <span class="kw-2">&amp;</span>Curve, stroke: Stroke) {
         <span class="kw">if </span>stroke.width &lt;= <span class="number">0.0 </span>{
             <span class="kw">return</span>;
@@ -921,23 +969,7 @@
                     first = <span class="prelude-val">None</span>;
                 }
                 CurveSegment::Line(p1) =&gt; {
-                    <span class="kw">let </span>n1 = line_normal(p0, p1);
-
-                    <span class="kw">match </span>n0 {
-                        <span class="prelude-val">Some</span>(n0) =&gt; {
-                            <span class="self">self</span>.stroke_join(p0, n0, n1, r, stroke.join, stroke.miter);
-                            outside.stroke_join(p0, n0, n1, -r, stroke.join, stroke.miter);
-                        }
-                        <span class="prelude-val">None </span>=&gt; {
-                            <span class="self">self</span>.move_to(p0 + n1 * r);
-                            outside.move_to(p0 - n1 * r);
-                            first = <span class="prelude-val">Some</span>((p0, n1));
-                        }
-                    }
-
-                    <span class="self">self</span>.offset_line(p0, p1, r);
-                    outside.offset_line(p0, p1, -r);
-
+                    <span class="kw">let </span>(p1, n1) = <span class="self">self</span>.push_line(<span class="kw-2">&amp;mut </span>outside, p0, p1, n0, r, stroke, <span class="kw-2">&amp;mut </span>first);
                     n0 = <span class="prelude-val">Some</span>(n1);
                     p0 = p1;
                 }
@@ -984,9 +1016,13 @@
                     p0 = p3;
                 }
                 CurveSegment::Close =&gt; {
+                    <span class="kw">let </span>(pf, nf) = first.unwrap_or((p0, n0.unwrap()));
+                    <span class="kw">let </span>(p1, n1) = <span class="self">self</span>.push_line(<span class="kw-2">&amp;mut </span>outside, p0, pf, n0, r, stroke, <span class="kw-2">&amp;mut </span>first);
+                    <span class="self">self</span>.stroke_join(p1, n1, nf, r, stroke.join, stroke.miter);
+                    outside.stroke_join(p1, n1, nf, -r, stroke.join, stroke.miter);
+
                     <span class="self">self</span>.close();
 
-                    <span class="kw">let </span>(pf, nf) = first.unwrap_or((p0, n0.unwrap()));
                     <span class="self">self</span>.move_to(pf - nf * r);
                     <span class="self">self</span>.append_reverse(<span class="kw-2">&amp;</span>outside);
                     <span class="self">self</span>.close();
