@@ -1,1 +1,0 @@
-searchState.loadedDescShard("ori_winit", 0, "Winit backend for Ori.\nAn error that can occur when running an application.\nAn error occurred with the event loop.\nAn OS error.\nAn error occured with softbuffer.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nLaunch an application.")
