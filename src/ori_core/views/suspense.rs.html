@@ -160,6 +160,16 @@
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{cell::RefCell, future::Future};
 
 <span class="kw">use crate</span>::{
@@ -170,11 +180,11 @@
 };
 
 <span class="doccomment">/// Create a new [`Suspense`] view.
-</span><span class="kw">pub fn </span>suspense&lt;V, F&gt;(fallback: V, future: F) -&gt; Suspense&lt;V, F&gt;
+</span><span class="kw">pub fn </span>suspense&lt;F&gt;(future: F) -&gt; Suspense&lt;(), F&gt;
 <span class="kw">where
     </span>F: Future + Send + <span class="lifetime">'static</span>,
 {
-    Suspense::new(fallback, future)
+    Suspense::new(future)
 }
 
 <span class="doccomment">/// A view that suspends rendering while a future is pending.
@@ -183,15 +193,25 @@
     future: <span class="prelude-ty">Option</span>&lt;F&gt;,
 }
 
-<span class="kw">impl</span>&lt;V, F&gt; Suspense&lt;V, F&gt; {
+<span class="kw">impl</span>&lt;F&gt; Suspense&lt;(), F&gt; {
     <span class="doccomment">/// Create a new [`Suspense`] view.
-    </span><span class="kw">pub fn </span>new(fallback: V, future: F) -&gt; <span class="self">Self
+    </span><span class="kw">pub fn </span>new(future: F) -&gt; <span class="self">Self
     </span><span class="kw">where
         </span>F: Future + Send + <span class="lifetime">'static</span>,
     {
         <span class="self">Self </span>{
-            fallback: Pod::new(fallback),
+            fallback: Pod::new(()),
             future: <span class="prelude-val">Some</span>(future),
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;F&gt; Suspense&lt;(), F&gt; {
+    <span class="doccomment">/// Set the fallback view to display while the future is pending.
+    </span><span class="kw">pub fn </span>fallback&lt;V&gt;(<span class="self">self</span>, fallback: V) -&gt; Suspense&lt;V, F&gt; {
+        Suspense {
+            fallback: Pod::new(fallback),
+            future: <span class="self">self</span>.future,
         }
     }
 }

@@ -101,7 +101,7 @@
 };
 
 <span class="doccomment">/// Create a new [`Memo`].
-</span><span class="kw">pub fn </span>memo&lt;T, V, D: PartialEq&gt;(
+</span><span class="kw">pub fn </span>memo&lt;T, V: View&lt;T&gt;, D: PartialEq&gt;(
     data: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; D + <span class="lifetime">'static</span>,
     build: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>,
 ) -&gt; Memo&lt;T, V, D&gt; {
@@ -117,7 +117,7 @@
     styles: Styles,
 }
 
-<span class="kw">impl</span>&lt;T, V, D: PartialEq&gt; Memo&lt;T, V, D&gt; {
+<span class="kw">impl</span>&lt;T, V: View&lt;T&gt;, D: PartialEq&gt; Memo&lt;T, V, D&gt; {
     <span class="doccomment">/// Create a new [`Memo`].
     </span><span class="kw">pub fn </span>new(
         data: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; D + <span class="lifetime">'static</span>,
