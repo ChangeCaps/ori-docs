@@ -315,8 +315,40 @@
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
-    any::Any,
+    any::{Any, TypeId},
     collections::HashMap,
     fmt::Debug,
     hash::{BuildHasherDefault, Hasher},
@@ -364,7 +396,7 @@
 
 <span class="attr">#[derive(Clone)]
 </span><span class="kw">enum </span>StyleEntry {
-    Value(Arc&lt;<span class="kw">dyn </span>Any&gt;),
+    Value(TypeId, Arc&lt;<span class="kw">dyn </span>Any&gt;),
     Key(u64),
 }
 
@@ -372,8 +404,8 @@
 </span><span class="kw">struct </span>StylesHasher(u64);
 
 <span class="kw">impl </span>Hasher <span class="kw">for </span>StylesHasher {
-    <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bytes: <span class="kw-2">&amp;</span>[u8]) {
-        <span class="self">self</span>.<span class="number">0 </span>= hash_style_key(bytes);
+    <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _bytes: <span class="kw-2">&amp;</span>[u8]) {
+        <span class="macro">unreachable!</span>()
     }
 
     <span class="kw">fn </span>write_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: u64) {
@@ -383,6 +415,11 @@
     <span class="kw">fn </span>finish(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
         <span class="self">self</span>.<span class="number">0
     </span>}
+}
+
+<span class="kw">enum </span>GetRefError {
+    TypeMismatch,
+    KeyNotFound,
 }
 
 <span class="doccomment">/// A collection of styles.
@@ -412,7 +449,8 @@
     <span class="doccomment">/// Insert a style.
     </span><span class="kw">pub fn </span>insert_value&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, style: T) {
         <span class="kw">let </span>key = hash_style_key(key.as_bytes());
-        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, StyleEntry::Value(Arc::new(style)));
+        <span class="kw">let </span>entry = StyleEntry::Value(TypeId::of::&lt;T&gt;(), Arc::new(style));
+        Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, entry);
     }
 
     <span class="doccomment">/// Insert a style key.
@@ -435,11 +473,29 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">fn </span>get_ref(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">dyn </span>Any&gt; {
-        <span class="kw">let </span>style = <span class="self">self</span>.styles.get(<span class="kw-2">&amp;</span>key)<span class="question-mark">?</span>;
+    </span><span class="kw">fn </span>get_ref&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>T, GetRefError&gt;
+    <span class="kw">where
+        </span>T: <span class="lifetime">'static</span>,
+    {
+        <span class="kw">let </span>style = <span class="self">self</span>.styles.get(<span class="kw-2">&amp;</span>key).ok_or(GetRefError::KeyNotFound)<span class="question-mark">?</span>;
 
         <span class="kw">match </span>style {
-            StyleEntry::Value(value) =&gt; <span class="prelude-val">Some</span>(value.as_ref()),
+            StyleEntry::Value(type_id, value) =&gt; {
+                <span class="kw">if </span><span class="kw-2">*</span>type_id != TypeId::of::&lt;T&gt;() {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(GetRefError::TypeMismatch);
+                }
+
+                <span class="macro">debug_assert!</span>(
+                    value.is::&lt;T&gt;(),
+                    <span class="string">"style is of type `{}"</span>,
+                    std::any::type_name::&lt;T&gt;()
+                );
+
+                <span class="kw">let </span>ptr = value.as_ref() <span class="kw">as </span><span class="kw-2">*const </span><span class="kw">_ as </span><span class="kw-2">*const </span><span class="kw">_</span>;
+
+                <span class="comment">// SAFETY: The was just asserted to be of type `T`.
+                </span><span class="kw">unsafe </span>{ <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;*</span>ptr) }
+            }
             StyleEntry::Key(key) =&gt; <span class="self">self</span>.get_ref(<span class="kw-2">*</span>key),
         }
     }
@@ -451,8 +507,16 @@
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
     {
-        <span class="kw">let </span>style = <span class="self">self</span>.get_ref(key)<span class="question-mark">?</span>.downcast_ref::&lt;T&gt;();
-        <span class="prelude-val">Some</span>(style.expect(<span class="string">"style is of type `T`"</span>).clone())
+        <span class="kw">match </span><span class="self">self</span>.get_ref::&lt;T&gt;(key) {
+            <span class="prelude-val">Ok</span>(value) =&gt; <span class="prelude-val">Some</span>(value.clone()),
+            <span class="prelude-val">Err</span>(GetRefError::TypeMismatch) =&gt; {
+                <span class="macro">panic!</span>(
+                    <span class="string">"style is of a different type than `{}`"</span>,
+                    std::any::type_name::&lt;T&gt;()
+                )
+            }
+            <span class="prelude-val">Err</span>(GetRefError::KeyNotFound) =&gt; <span class="prelude-val">None</span>,
+        }
     }
 
     <span class="doccomment">/// Get a style, or a default value.
