@@ -495,8 +495,8 @@
     }
 }
 
-<span class="kw">impl</span>&lt;T, U, V: View&lt;(T, U)&gt;&gt; View&lt;T&gt; <span class="kw">for </span>WithState&lt;T, U, V&gt; {
-    <span class="kw">type </span>State = (Pod&lt;V&gt;, U, State&lt;(T, U), V&gt;);
+<span class="kw">impl</span>&lt;T, S, V: View&lt;(T, S)&gt;&gt; View&lt;T&gt; <span class="kw">for </span>WithState&lt;T, S, V&gt; {
+    <span class="kw">type </span>State = (Pod&lt;V&gt;, S, State&lt;(T, S), V&gt;);
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span><span class="kw-2">mut </span>state = (<span class="self">self</span>.build)();

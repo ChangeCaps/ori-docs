@@ -805,8 +805,8 @@
     }
 
     <span class="doccomment">/// Set the text of the input.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">mut </span><span class="self">self</span>, text: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.text = <span class="prelude-val">Some</span>(text.as_ref().to_string());
+    </span><span class="kw">pub fn </span>text(<span class="kw-2">mut </span><span class="self">self</span>, text: <span class="kw">impl </span>ToString) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.text = <span class="prelude-val">Some</span>(text.to_string());
         <span class="self">self
     </span>}
 
