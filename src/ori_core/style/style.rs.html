@@ -282,6 +282,39 @@
 <a href="#282" id="282">282</a>
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
     collections::HashMap,
@@ -340,7 +373,7 @@
 
 <span class="kw">impl </span>Hasher <span class="kw">for </span>StylesHasher {
     <span class="kw">fn </span>write(<span class="kw-2">&amp;mut </span><span class="self">self</span>, bytes: <span class="kw-2">&amp;</span>[u8]) {
-        <span class="self">self</span>.<span class="number">0 </span>= seahash::hash(bytes);
+        <span class="self">self</span>.<span class="number">0 </span>= hash_style_key(bytes);
     }
 
     <span class="kw">fn </span>write_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: u64) {
@@ -369,7 +402,7 @@
         <span class="kw">match </span>styled {
             Styled::Value(value) =&gt; <span class="self">self</span>.insert_value(key, value),
             Styled::Key(style) =&gt; {
-                <span class="kw">let </span>key = seahash::hash(key.as_bytes());
+                <span class="kw">let </span>key = hash_style_key(key.as_bytes());
                 Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, StyleEntry::Key(style));
             }
             Styled::Computed(derived) =&gt; <span class="self">self</span>.insert_value(key, derived(<span class="self">self</span>)),
@@ -378,14 +411,20 @@
 
     <span class="doccomment">/// Insert a style.
     </span><span class="kw">pub fn </span>insert_value&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, style: T) {
-        <span class="kw">let </span>key = seahash::hash(key.as_bytes());
+        <span class="kw">let </span>key = hash_style_key(key.as_bytes());
         Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, StyleEntry::Value(Arc::new(style)));
     }
 
     <span class="doccomment">/// Insert a style key.
     </span><span class="kw">pub fn </span>insert_style(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, style: <span class="kw-2">&amp;</span>str) {
-        <span class="kw">let </span>key = seahash::hash(key.as_bytes());
-        <span class="kw">let </span>style = seahash::hash(style.as_bytes());
+        <span class="self">self</span>.insert_style_keys(
+            hash_style_key(key.as_bytes()),
+            hash_style_key(style.as_bytes()),
+        );
+    }
+
+    <span class="doccomment">/// Insert a style key.
+    </span><span class="kw">pub fn </span>insert_style_keys(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: u64, style: u64) {
         Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, StyleEntry::Key(style));
     }
 
@@ -395,7 +434,8 @@
         Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).extend(styles);
     }
 
-    <span class="kw">fn </span>get_ref(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">dyn </span>Any&gt; {
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>get_ref(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">dyn </span>Any&gt; {
         <span class="kw">let </span>style = <span class="self">self</span>.styles.get(<span class="kw-2">&amp;</span>key)<span class="question-mark">?</span>;
 
         <span class="kw">match </span>style {
@@ -406,6 +446,7 @@
 
     <span class="doccomment">/// Get a style.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get_keyed&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -416,6 +457,7 @@
 
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get_keyed_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: T, key: u64) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -425,6 +467,7 @@
 
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get_keyed_or_else&lt;T, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: F, key: u64) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -435,16 +478,18 @@
 
     <span class="doccomment">/// Get a style.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
     {
-        <span class="kw">let </span>key = seahash::hash(key.as_bytes());
+        <span class="kw">let </span>key = hash_style_key(key.as_bytes());
         <span class="self">self</span>.get_keyed(key)
     }
 
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: T, key: <span class="kw-2">&amp;</span>str) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -454,6 +499,7 @@
 
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
+    #[inline(always)]
     </span><span class="kw">pub fn </span>get_or_else&lt;T, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: F, key: <span class="kw-2">&amp;</span>str) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -469,7 +515,7 @@
 }
 
 <span class="doccomment">/// Create a style key.
-</span><span class="kw">pub fn </span>key&lt;T&gt;(key: <span class="kw-2">&amp;</span>str) -&gt; Styled&lt;T&gt; {
+</span><span class="kw">pub const fn </span>key&lt;T&gt;(key: <span class="kw-2">&amp;</span>str) -&gt; Styled&lt;T&gt; {
     Styled::key(key)
 }
 
@@ -498,11 +544,13 @@
 
 <span class="kw">impl</span>&lt;T&gt; Styled&lt;T&gt; {
     <span class="doccomment">/// Create a new styled value, from a style key.
-    </span><span class="kw">pub fn </span>key(key: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::Key(seahash::hash(key.as_bytes()))
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">pub const fn </span>key(key: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Key(hash_style_key(key.as_bytes()))
     }
 
     <span class="doccomment">/// Get the value, or a style from the styles.
+    </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, styles: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -515,6 +563,7 @@
     }
 
     <span class="doccomment">/// Get the value, or a style from the styles.
+    </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>get_or(<span class="kw-2">&amp;</span><span class="self">self</span>, styles: <span class="kw-2">&amp;</span>Styles, default: T) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -523,6 +572,7 @@
     }
 
     <span class="doccomment">/// Get the value, or a style from the styles.
+    </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>get_or_else&lt;F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, styles: <span class="kw-2">&amp;</span>Styles, default: F) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
@@ -548,9 +598,25 @@
     }
 }
 
+<span class="doccomment">/// Hash a style key.
+///
+/// This uses the FNV-1a hash algorithm, with a 64-bit seed.
+</span><span class="attr">#[inline(always)]
+</span><span class="kw">const fn </span>hash_style_key(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; u64 {
+    <span class="kw">let </span><span class="kw-2">mut </span>hash = <span class="number">0xcbf29ce484222325</span>;
+
+    <span class="kw">let </span><span class="kw-2">mut </span>index = <span class="number">0</span>;
+    <span class="kw">while </span>index &lt; bytes.len() {
+        hash ^= bytes[index] <span class="kw">as </span>u64;
+        hash = hash.wrapping_mul(<span class="number">0x100000001b3</span>);
+        index += <span class="number">1</span>;
+    }
+
+    hash
+}
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-
     <span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
     <span class="attr">#[test]
