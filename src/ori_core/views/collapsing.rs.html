@@ -254,6 +254,7 @@
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build, Styled};
@@ -394,6 +395,7 @@
         }
 
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
+        state.style.rebuild(<span class="self">self</span>, cx);
 
         (<span class="self">self</span>.header).rebuild(<span class="kw-2">&amp;mut </span>state.header, cx, data, <span class="kw-2">&amp;</span>old.header);
         (<span class="self">self</span>.content).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.content);

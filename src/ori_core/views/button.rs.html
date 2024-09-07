@@ -199,6 +199,7 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
@@ -301,12 +302,13 @@
 
     <span class="kw">fn </span>rebuild(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        (_state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
         cx: <span class="kw-2">&amp;mut </span>RebuildCx,
         data: <span class="kw-2">&amp;mut </span>T,
         old: <span class="kw-2">&amp;</span><span class="self">Self</span>,
     ) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
+        state.style.rebuild(<span class="self">self</span>, cx);
 
         <span class="self">self</span>.content.rebuild(content, cx, data, <span class="kw-2">&amp;</span>old.content);
     }

@@ -157,6 +157,11 @@
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::{parse::ParseStream, punctuated::Punctuated};
@@ -188,13 +193,14 @@
 }
 
 <span class="attr">#[derive(Default)]
-</span><span class="kw">struct </span>FieldAttributes {
-    layout: bool,
-    draw: bool,
+</span><span class="kw">pub struct </span>FieldAttributes {
+    <span class="kw">pub </span>styled: bool,
+    <span class="kw">pub </span>layout: bool,
+    <span class="kw">pub </span>draw: bool,
 }
 
 <span class="kw">impl </span>FieldAttributes {
-    <span class="kw">fn </span>new(attrs: <span class="kw-2">&amp;</span>[syn::Attribute]) -&gt; manyhow::Result&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">pub fn </span>new(attrs: <span class="kw-2">&amp;</span>[syn::Attribute]) -&gt; manyhow::Result&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>this = <span class="self">Self</span>::default();
 
         <span class="kw">for </span>attr <span class="kw">in </span>attrs {
@@ -210,12 +216,16 @@
                     }
                 }
             }
+
+            <span class="kw">if </span>attr.path().is_ident(<span class="string">"styled"</span>) {
+                this.styled = <span class="bool-val">true</span>;
+            }
         }
 
         <span class="prelude-val">Ok</span>(this)
     }
 
-    <span class="kw">fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    <span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         !<span class="self">self</span>.layout &amp;&amp; !<span class="self">self</span>.draw
     }
 
@@ -305,7 +315,7 @@
 <span class="kw">fn </span>rebuild_field(name: TokenStream, field: <span class="kw-2">&amp;</span>syn::Field) -&gt; manyhow::Result&lt;TokenStream&gt; {
     <span class="kw">let </span>attributes = FieldAttributes::new(<span class="kw-2">&amp;</span>field.attrs)<span class="question-mark">?</span>;
 
-    <span class="kw">if </span>attributes.is_empty() {
+    <span class="kw">if </span>attributes.is_empty() || attributes.styled {
         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="macro">quote!</span>());
     }
 

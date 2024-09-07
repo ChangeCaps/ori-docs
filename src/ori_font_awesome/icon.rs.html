@@ -148,6 +148,11 @@
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::Color,
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
@@ -267,7 +272,12 @@
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
 
-        <span class="kw">if </span><span class="self">self </span>!= old {
+        <span class="kw">let </span>size = state.style.size;
+        <span class="kw">let </span>color = state.style.color;
+
+        state.style.rebuild(<span class="self">self</span>, cx);
+
+        <span class="kw">if </span><span class="self">self </span>!= old || size != state.style.size || color != state.style.color {
             <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>state.buffer, <span class="kw-2">&amp;</span>state.style);
         }
     }

@@ -332,6 +332,7 @@
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
 <a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{FRAC_PI_2, PI, TAU};
 
 <span class="kw">use </span>ori_macro::{Build, Styled};
@@ -542,6 +543,7 @@
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
+        state.style.rebuild(<span class="self">self</span>, cx);
 
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, l, a) = <span class="self">self</span>.color.to_okhsla();
         <span class="kw">let </span>(<span class="kw">_</span>, <span class="kw">_</span>, old_l, old_a) = old.color.to_okhsla();

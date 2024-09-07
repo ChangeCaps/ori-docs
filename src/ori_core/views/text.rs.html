@@ -211,6 +211,11 @@
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span>ori_macro::{example, Build, Styled};
@@ -345,47 +350,52 @@
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
-            (state.buffer).set_metrics(cx.fonts(), state.style.font_size, state.style.line_height);
+        <span class="kw">let </span>style = TextStyle::styled(<span class="self">self</span>, cx.styles());
+
+        <span class="kw">if </span>style.font_size != state.style.font_size || style.line_height != state.style.line_height
+        {
+            (state.buffer).set_metrics(cx.fonts(), style.font_size, style.line_height);
 
             cx.layout();
         }
 
-        <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
-            state.buffer.set_wrap(cx.fonts(), state.style.wrap);
+        <span class="kw">if </span>style.wrap != state.style.wrap {
+            state.buffer.set_wrap(cx.fonts(), style.wrap);
 
             cx.draw();
         }
 
-        <span class="kw">if </span><span class="self">self</span>.align != old.align {
-            state.buffer.set_align(state.style.align);
+        <span class="kw">if </span>style.align != state.style.align {
+            state.buffer.set_align(style.align);
 
             cx.draw();
         }
 
         <span class="kw">if </span><span class="self">self</span>.text != old.text
-            || <span class="self">self</span>.font_family != old.font_family
-            || <span class="self">self</span>.font_weight != old.font_weight
-            || <span class="self">self</span>.font_stretch != old.font_stretch
-            || <span class="self">self</span>.font_style != old.font_style
+            || style.font_family != state.style.font_family
+            || style.font_weight != state.style.font_weight
+            || style.font_stretch != state.style.font_stretch
+            || style.font_style != state.style.font_style
         {
             state.buffer.set_text(
                 cx.fonts(),
                 <span class="kw-2">&amp;</span><span class="self">self</span>.text,
                 TextAttributes {
-                    family: state.style.font_family.clone(),
-                    stretch: state.style.font_stretch,
-                    weight: state.style.font_weight,
-                    style: state.style.font_style,
+                    family: style.font_family.clone(),
+                    stretch: style.font_stretch,
+                    weight: style.font_weight,
+                    style: style.font_style,
                 },
             );
 
             cx.layout();
         }
 
-        <span class="kw">if </span><span class="self">self</span>.color != old.color {
+        <span class="kw">if </span>style.color != state.style.color {
             cx.draw();
         }
+
+        state.style = style;
     }
 
     <span class="kw">fn </span>event(
