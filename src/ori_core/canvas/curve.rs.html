@@ -840,6 +840,22 @@
 <a href="#840" id="840">840</a>
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span><span class="kw">crate</span>::layout::{Affine, Point, Rect, Size, Vector};
@@ -1206,10 +1222,14 @@
                 tl + Vector::new(r * <span class="number">0.45</span>, <span class="number">0.0</span>),
                 tl + Vector::new(r, <span class="number">0.0</span>),
             );
-            <span class="self">self</span>.line_to(tr + Vector::new(-r, <span class="number">0.0</span>));
 
-            <span class="self">self</span>.line_to(tr + Vector::new(-r, e));
+            <span class="kw">if </span>e &gt; <span class="number">0.0 </span>{
+                <span class="self">self</span>.line_to(tr + Vector::new(-r, <span class="number">0.0</span>));
+                <span class="self">self</span>.line_to(tr + Vector::new(-r, e));
+            }
+
             <span class="self">self</span>.line_to(tl + Vector::new(r, e));
+
             <span class="self">self</span>.cubic_to(
                 tl + Vector::new((r + s) * <span class="number">0.45</span>, e),
                 tl + Vector::new(s, (r + e) * <span class="number">0.45</span>),
@@ -1228,10 +1248,14 @@
                 tr + Vector::new(<span class="number">0.0</span>, r * <span class="number">0.45</span>),
                 tr + Vector::new(<span class="number">0.0</span>, r),
             );
-            <span class="self">self</span>.line_to(br + Vector::new(<span class="number">0.0</span>, -r));
 
-            <span class="self">self</span>.line_to(br + Vector::new(-e, -r));
+            <span class="kw">if </span>e &gt; <span class="number">0.0 </span>{
+                <span class="self">self</span>.line_to(br + Vector::new(<span class="number">0.0</span>, -r));
+                <span class="self">self</span>.line_to(br + Vector::new(-e, -r));
+            }
+
             <span class="self">self</span>.line_to(tr + Vector::new(-e, r));
+
             <span class="self">self</span>.cubic_to(
                 tr + Vector::new(-e, (r + s) * <span class="number">0.45</span>),
                 tr + Vector::new(-(r + e) * <span class="number">0.45</span>, s),
@@ -1250,10 +1274,14 @@
                 br + Vector::new(-r * <span class="number">0.45</span>, <span class="number">0.0</span>),
                 br + Vector::new(-r, <span class="number">0.0</span>),
             );
-            <span class="self">self</span>.line_to(bl + Vector::new(r, <span class="number">0.0</span>));
 
-            <span class="self">self</span>.line_to(bl + Vector::new(r, -e));
+            <span class="kw">if </span>e &gt; <span class="number">0.0 </span>{
+                <span class="self">self</span>.line_to(bl + Vector::new(r, <span class="number">0.0</span>));
+                <span class="self">self</span>.line_to(bl + Vector::new(r, -e));
+            }
+
             <span class="self">self</span>.line_to(br + Vector::new(-r, -e));
+
             <span class="self">self</span>.cubic_to(
                 br + Vector::new(-(r + s) * <span class="number">0.45</span>, -e),
                 br + Vector::new(-s, -(r + e) * <span class="number">0.45</span>),
@@ -1272,10 +1300,14 @@
                 bl + Vector::new(<span class="number">0.0</span>, -r * <span class="number">0.45</span>),
                 bl + Vector::new(<span class="number">0.0</span>, -r),
             );
-            <span class="self">self</span>.line_to(tl + Vector::new(<span class="number">0.0</span>, r));
 
-            <span class="self">self</span>.line_to(tl + Vector::new(e, r));
+            <span class="kw">if </span>e &gt; <span class="number">0.0 </span>{
+                <span class="self">self</span>.line_to(tl + Vector::new(<span class="number">0.0</span>, r));
+                <span class="self">self</span>.line_to(tl + Vector::new(e, r));
+            }
+
             <span class="self">self</span>.line_to(bl + Vector::new(e, -r));
+
             <span class="self">self</span>.cubic_to(
                 bl + Vector::new(e, -(r + s) * <span class="number">0.45</span>),
                 bl + Vector::new((r + e) * <span class="number">0.45</span>, -s),
