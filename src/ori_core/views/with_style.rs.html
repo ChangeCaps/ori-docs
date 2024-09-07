@@ -110,8 +110,8 @@
 };
 
 <span class="doccomment">/// Create a view that applies a style to its content.
-</span><span class="kw">pub fn </span>with_style&lt;V: View&lt;T&gt;, T&gt;(style: Styles, content: V) -&gt; WithStyle&lt;V&gt; {
-    WithStyle::new(content, style)
+</span><span class="kw">pub fn </span>with_style&lt;V: View&lt;T&gt;, T&gt;(style: <span class="kw">impl </span>Into&lt;Styles&gt;, content: V) -&gt; WithStyle&lt;V&gt; {
+    WithStyle::new(style.into(), content)
 }
 
 <span class="doccomment">/// A view that applies a style to its content.
@@ -125,7 +125,7 @@
 
 <span class="kw">impl</span>&lt;V&gt; WithStyle&lt;V&gt; {
     <span class="doccomment">/// Create a new [`WithStyle`] view.
-    </span><span class="kw">pub fn </span>new(content: V, style: Styles) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(style: Styles, content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ content, style }
     }
 }
