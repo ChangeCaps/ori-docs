@@ -158,7 +158,6 @@
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    rebuild::Rebuild,
     style::{key, Styled},
     text::{FontStretch, FontStyle, TextAttributes, TextBuffer},
     view::View,
@@ -176,16 +175,14 @@
 ///
 /// By default, the icon is rendered using the `icon.font` font family.
 /// This uses the [Font Awesome 6 Regular Free](https://fontawesome.com/) font by default.
-</span><span class="attr">#[derive(Styled, Build, Rebuild, PartialEq)]
+</span><span class="attr">#[derive(Styled, Build)]
 </span><span class="kw">pub struct </span>Icon {
     <span class="doccomment">/// The codepoint of the icon to display.
-    </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>icon: IconCode,
 
     <span class="doccomment">/// Whether the icon is solid or regular.
     ///
     /// This only affects the rendering of the icon if the icon is available in both styles.
-    </span><span class="attr">#[rebuild(draw)]
     </span><span class="kw">pub </span>solid: bool,
 
     <span class="doccomment">/// The size of the icon.
@@ -270,15 +267,18 @@
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        Rebuild::rebuild(<span class="self">self</span>, cx, old);
-
         <span class="kw">let </span>size = state.style.size;
         <span class="kw">let </span>color = state.style.color;
 
         state.style.rebuild(<span class="self">self</span>, cx);
 
-        <span class="kw">if </span><span class="self">self </span>!= old || size != state.style.size || color != state.style.color {
+        <span class="kw">if </span><span class="self">self</span>.icon != old.icon
+            || <span class="self">self</span>.solid != old.solid
+            || size != state.style.size
+            || color != state.style.color
+        {
             <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>state.buffer, <span class="kw-2">&amp;</span>state.style);
+            cx.layout();
         }
     }
 
