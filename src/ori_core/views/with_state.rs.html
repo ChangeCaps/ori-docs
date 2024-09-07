@@ -358,7 +358,7 @@
 /// }
 /// ```
 </span><span class="kw">pub fn </span>with_state&lt;T, S, V&gt;(
-    build: <span class="kw">impl </span>Fn() -&gt; S + <span class="lifetime">'static</span>,
+    build: <span class="kw">impl </span>FnMut() -&gt; S + <span class="lifetime">'static</span>,
     view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>S) -&gt; V + <span class="lifetime">'static</span>,
 ) -&gt; WithState&lt;T, S, V&gt;
 <span class="kw">where
@@ -425,7 +425,7 @@
 /// }
 /// ```
 </span><span class="kw">pub fn </span>with_data&lt;T, S, V&gt;(
-    build: <span class="kw">impl </span>Fn() -&gt; S + <span class="lifetime">'static</span>,
+    build: <span class="kw">impl </span>FnMut() -&gt; S + <span class="lifetime">'static</span>,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S) -&gt; V + <span class="lifetime">'static</span>,
 ) -&gt; <span class="kw">impl </span>View&lt;T&gt;
 <span class="kw">where
