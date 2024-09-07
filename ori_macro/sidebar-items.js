@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["desktop","example","main","mobile","reloadable","web"],"derive":["Build","Rebuild"],"macro":["include_font"]};
+window.SIDEBAR_ITEMS = {"attr":["desktop","example","main","mobile","reloadable","web"],"derive":["Build","Rebuild","Styled"],"macro":["include_font"]};

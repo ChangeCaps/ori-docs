@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["palette","style","style_or","styled","try_style"],"struct":["Palette","Styles","Theme"],"trait":["Style"]};
+window.SIDEBAR_ITEMS = {"enum":["Styled"],"fn":["key"],"macro":["style"],"struct":["Styles","Theme"]};

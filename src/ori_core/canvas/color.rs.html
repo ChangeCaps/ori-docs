@@ -2257,13 +2257,13 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_hex() {
+    </span><span class="kw">fn </span>hex() {
         <span class="kw">let </span>color = Color::hex(<span class="string">"#ff00ff"</span>);
         <span class="macro">assert_eq!</span>(color, Color::MAGENTA);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_hex_display() {
+    </span><span class="kw">fn </span>hex_display() {
         <span class="kw">let </span>display = DisplayHex::new(<span class="number">0xa0</span>, <span class="number">0xb2</span>, <span class="number">0xcb</span>, <span class="number">0xd6</span>);
         <span class="macro">assert_eq!</span>(display.as_ref(), <span class="string">"#a0b2cbd6"</span>);
     }

@@ -211,50 +211,9 @@
 <a href="#211" id="211">211</a>
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
-<a href="#238" id="238">238</a>
-<a href="#239" id="239">239</a>
-<a href="#240" id="240">240</a>
-<a href="#241" id="241">241</a>
-<a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
-<a href="#244" id="244">244</a>
-<a href="#245" id="245">245</a>
-<a href="#246" id="246">246</a>
-<a href="#247" id="247">247</a>
-<a href="#248" id="248">248</a>
-<a href="#249" id="249">249</a>
-<a href="#250" id="250">250</a>
-<a href="#251" id="251">251</a>
-<a href="#252" id="252">252</a>
-<a href="#253" id="253">253</a>
-<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
-<span class="kw">use </span>ori_macro::{example, Build};
+<span class="kw">use </span>ori_macro::{example, Build, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
@@ -262,7 +221,7 @@
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    style::{style, Style, Styles},
+    style::{key, Styled},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -289,123 +248,80 @@
     Text::new(text)
 }
 
-<span class="doccomment">/// The style of a text.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>TextStyle {
-    <span class="doccomment">/// The font size of the text.
-    </span><span class="kw">pub </span>font_size: f32,
-
-    <span class="doccomment">/// The font family of the text.
-    </span><span class="kw">pub </span>font_family: FontFamily,
-
-    <span class="doccomment">/// The font weight of the text.
-    </span><span class="kw">pub </span>font_weight: FontWeight,
-
-    <span class="doccomment">/// The font stretch of the text.
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
-
-    <span class="doccomment">/// The font style of the text.
-    </span><span class="kw">pub </span>font_style: FontStyle,
-
-    <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
-
-    <span class="doccomment">/// The horizontal alignment of the text.
-    </span><span class="kw">pub </span>align: TextAlign,
-
-    <span class="doccomment">/// The line height of the text.
-    </span><span class="kw">pub </span>line_height: f32,
-
-    <span class="doccomment">/// The text wrap of the text.
-    </span><span class="kw">pub </span>wrap: TextWrap,
-}
-
-<span class="kw">impl </span>Style <span class="kw">for </span>TextStyle {
-    <span class="kw">fn </span>styled(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            font_size: <span class="number">16.0</span>,
-            font_family: FontFamily::SansSerif,
-            font_weight: FontWeight::NORMAL,
-            font_stretch: FontStretch::Normal,
-            font_style: FontStyle::Normal,
-            color: style.palette().contrast,
-            align: TextAlign::Start,
-            line_height: <span class="number">1.3</span>,
-            wrap: TextWrap::Word,
-        }
-    }
-}
-
 <span class="doccomment">/// A view that displays text.
 ///
 /// Can be styled using the [`TextStyle`].
 </span><span class="attr">#[example(name = <span class="string">"text"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
-#[derive(Build)]
+#[derive(Styled, Build)]
 </span><span class="kw">pub struct </span>Text {
     <span class="doccomment">/// The text.
     </span><span class="kw">pub </span>text: SmolStr,
 
     <span class="doccomment">/// The font size of the text.
-    </span><span class="kw">pub </span>font_size: f32,
+    </span><span class="attr">#[styled(default = <span class="number">16.0</span>)]
+    </span><span class="kw">pub </span>font_size: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The font family of the text.
-    </span><span class="kw">pub </span>font_family: FontFamily,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_family: Styled&lt;FontFamily&gt;,
 
     <span class="doccomment">/// The font weight of the text.
-    </span><span class="kw">pub </span>font_weight: FontWeight,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_weight: Styled&lt;FontWeight&gt;,
 
     <span class="doccomment">/// The font stretch of the text.
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_stretch: Styled&lt;FontStretch&gt;,
 
     <span class="doccomment">/// The font.into of the text.
-    </span><span class="kw">pub </span>font_style: FontStyle,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
+    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The horizontal alignment of the text.
-    </span><span class="kw">pub </span>align: TextAlign,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>align: Styled&lt;TextAlign&gt;,
 
     <span class="doccomment">/// The line height of the text.
-    </span><span class="kw">pub </span>line_height: f32,
+    </span><span class="attr">#[styled(default = <span class="number">1.2</span>)]
+    </span><span class="kw">pub </span>line_height: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The text wrap of the text.
-    </span><span class="kw">pub </span>wrap: TextWrap,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>wrap: Styled&lt;TextWrap&gt;,
 }
 
 <span class="kw">impl </span>Text {
     <span class="doccomment">/// Create a new text.
     </span><span class="kw">pub fn </span>new(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::styled(text, style())
-    }
-
-    <span class="doccomment">/// Create a new text with a style.
-    </span><span class="kw">pub fn </span>styled(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;, style: TextStyle) -&gt; <span class="self">Self </span>{
-        Text {
+        <span class="self">Self </span>{
             text: text.into(),
-            font_size: style.font_size,
-            font_family: style.font_family,
-            font_weight: style.font_weight,
-            font_stretch: style.font_stretch,
-            font_style: style.font_style,
-            color: style.color,
-            align: style.align,
-            line_height: style.line_height,
-            wrap: style.wrap,
+            font_size: key(<span class="string">"text.font_size"</span>),
+            font_family: key(<span class="string">"text.font_family"</span>),
+            font_weight: key(<span class="string">"text.font_weight"</span>),
+            font_stretch: key(<span class="string">"text.font_stretch"</span>),
+            font_style: key(<span class="string">"text.font_style"</span>),
+            color: key(<span class="string">"text.color"</span>),
+            align: key(<span class="string">"text.align"</span>),
+            line_height: key(<span class="string">"text.line_height"</span>),
+            wrap: key(<span class="string">"text.wrap"</span>),
         }
     }
 
-    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, buffer: <span class="kw-2">&amp;mut </span>TextBuffer) {
-        buffer.set_wrap(fonts, <span class="self">self</span>.wrap);
-        buffer.set_align(<span class="self">self</span>.align);
+    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, buffer: <span class="kw-2">&amp;mut </span>TextBuffer, style: <span class="kw-2">&amp;</span>TextStyle) {
+        buffer.set_wrap(fonts, style.wrap);
+        buffer.set_align(style.align);
         buffer.set_text(
             fonts,
             <span class="kw-2">&amp;</span><span class="self">self</span>.text,
             TextAttributes {
-                family: <span class="self">self</span>.font_family.clone(),
-                stretch: <span class="self">self</span>.font_stretch,
-                weight: <span class="self">self</span>.font_weight,
-                style: <span class="self">self</span>.font_style,
+                family: style.font_family.clone(),
+                stretch: style.font_stretch,
+                weight: style.font_weight,
+                style: style.font_style,
             },
         );
     }
@@ -413,6 +329,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>TextState {
+    style: TextStyle,
     buffer: TextBuffer,
 }
 
@@ -420,27 +337,28 @@
     <span class="kw">type </span>State = TextState;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span><span class="kw-2">mut </span>buffer = TextBuffer::new(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
-        <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>buffer);
+        <span class="kw">let </span>style = TextStyle::styled(<span class="self">self</span>, cx.styles());
+        <span class="kw">let </span><span class="kw-2">mut </span>buffer = TextBuffer::new(cx.fonts(), style.font_size, style.line_height);
+        <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;</span>style);
 
-        TextState { buffer }
+        TextState { style, buffer }
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
-            (state.buffer).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+            (state.buffer).set_metrics(cx.fonts(), state.style.font_size, state.style.line_height);
 
             cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
-            state.buffer.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
+            state.buffer.set_wrap(cx.fonts(), state.style.wrap);
 
             cx.draw();
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
-            state.buffer.set_align(<span class="self">self</span>.align);
+            state.buffer.set_align(state.style.align);
 
             cx.draw();
         }
@@ -455,10 +373,10 @@
                 cx.fonts(),
                 <span class="kw-2">&amp;</span><span class="self">self</span>.text,
                 TextAttributes {
-                    family: <span class="self">self</span>.font_family.clone(),
-                    stretch: <span class="self">self</span>.font_stretch,
-                    weight: <span class="self">self</span>.font_weight,
-                    style: <span class="self">self</span>.font_style,
+                    family: state.style.font_family.clone(),
+                    stretch: state.style.font_stretch,
+                    weight: state.style.font_weight,
+                    style: state.style.font_style,
                 },
             );
 
@@ -495,7 +413,7 @@
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span>offset = cx.rect().center() - state.buffer.rect().center();
-        cx.text(<span class="kw-2">&amp;</span>state.buffer, <span class="self">self</span>.color, offset);
+        cx.text(<span class="kw-2">&amp;</span>state.buffer, state.style.color, offset);
     }
 }
 

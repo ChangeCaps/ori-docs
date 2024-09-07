@@ -325,65 +325,7 @@
 <a href="#325" id="325">325</a>
 <a href="#326" id="326">326</a>
 <a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-<a href="#349" id="349">349</a>
-<a href="#350" id="350">350</a>
-<a href="#351" id="351">351</a>
-<a href="#352" id="352">352</a>
-<a href="#353" id="353">353</a>
-<a href="#354" id="354">354</a>
-<a href="#355" id="355">355</a>
-<a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::example;
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
@@ -392,7 +334,7 @@
     event::Event,
     layout::{pt, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{style, Style, Styles},
+    style::{key, Styled},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -400,92 +342,16 @@
     view::{Pod, State, View},
 };
 
-<span class="kw">use </span><span class="kw">super</span>::TextStyle;
-
 <span class="doccomment">/// Create a new [`Tooltip`] view.
 </span><span class="kw">pub fn </span>tooltip&lt;V&gt;(content: V, text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Tooltip&lt;V&gt; {
     Tooltip::new(content, text)
-}
-
-<span class="doccomment">/// The style of a tooltip.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>TooltipStyle {
-    <span class="doccomment">/// The delay before the tooltip is displayed.
-    </span><span class="kw">pub </span>delay: f32,
-
-    <span class="doccomment">/// The padding of the tooltip.
-    </span><span class="kw">pub </span>padding: Padding,
-
-    <span class="doccomment">/// The font size of the text.
-    </span><span class="kw">pub </span>font_size: f32,
-
-    <span class="doccomment">/// The font family of the text.
-    </span><span class="kw">pub </span>font_family: FontFamily,
-
-    <span class="doccomment">/// The font weight of the text.
-    </span><span class="kw">pub </span>font_weight: FontWeight,
-
-    <span class="doccomment">/// The font stretch of the text.
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
-
-    <span class="doccomment">/// The font style of the text.
-    </span><span class="kw">pub </span>font_style: FontStyle,
-
-    <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
-
-    <span class="doccomment">/// The horizontal alignment of the text.
-    </span><span class="kw">pub </span>align: TextAlign,
-
-    <span class="doccomment">/// The line height of the text.
-    </span><span class="kw">pub </span>line_height: f32,
-
-    <span class="doccomment">/// The text wrap of the text.
-    </span><span class="kw">pub </span>wrap: TextWrap,
-
-    <span class="doccomment">/// The background color of the text.
-    </span><span class="kw">pub </span>background: Color,
-
-    <span class="doccomment">/// The border radius of the text.
-    </span><span class="kw">pub </span>border_radius: BorderRadius,
-
-    <span class="doccomment">/// The border width of the text.
-    </span><span class="kw">pub </span>border_width: BorderWidth,
-
-    <span class="doccomment">/// The border color of the text.
-    </span><span class="kw">pub </span>border_color: Color,
-}
-
-<span class="kw">impl </span>Style <span class="kw">for </span>TooltipStyle {
-    <span class="kw">fn </span>styled(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>text_style = style.get::&lt;TextStyle&gt;();
-        <span class="kw">let </span>palette = style.palette();
-
-        <span class="self">Self </span>{
-            delay: <span class="number">0.2</span>,
-            padding: Padding::from([<span class="number">8.0</span>, <span class="number">4.0</span>]),
-            font_size: pt(<span class="number">10.0</span>),
-            font_family: text_style.font_family.clone(),
-            font_weight: text_style.font_weight,
-            font_stretch: text_style.font_stretch,
-            font_style: text_style.font_style,
-            color: text_style.color,
-            align: text_style.align,
-            line_height: text_style.line_height,
-            wrap: text_style.wrap,
-            background: palette.surface_higher,
-            border_radius: BorderRadius::all(<span class="number">4.0</span>),
-            border_width: BorderWidth::all(<span class="number">1.0</span>),
-            border_color: palette.outline,
-        }
-    }
 }
 
 <span class="doccomment">/// A view that displays some text when the content is hovered.
 ///
 /// Can be styled using the [`TooltipStyle`].
 </span><span class="attr">#[example(name = <span class="string">"tooltip"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
-#[derive(Rebuild)]
+#[derive(Styled, Rebuild)]
 </span><span class="kw">pub struct </span>Tooltip&lt;V&gt; {
     <span class="doccomment">/// The content to display.
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
@@ -495,105 +361,115 @@
     </span><span class="kw">pub </span>text: SmolStr,
 
     <span class="doccomment">/// The delay before the tooltip is displayed.
-    </span><span class="kw">pub </span>delay: f32,
+    </span><span class="attr">#[styled(default = <span class="number">0.2</span>)]
+    </span><span class="kw">pub </span>delay: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The padding of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>padding: Padding,
+    #[styled(default = Padding::all(<span class="number">4.0</span>))]
+    </span><span class="kw">pub </span>padding: Styled&lt;Padding&gt;,
 
     <span class="doccomment">/// The font size of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>font_size: f32,
+    #[styled(default = pt(<span class="number">10.0</span>))]
+    </span><span class="kw">pub </span>font_size: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The font family of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>font_family: FontFamily,
+    #[styled(default)]
+    </span><span class="kw">pub </span>font_family: Styled&lt;FontFamily&gt;,
 
     <span class="doccomment">/// The font weight of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>font_weight: FontWeight,
+    #[styled(default)]
+    </span><span class="kw">pub </span>font_weight: Styled&lt;FontWeight&gt;,
 
     <span class="doccomment">/// The font stretch of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
+    #[styled(default)]
+    </span><span class="kw">pub </span>font_stretch: Styled&lt;FontStretch&gt;,
 
     <span class="doccomment">/// The font style of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>font_style: FontStyle,
+    #[styled(default)]
+    </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of text.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>color: Color,
+    #[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The horizontal alignment of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>align: TextAlign,
+    #[styled(default)]
+    </span><span class="kw">pub </span>align: Styled&lt;TextAlign&gt;,
 
     <span class="doccomment">/// The line height of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>line_height: f32,
+    #[styled(default = <span class="number">1.2</span>)]
+    </span><span class="kw">pub </span>line_height: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The text wrap of the text.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>wrap: TextWrap,
+    #[styled(default)]
+    </span><span class="kw">pub </span>wrap: Styled&lt;TextWrap&gt;,
 
     <span class="doccomment">/// The background color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>background: Color,
+    #[styled(default -&gt; <span class="string">"palette.surface_higher" </span>or Color::WHITE)]
+    </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius of the text.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_radius: BorderRadius,
+    #[styled(default = BorderRadius::all(<span class="number">4.0</span>))]
+    </span><span class="kw">pub </span>border_radius: Styled&lt;BorderRadius&gt;,
 
     <span class="doccomment">/// The border width of the text.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_width: BorderWidth,
+    #[styled(default = BorderWidth::all(<span class="number">1.0</span>))]
+    </span><span class="kw">pub </span>border_width: Styled&lt;BorderWidth&gt;,
 
     <span class="doccomment">/// The border color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_color: Color,
+    #[styled(default -&gt; <span class="string">"palette.outline" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 
 <span class="kw">impl</span>&lt;V&gt; Tooltip&lt;V&gt; {
     <span class="doccomment">/// Create a new tooltip view.
     </span><span class="kw">pub fn </span>new(content: V, text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::styled(content, text, style())
-    }
-
-    <span class="doccomment">/// Create a new tooltip view with a style.
-    </span><span class="kw">pub fn </span>styled(content: V, text: <span class="kw">impl </span>Into&lt;SmolStr&gt;, style: TooltipStyle) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content: Pod::new(content),
             text: text.into(),
-            delay: style.delay,
-            padding: style.padding,
-            font_size: style.font_size,
-            font_family: style.font_family,
-            font_weight: style.font_weight,
-            font_stretch: style.font_stretch,
-            font_style: style.font_style,
-            color: style.color,
-            align: style.align,
-            line_height: style.line_height,
-            wrap: style.wrap,
-            background: style.background,
-            border_radius: style.border_radius,
-            border_width: style.border_width,
-            border_color: style.border_color,
+            delay: key(<span class="string">"tooltip.delay"</span>),
+            padding: key(<span class="string">"tooltip.padding"</span>),
+            font_size: key(<span class="string">"tooltip.font_size"</span>),
+            font_family: key(<span class="string">"tooltip.font_family"</span>),
+            font_weight: key(<span class="string">"tooltip.font_weight"</span>),
+            font_stretch: key(<span class="string">"tooltip.font_stretch"</span>),
+            font_style: key(<span class="string">"tooltip.font_style"</span>),
+            color: key(<span class="string">"tooltip.color"</span>),
+            align: key(<span class="string">"tooltip.align"</span>),
+            line_height: key(<span class="string">"tooltip.line_height"</span>),
+            wrap: key(<span class="string">"tooltip.wrap"</span>),
+            background: key(<span class="string">"tooltip.background"</span>),
+            border_radius: key(<span class="string">"tooltip.border_radius"</span>),
+            border_width: key(<span class="string">"tooltip.border_width"</span>),
+            border_color: key(<span class="string">"tooltip.border_color"</span>),
         }
     }
 
-    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, buffer: <span class="kw-2">&amp;mut </span>TextBuffer) {
-        buffer.set_wrap(fonts, <span class="self">self</span>.wrap);
-        buffer.set_align(<span class="self">self</span>.align);
+    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, buffer: <span class="kw-2">&amp;mut </span>TextBuffer, style: <span class="kw-2">&amp;</span>TooltipStyle) {
+        buffer.set_wrap(fonts, style.wrap);
+        buffer.set_align(style.align);
         buffer.set_text(
             fonts,
             <span class="kw-2">&amp;</span><span class="self">self</span>.text,
             TextAttributes {
-                family: <span class="self">self</span>.font_family.clone(),
-                weight: <span class="self">self</span>.font_weight,
-                stretch: <span class="self">self</span>.font_stretch,
-                style: <span class="self">self</span>.font_style,
+                family: style.font_family.clone(),
+                weight: style.font_weight,
+                stretch: style.font_stretch,
+                style: style.font_style,
             },
         );
     }
@@ -604,19 +480,23 @@
     <span class="kw">pub </span>buffer: TextBuffer,
     <span class="kw">pub </span>timer: f32,
     <span class="kw">pub </span>position: Point,
+    <span class="kw">pub </span>style: TooltipStyle,
 }
 
 <span class="kw">impl</span>&lt;T, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span>Tooltip&lt;V&gt; {
     <span class="kw">type </span>State = (TooltipState, State&lt;T, V&gt;);
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
+        <span class="kw">let </span>style = TooltipStyle::styled(<span class="self">self</span>, cx.styles());
+
         <span class="kw">let </span><span class="kw-2">mut </span>state = TooltipState {
-            buffer: TextBuffer::new(cx.fonts(), <span class="self">self</span>.font_size, <span class="number">1.0</span>),
+            buffer: TextBuffer::new(cx.fonts(), style.font_size, <span class="number">1.0</span>),
             timer: <span class="number">0.0</span>,
             position: Point::ZERO,
+            style,
         };
 
-        <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>state.buffer);
+        <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>state.buffer, <span class="kw-2">&amp;</span>state.style);
 
         (state, <span class="self">self</span>.content.build(cx, data))
     }
@@ -631,15 +511,15 @@
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
 
         <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
-            (state.buffer).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+            (state.buffer).set_metrics(cx.fonts(), state.style.font_size, state.style.line_height);
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
-            state.buffer.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
+            state.buffer.set_wrap(cx.fonts(), state.style.wrap);
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
-            state.buffer.set_align(<span class="self">self</span>.align);
+            state.buffer.set_align(state.style.align);
         }
 
         <span class="kw">if </span><span class="self">self</span>.text != old.text
@@ -652,10 +532,10 @@
                 cx.fonts(),
                 <span class="kw-2">&amp;</span><span class="self">self</span>.text,
                 TextAttributes {
-                    family: <span class="self">self</span>.font_family.clone(),
-                    stretch: <span class="self">self</span>.font_stretch,
-                    weight: <span class="self">self</span>.font_weight,
-                    style: <span class="self">self</span>.font_style,
+                    family: state.style.font_family.clone(),
+                    stretch: state.style.font_stretch,
+                    weight: state.style.font_weight,
+                    style: state.style.font_style,
                 },
             );
 
@@ -696,7 +576,7 @@
             }
             Event::Animate(dt) =&gt; {
                 <span class="kw">if </span>content.has_hot() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
-                    state.timer += dt / <span class="self">self</span>.delay;
+                    state.timer += dt / state.style.delay;
                     cx.animate();
                 }
 
@@ -721,7 +601,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>window_size = cx.window().size - <span class="self">self</span>.padding.size();
+        <span class="kw">let </span>window_size = cx.window().size - state.style.padding.size();
         state.buffer.set_bounds(cx.fonts(), window_size);
         <span class="self">self</span>.content.layout(content, cx, data, space)
     }
@@ -742,7 +622,7 @@
         <span class="comment">// we need to try to move the tooltip so it fits on the screen
         </span><span class="kw">let </span>window_rect = Rect::min_size(Point::ZERO, cx.window().size);
 
-        <span class="kw">let </span>size = state.buffer.size() + <span class="self">self</span>.padding.size();
+        <span class="kw">let </span>size = state.buffer.size() + state.style.padding.size();
         <span class="kw">let </span><span class="kw-2">mut </span>offset = Vector::new(-size.width / <span class="number">2.0</span>, <span class="number">20.0</span>);
 
         <span class="kw">let </span>rect = Rect::min_size(state.position + offset, size);
@@ -757,13 +637,17 @@
             cx.translated(Vector::from(state.position + offset), |cx| {
                 cx.quad(
                     Rect::min_size(Point::ZERO, size),
-                    <span class="self">self</span>.background.fade(alpha),
-                    <span class="self">self</span>.border_radius,
-                    <span class="self">self</span>.border_width,
-                    <span class="self">self</span>.border_color.fade(alpha),
+                    state.style.background.fade(alpha),
+                    state.style.border_radius,
+                    state.style.border_width,
+                    state.style.border_color.fade(alpha),
                 );
 
-                cx.text(<span class="kw-2">&amp;</span>state.buffer, <span class="self">self</span>.color, <span class="self">self</span>.padding.offset());
+                cx.text(
+                    <span class="kw-2">&amp;</span>state.buffer,
+                    state.style.color,
+                    state.style.padding.offset(),
+                );
             });
         });
     }

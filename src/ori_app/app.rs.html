@@ -727,9 +727,6 @@
 <a href="#727" id="727">727</a>
 <a href="#728" id="728">728</a>
 <a href="#729" id="729">729</a>
-<a href="#730" id="730">730</a>
-<a href="#731" id="731">731</a>
-<a href="#732" id="732">732</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -755,8 +752,10 @@
 </span><span class="kw">pub struct </span>WindowRenderState&lt;<span class="lifetime">'a</span>&gt; {
     <span class="doccomment">/// The canvas to render.
     </span><span class="kw">pub </span>canvas: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>Canvas,
+
     <span class="doccomment">/// The size of the window.
     </span><span class="kw">pub </span>logical_size: Size,
+
     <span class="doccomment">/// The clear color of the window.
     </span><span class="kw">pub </span>clear_color: Color,
 }
@@ -859,7 +858,6 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) delegates: Vec&lt;Box&lt;<span class="kw">dyn </span>Delegate&lt;T&gt;&gt;&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) proxy: CommandProxy,
     <span class="kw">pub</span>(<span class="kw">crate</span>) receiver: CommandReceiver,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) style: Styles,
     <span class="kw">pub</span>(<span class="kw">crate</span>) requests: Vec&lt;AppRequest&lt;T&gt;&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) contexts: Contexts,
 }
@@ -1087,7 +1085,7 @@
 <span class="kw">impl</span>&lt;T&gt; App&lt;T&gt; {
     <span class="doccomment">/// Add a window to the application.
     </span><span class="kw">pub fn </span>add_window(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, <span class="kw-2">mut </span>ui: UiBuilder&lt;T&gt;, <span class="kw-2">mut </span>window: Window) {
-        <span class="kw">let </span><span class="kw-2">mut </span>view = <span class="self">self</span>.style.as_context(|| ui(data));
+        <span class="kw">let </span><span class="kw-2">mut </span>view = ui(data);
         <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
 
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
@@ -1095,13 +1093,10 @@
         <span class="kw">let </span>snapshot = window.snapshot();
 
         <span class="kw">let </span><span class="kw-2">mut </span>cx = BuildCx::new(<span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>view_state);
-        <span class="kw">let </span>state = <span class="self">self</span>.style.as_context(|| {
-            cx.insert_context(window.clone());
-            <span class="kw">let </span>state = view.build(<span class="kw-2">&amp;mut </span>cx, data);
-            window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
 
-            state
-        });
+        cx.insert_context(window.clone());
+        <span class="kw">let </span>state = view.build(<span class="kw-2">&amp;mut </span>cx, data);
+        window = cx.remove_context().expect(<span class="string">"Window context missing"</span>);
 
         <span class="kw">let </span>window_id = window.id();
         <span class="kw">let </span>window_state = WindowState {
@@ -1284,7 +1279,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
         <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
-            (<span class="self">self</span>.style).as_context(|| window_state.rebuild(data, <span class="kw-2">&amp;mut </span>base));
+            window_state.rebuild(data, <span class="kw-2">&amp;mut </span>base);
         }
     }
 
@@ -1307,9 +1302,7 @@
             <span class="kw">for </span>window_state <span class="kw">in </span><span class="self">self</span>.windows.values_mut() {
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
-                <span class="self">self</span>.style.as_context(|| {
-                    window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
-                });
+                window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
             }
         }
 
@@ -1351,9 +1344,7 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>base = BaseCx::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.contexts, <span class="kw-2">&amp;mut </span><span class="self">self</span>.proxy);
 
                 <span class="comment">// we send the event to the window, remembering to set the style context
-                </span><span class="self">self</span>.style.as_context(|| {
-                    window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
-                });
+                </span>window_state.event(data, <span class="kw-2">&amp;mut </span>base, <span class="kw-2">&amp;mut </span>rebuild, event);
             }
         }
 
@@ -1421,12 +1412,12 @@
 
         <span class="comment">// layout if needed
         </span><span class="kw">if </span>window_state.view_state.needs_layout() {
-            (<span class="self">self</span>.style).as_context(|| window_state.layout(data, <span class="kw-2">&amp;mut </span>base));
+            window_state.layout(data, <span class="kw-2">&amp;mut </span>base);
         }
 
         <span class="comment">// draw if needed
         </span><span class="kw">if </span>window_state.view_state.needs_draw() {
-            <span class="self">self</span>.style.as_context(|| window_state.draw(data, <span class="kw-2">&amp;mut </span>base));
+            window_state.draw(data, <span class="kw-2">&amp;mut </span>base);
 
             <span class="comment">// since hover state is determined by the scene, and since draw modifies the scene,
             // we must update the hover state, and send an UpdateHovered event if needed
@@ -1452,7 +1443,10 @@
         <span class="comment">// the clear color is the palette background color, but can be overridden by the window
         </span><span class="kw">let </span>clear_color = <span class="kw">match </span>window_state.window.color {
             <span class="prelude-val">Some</span>(color) =&gt; color,
-            <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.style.palette().background,
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">let </span>styles = (<span class="self">self</span>.contexts.get::&lt;Styles&gt;()).expect(<span class="string">"app has styles context"</span>);
+                styles.get_or(Color::WHITE, <span class="string">"palette.background"</span>)
+            }
         };
 
         <span class="prelude-val">Some</span>(WindowRenderState {

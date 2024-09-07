@@ -144,17 +144,21 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::Color,
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
     rebuild::Rebuild,
-    style::palette,
+    style::{key, Styled},
     text::{FontStretch, FontStyle, TextAttributes, TextBuffer},
     view::View,
 };
-<span class="kw">use </span>ori_macro::{include_font, Build};
+<span class="kw">use </span>ori_macro::{include_font, Build, Styled};
 
 <span class="kw">use crate</span>::{IconCode, IconFont};
 
@@ -167,7 +171,7 @@
 ///
 /// By default, the icon is rendered using the `icon.font` font family.
 /// This uses the [Font Awesome 6 Regular Free](https://fontawesome.com/) font by default.
-</span><span class="attr">#[derive(Build, Rebuild, PartialEq)]
+</span><span class="attr">#[derive(Styled, Build, Rebuild, PartialEq)]
 </span><span class="kw">pub struct </span>Icon {
     <span class="doccomment">/// The codepoint of the icon to display.
     </span><span class="attr">#[rebuild(draw)]
@@ -181,11 +185,13 @@
 
     <span class="doccomment">/// The size of the icon.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>size: f32,
+    #[styled(default = <span class="number">16.0</span>)]
+    </span><span class="kw">pub </span>size: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The color of the icon.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>color: Color,
+    #[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 }
 
 <span class="kw">impl </span>Icon {
@@ -194,8 +200,8 @@
         <span class="self">Self </span>{
             icon: icon.into(),
             solid: <span class="bool-val">false</span>,
-            size: <span class="number">16.0</span>,
-            color: palette().contrast,
+            size: key(<span class="string">"icon.size"</span>),
+            color: key(<span class="string">"icon.color"</span>),
         }
     }
 
@@ -214,7 +220,7 @@
         <span class="self">self</span>.icon.fonts()[<span class="number">0</span>]
     }
 
-    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BaseCx, buffer: <span class="kw-2">&amp;mut </span>TextBuffer) {
+    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BaseCx, buffer: <span class="kw-2">&amp;mut </span>TextBuffer, style: <span class="kw-2">&amp;</span>IconStyle) {
         <span class="kw">struct </span>FontsLoaded;
 
         <span class="comment">// ensure that all the fonts are loaded
@@ -226,7 +232,7 @@
 
         <span class="kw">let </span>font = <span class="self">self</span>.font();
 
-        buffer.set_metrics(cx.fonts(), <span class="self">self</span>.size, <span class="number">1.0</span>);
+        buffer.set_metrics(cx.fonts(), style.size, <span class="number">1.0</span>);
         buffer.set_text(
             cx.fonts(),
             <span class="self">self</span>.icon.as_str(),
@@ -242,6 +248,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>IconState {
+    style: IconStyle,
     buffer: TextBuffer,
 }
 
@@ -249,18 +256,19 @@
     <span class="kw">type </span>State = IconState;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
-        <span class="kw">let </span><span class="kw-2">mut </span>buffer = TextBuffer::new(cx.fonts(), <span class="self">self</span>.size, <span class="number">1.0</span>);
+        <span class="kw">let </span>style = IconStyle::styled(<span class="self">self</span>, cx.styles());
+        <span class="kw">let </span><span class="kw-2">mut </span>buffer = TextBuffer::new(cx.fonts(), style.size, <span class="number">1.0</span>);
 
-        <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>buffer);
+        <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;</span>style);
 
-        IconState { buffer }
+        IconState { style, buffer }
     }
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
 
         <span class="kw">if </span><span class="self">self </span>!= old {
-            <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>state.buffer);
+            <span class="self">self</span>.set_attributes(cx, <span class="kw-2">&amp;mut </span>state.buffer, <span class="kw-2">&amp;</span>state.style);
         }
     }
 
@@ -282,12 +290,12 @@
     ) -&gt; Size {
         state.buffer.set_bounds(cx.fonts(), space.max);
 
-        Size::all(<span class="self">self</span>.size)
+        Size::all(state.style.size)
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, _data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let </span>offset = cx.rect().center() - state.buffer.rect().center();
-        cx.text(<span class="kw-2">&amp;</span>state.buffer, <span class="self">self</span>.color, offset);
+        cx.text(<span class="kw-2">&amp;</span>state.buffer, state.style.color, offset);
     }
 }
 </code></pre></div></section></main></body></html>

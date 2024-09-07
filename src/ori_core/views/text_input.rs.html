@@ -682,43 +682,18 @@
 <a href="#682" id="682">682</a>
 <a href="#683" id="683">683</a>
 <a href="#684" id="684">684</a>
-<a href="#685" id="685">685</a>
-<a href="#686" id="686">686</a>
-<a href="#687" id="687">687</a>
-<a href="#688" id="688">688</a>
-<a href="#689" id="689">689</a>
-<a href="#690" id="690">690</a>
-<a href="#691" id="691">691</a>
-<a href="#692" id="692">692</a>
-<a href="#693" id="693">693</a>
-<a href="#694" id="694">694</a>
-<a href="#695" id="695">695</a>
-<a href="#696" id="696">696</a>
-<a href="#697" id="697">697</a>
-<a href="#698" id="698">698</a>
-<a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
-<a href="#703" id="703">703</a>
-<a href="#704" id="704">704</a>
-<a href="#705" id="705">705</a>
-<a href="#706" id="706">706</a>
-<a href="#707" id="707">707</a>
-<a href="#708" id="708">708</a>
-<a href="#709" id="709">709</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Shaping,
 };
-<span class="kw">use </span>ori_macro::{example, Build};
+<span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{Event, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
-    style::{style, Palette, Style, Styles},
+    style::{key, Styled},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -727,72 +702,16 @@
     window::Cursor,
 };
 
-<span class="kw">use </span><span class="kw">super</span>::TextStyle;
-
 <span class="doccomment">/// Create a new [`TextInput`].
 </span><span class="kw">pub fn </span>text_input&lt;T&gt;() -&gt; TextInput&lt;T&gt; {
     TextInput::new()
-}
-
-<span class="doccomment">/// The style of a text input.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>TextInputStyle {
-    <span class="doccomment">/// The font size of the text.
-    </span><span class="kw">pub </span>font_size: f32,
-
-    <span class="doccomment">/// The font family of the text.
-    </span><span class="kw">pub </span>font_family: FontFamily,
-
-    <span class="doccomment">/// The font weight of the text.
-    </span><span class="kw">pub </span>font_weight: FontWeight,
-
-    <span class="doccomment">/// The font stretch of the text.
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
-
-    <span class="doccomment">/// The font style of the text.
-    </span><span class="kw">pub </span>font_style: FontStyle,
-
-    <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
-
-    <span class="doccomment">/// The color of the placeholder text.
-    </span><span class="kw">pub </span>placeholder_color: Color,
-
-    <span class="doccomment">/// The horizontal alignment of the text.
-    </span><span class="kw">pub </span>align: TextAlign,
-
-    <span class="doccomment">/// The line height of the text.
-    </span><span class="kw">pub </span>line_height: f32,
-
-    <span class="doccomment">/// The text wrap of the text.
-    </span><span class="kw">pub </span>wrap: TextWrap,
-}
-
-<span class="kw">impl </span>Style <span class="kw">for </span>TextInputStyle {
-    <span class="kw">fn </span>styled(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>text_style = style.get::&lt;TextStyle&gt;();
-        <span class="kw">let </span>palette = style.get::&lt;Palette&gt;();
-
-        <span class="self">Self </span>{
-            font_size: text_style.font_size,
-            font_family: text_style.font_family,
-            font_weight: text_style.font_weight,
-            font_stretch: text_style.font_stretch,
-            font_style: text_style.font_style,
-            color: text_style.color,
-            placeholder_color: palette.surface_highest,
-            align: text_style.align,
-            line_height: text_style.line_height,
-            wrap: text_style.wrap,
-        }
-    }
 }
 
 <span class="doccomment">/// A text input.
 ///
 /// Can be styled using the [`TextInputStyle`].
 </span><span class="attr">#[example(name = <span class="string">"text_input"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
-#[derive(Build)]
+#[derive(Styled, Build)]
 </span><span class="kw">pub struct </span>TextInput&lt;T&gt; {
     <span class="doccomment">/// The text.
     </span><span class="attr">#[build(ignore)]
@@ -817,34 +736,44 @@
     </span><span class="kw">pub </span>multiline: bool,
 
     <span class="doccomment">/// The font size of the text.
-    </span><span class="kw">pub </span>font_size: f32,
+    </span><span class="attr">#[styled(default = <span class="number">16.0</span>)]
+    </span><span class="kw">pub </span>font_size: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The font family of the text.
-    </span><span class="kw">pub </span>font_family: FontFamily,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_family: Styled&lt;FontFamily&gt;,
 
     <span class="doccomment">/// The font weight of the text.
-    </span><span class="kw">pub </span>font_weight: FontWeight,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_weight: Styled&lt;FontWeight&gt;,
 
     <span class="doccomment">/// The font stretch of the text.
-    </span><span class="kw">pub </span>font_stretch: FontStretch,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_stretch: Styled&lt;FontStretch&gt;,
 
     <span class="doccomment">/// The font.into of the text.
-    </span><span class="kw">pub </span>font_style: FontStyle,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of the text.
-    </span><span class="kw">pub </span>color: Color,
+    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the placeholder text.
-    </span><span class="kw">pub </span>placeholder_color: Color,
+    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::grayscale(<span class="number">0.9</span>))]
+    </span><span class="kw">pub </span>placeholder_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The vertical alignment of the text.
-    </span><span class="kw">pub </span>align: TextAlign,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>align: Styled&lt;TextAlign&gt;,
 
     <span class="doccomment">/// The line height of the text.
-    </span><span class="kw">pub </span>line_height: f32,
+    </span><span class="attr">#[styled(default = <span class="number">1.2</span>)]
+    </span><span class="kw">pub </span>line_height: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The text wrap of the text.
-    </span><span class="kw">pub </span>wrap: TextWrap,
+    </span><span class="attr">#[styled(default)]
+    </span><span class="kw">pub </span>wrap: Styled&lt;TextWrap&gt;,
 }
 
 <span class="kw">impl</span>&lt;T&gt; Default <span class="kw">for </span>TextInput&lt;T&gt; {
@@ -856,27 +785,22 @@
 <span class="kw">impl</span>&lt;T&gt; TextInput&lt;T&gt; {
     <span class="doccomment">/// Create a new text input view.
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::styled(style())
-    }
-
-    <span class="doccomment">/// Create a new text input view with a style.
-    </span><span class="kw">pub fn </span>styled(style: TextInputStyle) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             text: <span class="prelude-val">None</span>,
             on_input: <span class="prelude-val">None</span>,
             on_submit: <span class="prelude-val">None</span>,
             placeholder: String::from(<span class="string">"..."</span>),
             multiline: <span class="bool-val">false</span>,
-            font_size: style.font_size,
-            font_family: style.font_family,
-            font_weight: style.font_weight,
-            font_stretch: style.font_stretch,
-            font_style: style.font_style,
-            color: style.color,
-            placeholder_color: style.placeholder_color,
-            align: style.align,
-            line_height: style.line_height,
-            wrap: style.wrap,
+            font_size: key(<span class="string">"text_input.font_size"</span>),
+            font_family: key(<span class="string">"text_input.font_family"</span>),
+            font_weight: key(<span class="string">"text_input.font_weight"</span>),
+            font_stretch: key(<span class="string">"text_input.font_stretch"</span>),
+            font_style: key(<span class="string">"text_input.font_style"</span>),
+            color: key(<span class="string">"text_input.color"</span>),
+            placeholder_color: key(<span class="string">"text_input.placeholder_color"</span>),
+            align: key(<span class="string">"text_input.align"</span>),
+            line_height: key(<span class="string">"text_input.line_height"</span>),
+            wrap: key(<span class="string">"text_input.wrap"</span>),
         }
     }
 
@@ -908,25 +832,26 @@
 
     <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, state: <span class="kw-2">&amp;mut </span>TextInputState) {
         <span class="kw">let </span>attrs = TextAttributes {
-            family: <span class="self">self</span>.font_family.clone(),
-            stretch: <span class="self">self</span>.font_stretch,
-            weight: <span class="self">self</span>.font_weight,
-            style: <span class="self">self</span>.font_style,
+            family: state.style.font_family.clone(),
+            stretch: state.style.font_stretch,
+            weight: state.style.font_weight,
+            style: state.style.font_style,
         };
         <span class="kw">let </span>placeholder_attrs = TextAttributes {
-            family: <span class="self">self</span>.font_family.clone(),
-            stretch: <span class="self">self</span>.font_stretch,
-            weight: <span class="self">self</span>.font_weight,
-            style: <span class="self">self</span>.font_style,
+            family: state.style.font_family.clone(),
+            stretch: state.style.font_stretch,
+            weight: state.style.font_weight,
+            style: state.style.font_style,
         };
         <span class="kw">let </span>metrics = Metrics {
-            font_size: <span class="self">self</span>.font_size,
-            line_height: <span class="self">self</span>.line_height * <span class="self">self</span>.font_size,
+            font_size: state.style.font_size,
+            line_height: state.style.line_height * state.style.font_size,
         };
 
         <span class="comment">/* editor */
-        </span><span class="kw">let </span>buffer = state.buffer_mut();
-        buffer.set_wrap(<span class="kw-2">&amp;mut </span>fonts.font_system, <span class="self">self</span>.wrap.to_cosmic_text());
+        </span><span class="kw">let </span>wrap = state.style.wrap.to_cosmic_text();
+        <span class="kw">let </span>buffer = state.buffer_mut();
+        buffer.set_wrap(<span class="kw-2">&amp;mut </span>fonts.font_system, wrap);
         buffer.set_metrics(<span class="kw-2">&amp;mut </span>fonts.font_system, metrics);
 
         <span class="kw">let </span><span class="kw-2">mut </span>text = state.text();
@@ -943,17 +868,17 @@
         );
 
         <span class="comment">/* placeholder */
-        </span>state.placeholder.set_wrap(fonts, <span class="self">self</span>.wrap);
-        (state.placeholder).set_metrics(fonts, <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+        </span>state.placeholder.set_wrap(fonts, state.style.wrap);
+        (state.placeholder).set_metrics(fonts, state.style.font_size, state.style.line_height);
         (state.placeholder).set_text(fonts, <span class="kw-2">&amp;</span><span class="self">self</span>.placeholder, placeholder_attrs);
     }
 
-    <span class="kw">fn </span>set_attrs_list(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;mut </span>Buffer) {
+    <span class="kw">fn </span>set_attrs_list(<span class="kw-2">&amp;</span><span class="self">self</span>, buffer: <span class="kw-2">&amp;mut </span>Buffer, style: <span class="kw-2">&amp;</span>TextInputStyle) {
         <span class="kw">let </span>attrs = TextAttributes {
-            family: <span class="self">self</span>.font_family.clone(),
-            stretch: <span class="self">self</span>.font_stretch,
-            weight: <span class="self">self</span>.font_weight,
-            style: <span class="self">self</span>.font_style,
+            family: style.font_family.clone(),
+            stretch: style.font_stretch,
+            weight: style.font_weight,
+            style: style.font_style,
         };
 
         <span class="kw">let </span>attrs_list = AttrsList::new(attrs.to_cosmic_text());
@@ -966,6 +891,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>TextInputState {
+    style: TextInputStyle,
     editor: Editor&lt;<span class="lifetime">'static</span>&gt;,
     placeholder: TextBuffer,
     dragging: bool,
@@ -1044,17 +970,20 @@
     <span class="kw">type </span>State = TextInputState;
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, _data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
+        <span class="kw">let </span>style = TextInputStyle::styled(<span class="self">self</span>, cx.styles());
+
         <span class="kw">let </span>editor = Editor::new(Buffer::new(
             <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
             Metrics {
-                font_size: <span class="self">self</span>.font_size,
-                line_height: <span class="self">self</span>.line_height * <span class="self">self</span>.font_size,
+                font_size: style.font_size,
+                line_height: style.line_height * style.font_size,
             },
         ));
 
-        <span class="kw">let </span>placeholder = TextBuffer::new(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+        <span class="kw">let </span>placeholder = TextBuffer::new(cx.fonts(), style.font_size, style.line_height);
 
         <span class="kw">let </span><span class="kw-2">mut </span>state = TextInputState {
+            style,
             editor,
             placeholder,
             dragging: <span class="bool-val">false</span>,
@@ -1063,10 +992,10 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>text) = <span class="self">self</span>.text {
             <span class="kw">let </span>attrs = TextAttributes {
-                family: <span class="self">self</span>.font_family.clone(),
-                stretch: <span class="self">self</span>.font_stretch,
-                weight: <span class="self">self</span>.font_weight,
-                style: <span class="self">self</span>.font_style,
+                family: state.style.font_family.clone(),
+                stretch: state.style.font_stretch,
+                weight: state.style.font_weight,
+                style: state.style.font_style,
             };
 
             state.buffer_mut().set_text(
@@ -1084,32 +1013,38 @@
 
     <span class="kw">fn </span>rebuild(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>RebuildCx, _data: <span class="kw-2">&amp;mut </span>T, old: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span><span class="self">self</span>.font_size != old.font_size || <span class="self">self</span>.line_height != old.line_height {
-            state.buffer_mut().set_metrics(
-                <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
-                Metrics {
-                    font_size: <span class="self">self</span>.font_size,
-                    line_height: <span class="self">self</span>.line_height * <span class="self">self</span>.font_size,
-                },
-            );
+            <span class="kw">let </span>metrics = Metrics {
+                font_size: state.style.font_size,
+                line_height: state.style.line_height * state.style.font_size,
+            };
 
-            (state.placeholder).set_metrics(cx.fonts(), <span class="self">self</span>.font_size, <span class="self">self</span>.line_height);
+            (state.buffer_mut()).set_metrics(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, metrics);
+
+            (state.placeholder).set_metrics(
+                cx.fonts(),
+                state.style.font_size,
+                state.style.line_height,
+            );
 
             cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.wrap != old.wrap {
-            (state.buffer_mut()).set_wrap(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, <span class="self">self</span>.wrap.to_cosmic_text());
-            state.placeholder.set_wrap(cx.fonts(), <span class="self">self</span>.wrap);
+            <span class="kw">let </span>wrap = state.style.wrap.to_cosmic_text();
+            (state.buffer_mut()).set_wrap(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, wrap);
+            state.placeholder.set_wrap(cx.fonts(), state.style.wrap);
 
             cx.layout();
         }
 
         <span class="kw">if </span><span class="self">self</span>.align != old.align {
+            <span class="kw">let </span>align = state.style.align.to_cosmic_text();
+
             <span class="kw">for </span>line <span class="kw">in </span>state.buffer_mut().lines.iter_mut() {
-                line.set_align(<span class="prelude-val">Some</span>(<span class="self">self</span>.align.to_cosmic_text()));
+                line.set_align(<span class="prelude-val">Some</span>(align));
             }
 
-            state.placeholder.set_align(<span class="self">self</span>.align);
+            state.placeholder.set_align(state.style.align);
 
             cx.layout();
         }
@@ -1122,10 +1057,10 @@
         <span class="kw">if </span><span class="self">self</span>.text != <span class="prelude-val">Some</span>(state.text()) &amp;&amp; <span class="self">self</span>.text.is_some() {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>text) = <span class="self">self</span>.text.clone() {
                 <span class="kw">let </span>attrs = TextAttributes {
-                    family: <span class="self">self</span>.font_family.clone(),
-                    stretch: <span class="self">self</span>.font_stretch,
-                    weight: <span class="self">self</span>.font_weight,
-                    style: <span class="self">self</span>.font_style,
+                    family: state.style.font_family.clone(),
+                    stretch: state.style.font_stretch,
+                    weight: state.style.font_weight,
+                    style: state.style.font_style,
                 };
 
                 <span class="kw">if </span>text.ends_with(<span class="string">'\n'</span>) {
@@ -1142,7 +1077,12 @@
                 cx.layout();
             }
         } <span class="kw">else if </span>attrs_changed {
-            <span class="self">self</span>.set_attrs_list(state.buffer_mut());
+            <span class="kw">let </span>buffer = <span class="kw">match </span>state.editor.buffer_ref_mut() {
+                BufferRef::Owned(buffer) =&gt; buffer,
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+            };
+
+            <span class="self">self</span>.set_attrs_list(buffer, <span class="kw-2">&amp;</span>state.style);
 
             cx.layout();
         }
@@ -1152,10 +1092,10 @@
                 cx.fonts(),
                 <span class="kw-2">&amp;</span><span class="self">self</span>.placeholder,
                 TextAttributes {
-                    family: <span class="self">self</span>.font_family.clone(),
-                    stretch: <span class="self">self</span>.font_stretch,
-                    weight: <span class="self">self</span>.font_weight,
-                    style: <span class="self">self</span>.font_style,
+                    family: state.style.font_family.clone(),
+                    stretch: state.style.font_stretch,
+                    weight: state.style.font_weight,
+                    style: state.style.font_style,
                 },
             );
 
@@ -1185,7 +1125,12 @@
                             (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Insert(c));
                         }
 
-                        <span class="self">self</span>.set_attrs_list(state.buffer_mut());
+                        <span class="kw">let </span>buffer = <span class="kw">match </span>state.editor.buffer_ref_mut() {
+                            BufferRef::Owned(buffer) =&gt; buffer,
+                            <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+                        };
+
+                        <span class="self">self</span>.set_attrs_list(buffer, <span class="kw-2">&amp;</span>state.style);
 
                         cx.layout();
                         state.blink = <span class="number">0.0</span>;
@@ -1352,7 +1297,7 @@
             state.placeholder.size()
         };
 
-        size.height = f32::max(size.height, <span class="self">self</span>.font_size);
+        size.height = f32::max(size.height, state.style.font_size);
         space.fit(size)
     }
 
@@ -1376,16 +1321,17 @@
                     <span class="kw">if let </span><span class="prelude-val">Some</span>((start, width)) = run.highlight(start, end) {
                         <span class="kw">let </span>min =
                             Point::new(cx.rect().min.x + start, cx.rect().min.y + run.line_top);
-                        <span class="kw">let </span>size = Size::new(width, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
+                        <span class="kw">let </span>size =
+                            Size::new(width, state.style.font_size * state.style.line_height);
 
                         <span class="kw">let </span>highlight = Rect::min_size(min, size);
 
-                        cx.fill_rect(highlight, <span class="self">self</span>.color.fade(<span class="number">0.2</span>));
+                        cx.fill_rect(highlight, state.style.color.fade(<span class="number">0.2</span>));
                     }
                 }
 
                 <span class="kw">if </span>i == cursor.line {
-                    <span class="kw">let </span>size = Size::new(<span class="number">1.0</span>, <span class="self">self</span>.font_size * <span class="self">self</span>.line_height);
+                    <span class="kw">let </span>size = Size::new(<span class="number">1.0</span>, state.style.font_size * state.style.line_height);
 
                     <span class="kw">let </span>min = <span class="kw">match </span>run.glyphs.get(cursor.index) {
                         <span class="prelude-val">Some</span>(glyph) =&gt; {
@@ -1403,15 +1349,19 @@
                     <span class="kw">let </span>cursor = Rect::min_size(min.round(), size);
 
                     <span class="kw">let </span>blink = state.blink.cos() * <span class="number">0.5 </span>+ <span class="number">0.5</span>;
-                    cx.fill_rect(cursor, <span class="self">self</span>.color.fade(blink));
+                    cx.fill_rect(cursor, state.style.color.fade(blink));
                 }
             }
 
             <span class="comment">/* draw the text */
             </span><span class="kw">if </span>!state.text().is_empty() {
-                cx.text_raw(state.buffer(), <span class="self">self</span>.color, Vector::ZERO)
+                cx.text_raw(state.buffer(), state.style.color, Vector::ZERO)
             } <span class="kw">else </span>{
-                cx.text(<span class="kw-2">&amp;</span>state.placeholder, <span class="self">self</span>.placeholder_color, Vector::ZERO)
+                cx.text(
+                    <span class="kw-2">&amp;</span>state.placeholder,
+                    state.style.placeholder_color,
+                    Vector::ZERO,
+                )
             };
         });
     }

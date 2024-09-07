@@ -89,14 +89,10 @@
 <a href="#89" id="89">89</a>
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
-<a href="#92" id="92">92</a>
-<a href="#93" id="93">93</a>
-<a href="#94" id="94">94</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    style::Styles,
     view::View,
 };
 
@@ -114,7 +110,6 @@
     </span>data: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; D&gt;&gt;,
     <span class="attr">#[allow(clippy::type_complexity)]
     </span>build: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; V&gt;&gt;,
-    styles: Styles,
 }
 
 <span class="kw">impl</span>&lt;T, V: View&lt;T&gt;, D: PartialEq&gt; Memo&lt;T, V, D&gt; {
@@ -126,16 +121,15 @@
         <span class="self">Self </span>{
             data: <span class="prelude-val">Some</span>(Box::new(data)),
             build: <span class="prelude-val">Some</span>(Box::new(build)),
-            styles: Styles::snapshot(),
         }
     }
 
     <span class="kw">fn </span>data(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) -&gt; D {
-        (<span class="self">self</span>.styles).as_context(|| (<span class="self">self</span>.data.take().expect(<span class="string">"Memo::data called twice"</span>))(data))
+        (<span class="self">self</span>.data.take().expect(<span class="string">"Memo::data called twice"</span>))(data)
     }
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T) -&gt; V {
-        (<span class="self">self</span>.styles).as_context(|| (<span class="self">self</span>.build.take().expect(<span class="string">"Memo::build called twice"</span>))(data))
+        (<span class="self">self</span>.build.take().expect(<span class="string">"Memo::build called twice"</span>))(data)
     }
 }
 

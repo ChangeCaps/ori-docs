@@ -254,34 +254,9 @@
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
-<span class="kw">use </span>ori_macro::{example, Build};
+<span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::{BorderRadius, BorderWidth, Color, Curve, FillRule},
@@ -289,7 +264,7 @@
     event::{Event, PointerButton},
     layout::{Affine, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{style, Style, Styles},
+    style::{key, Styled},
     transition::Transition,
     view::{Pod, State, View},
 };
@@ -299,44 +274,11 @@
     Collapsing::new(header, content)
 }
 
-<span class="doccomment">/// The style of a collapsing view.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>CollapsingStyle {
-    <span class="doccomment">/// The transition of the view.
-    </span><span class="kw">pub </span>transition: Transition,
-    <span class="doccomment">/// The size of the icon.
-    </span><span class="kw">pub </span>icon_size: f32,
-    <span class="doccomment">/// The color of the icon.
-    </span><span class="kw">pub </span>icon_color: Color,
-    <span class="doccomment">/// The background color of the header.
-    </span><span class="kw">pub </span>background: Color,
-    <span class="doccomment">/// The border width of the header.
-    </span><span class="kw">pub </span>border_width: BorderWidth,
-    <span class="doccomment">/// The border radius of the header.
-    </span><span class="kw">pub </span>border_radius: BorderRadius,
-    <span class="doccomment">/// The color of the border of the header.
-    </span><span class="kw">pub </span>border_color: Color,
-}
-
-<span class="kw">impl </span>Style <span class="kw">for </span>CollapsingStyle {
-    <span class="kw">fn </span>styled(style: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            transition: Transition::ease(<span class="number">0.1</span>),
-            icon_size: <span class="number">16.0</span>,
-            icon_color: style.palette().primary,
-            background: Color::TRANSPARENT,
-            border_width: BorderWidth::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>),
-            border_radius: BorderRadius::all(<span class="number">0.0</span>),
-            border_color: style.palette().surface_higher,
-        }
-    }
-}
-
 <span class="doccomment">/// A collapsing view.
 ///
 /// Can be styled using the [`CollapsingStyle`].
 </span><span class="attr">#[example(name = <span class="string">"collapsing"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
-#[derive(Build, Rebuild)]
+#[derive(Styled, Build, Rebuild)]
 </span><span class="kw">pub struct </span>Collapsing&lt;T, H, V&gt; {
     <span class="doccomment">/// The header.
     </span><span class="attr">#[build(ignore)]
@@ -359,54 +301,56 @@
     </span><span class="kw">pub </span>default_open: bool,
 
     <span class="doccomment">/// The transition of the view.
-    </span><span class="kw">pub </span>transition: Transition,
+    </span><span class="attr">#[styled(default = Transition::ease(<span class="number">0.1</span>))]
+    </span><span class="kw">pub </span>transition: Styled&lt;Transition&gt;,
 
     <span class="doccomment">/// The size of the icon.
     </span><span class="attr">#[rebuild(layout)]
-    </span><span class="kw">pub </span>icon_size: f32,
+    #[styled(default = <span class="number">16.0</span>)]
+    </span><span class="kw">pub </span>icon_size: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The color of the icon.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>icon_color: Color,
+    #[styled(default -&gt; <span class="string">"palette.primary" </span>or Color::BLUE)]
+    </span><span class="kw">pub </span>icon_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The background color of the header.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>background: Color,
+    #[styled(default = Color::TRANSPARENT)]
+    </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border width of the header.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_width: BorderWidth,
+    #[styled(default = BorderWidth::new(<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>))]
+    </span><span class="kw">pub </span>border_width: Styled&lt;BorderWidth&gt;,
 
     <span class="doccomment">/// The border radius of the header.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_radius: BorderRadius,
+    #[styled(default = BorderRadius::all(<span class="number">0.0</span>))]
+    </span><span class="kw">pub </span>border_radius: Styled&lt;BorderRadius&gt;,
 
     <span class="doccomment">/// The color of the border of the header.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_color: Color,
+    #[styled(default -&gt; <span class="string">"palette.outline" </span>or Color::BLACK)]
+    </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 
 <span class="kw">impl</span>&lt;T, H, V&gt; Collapsing&lt;T, H, V&gt; {
     <span class="doccomment">/// Create a new [`Collapsing`] view.
     </span><span class="kw">pub fn </span>new(header: H, content: V) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::styled(header, content, style())
-    }
-
-    <span class="doccomment">/// Create a new [`Collapsing`] view with a style.
-    </span><span class="kw">pub fn </span>styled(header: H, content: V, style: CollapsingStyle) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             header: Pod::new(header),
             content: Pod::new(content),
             on_open: <span class="prelude-val">None</span>,
             open: <span class="prelude-val">None</span>,
             default_open: <span class="bool-val">false</span>,
-            transition: style.transition,
-            icon_size: style.icon_size,
-            icon_color: style.icon_color,
-            background: style.background,
-            border_width: style.border_width,
-            border_radius: style.border_radius,
-            border_color: style.border_color,
+            transition: key(<span class="string">"collapsing.transition"</span>),
+            icon_size: key(<span class="string">"collapsing.icon_size"</span>),
+            icon_color: key(<span class="string">"collapsing.icon_color"</span>),
+            background: key(<span class="string">"collapsing.background"</span>),
+            border_width: key(<span class="string">"collapsing.border_width"</span>),
+            border_radius: key(<span class="string">"collapsing.border_radius"</span>),
+            border_color: key(<span class="string">"collapsing.border_color"</span>),
         }
     }
 
@@ -419,10 +363,11 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>CollapsingState&lt;T, H: View&lt;T&gt;, V: View&lt;T&gt;&gt; {
-    <span class="kw">pub </span>header: State&lt;T, H&gt;,
-    <span class="kw">pub </span>content: State&lt;T, V&gt;,
-    <span class="kw">pub </span>open: bool,
-    <span class="kw">pub </span>t: f32,
+    style: CollapsingStyle,
+    header: State&lt;T, H&gt;,
+    content: State&lt;T, V&gt;,
+    open: bool,
+    t: f32,
 }
 
 <span class="kw">impl</span>&lt;T, H: View&lt;T&gt;, V: View&lt;T&gt;&gt; View&lt;T&gt; <span class="kw">for </span>Collapsing&lt;T, H, V&gt; {
@@ -432,6 +377,7 @@
         <span class="kw">let </span>open = <span class="self">self</span>.open.unwrap_or(<span class="self">self</span>.default_open);
 
         CollapsingState {
+            style: CollapsingStyle::styled(<span class="self">self</span>, cx.styles()),
             header: <span class="self">self</span>.header.build(cx, data),
             content: <span class="self">self</span>.content.build(cx, data),
             open,
@@ -472,7 +418,7 @@
                 }
             }
             Event::Animate(dt) =&gt; {
-                <span class="kw">if </span><span class="self">self</span>.transition.step(<span class="kw-2">&amp;mut </span>state.t, state.open, <span class="kw-2">*</span>dt) {
+                <span class="kw">if </span>state.style.transition.step(<span class="kw-2">&amp;mut </span>state.t, state.open, <span class="kw-2">*</span>dt) {
                     cx.animate();
                     cx.layout();
                 }
@@ -488,16 +434,16 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>t = <span class="self">self</span>.transition.get(state.t);
+        <span class="kw">let </span>t = state.style.transition.get(state.t);
 
-        <span class="kw">let </span>header_space = space.loosen_height() - Size::new(<span class="self">self</span>.icon_size, <span class="number">0.0</span>);
+        <span class="kw">let </span>header_space = space.loosen_height() - Size::new(state.style.icon_size, <span class="number">0.0</span>);
         <span class="kw">let </span>header_size = (<span class="self">self</span>.header).layout(<span class="kw-2">&amp;mut </span>state.header, cx, data, header_space);
 
-        <span class="kw">let </span>header_width = header_size.width + <span class="self">self</span>.icon_size;
-        <span class="kw">let </span>header_height = header_size.height.max(<span class="self">self</span>.icon_size);
+        <span class="kw">let </span>header_width = header_size.width + state.style.icon_size;
+        <span class="kw">let </span>header_height = header_size.height.max(state.style.icon_size);
 
         <span class="kw">let </span>header_offset = (header_height - header_size.height) / <span class="number">2.0</span>;
-        (state.header).translate(Vector::new(<span class="self">self</span>.icon_size, header_offset));
+        (state.header).translate(Vector::new(state.style.icon_size, header_offset));
 
         <span class="kw">let </span>content_space = space - Size::new(<span class="number">0.0</span>, header_size.height);
         <span class="kw">let </span>content_size = (<span class="self">self</span>.content).layout(<span class="kw-2">&amp;mut </span>state.content, cx, data, content_space);
@@ -511,26 +457,30 @@
     }
 
     <span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">let </span>t = <span class="self">self</span>.transition.get(state.t);
+        <span class="kw">let </span>t = state.style.transition.get(state.t);
 
-        <span class="kw">let </span>header_height = <span class="self">self</span>.icon_size.max(state.header.size().height);
+        <span class="kw">let </span>header_height = state.style.icon_size.max(state.header.size().height);
         <span class="kw">let </span>header_size = Size::new(cx.rect().width(), header_height);
         <span class="kw">let </span>header_rect = Rect::min_size(cx.rect().top_left(), header_size);
 
         cx.quad(
             header_rect,
-            <span class="self">self</span>.background,
-            <span class="self">self</span>.border_radius,
-            <span class="self">self</span>.border_width,
-            <span class="self">self</span>.border_color,
+            state.style.background,
+            state.style.border_radius,
+            state.style.border_width,
+            state.style.border_color,
         );
 
-        <span class="kw">let </span>transform = Affine::translate(Vector::new(<span class="self">self</span>.icon_size / <span class="number">2.0</span>, header_height / <span class="number">2.0</span>))
-            * Affine::scale(Vector::all(<span class="self">self</span>.icon_size))
-            * Affine::rotate(PI / <span class="number">2.0 </span>* t);
+        <span class="kw">let </span><span class="kw-2">mut </span>transform = Affine::translate(Vector::new(
+            state.style.icon_size / <span class="number">2.0</span>,
+            header_height / <span class="number">2.0</span>,
+        ));
+
+        transform <span class="kw-2">*</span>= Affine::scale(Vector::all(state.style.icon_size));
+        transform <span class="kw-2">*</span>= Affine::rotate(PI / <span class="number">2.0 </span>* t);
 
         cx.transformed(transform, |cx| {
-            cx.fill(icon(), FillRule::EvenOdd, <span class="self">self</span>.icon_color);
+            cx.fill(icon(), FillRule::EvenOdd, state.style.icon_color);
         });
 
         cx.canvas().trigger(state.header.rect(), state.header.id());

@@ -212,16 +212,10 @@
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    style::Styles,
     transition::Transition,
     view::View,
 };
@@ -354,14 +348,10 @@
 <span class="kw">impl</span>&lt;T, V, S&gt; Animate&lt;T, V, S&gt; {
     <span class="doccomment">/// Create a new [`Animate`].
     </span><span class="kw">pub fn </span>new(
-        <span class="kw-2">mut </span>animate: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Option</span>&lt;V&gt; + <span class="lifetime">'static</span>,
+        animate: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Option</span>&lt;V&gt; + <span class="lifetime">'static</span>,
     ) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>snapshot = Styles::snapshot();
-
         <span class="self">Self </span>{
-            animate: Box::new(<span class="kw">move </span>|state, cx, data, event| {
-                snapshot.as_context(|| animate(state, cx, data, event))
-            }),
+            animate: Box::new(animate),
         }
     }
 }

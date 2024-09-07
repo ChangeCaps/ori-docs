@@ -565,6 +565,7 @@
 <a href="#565" id="565">565</a>
 <a href="#566" id="566">566</a>
 <a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::hash::{Hash, Hasher};
 
 <span class="kw">use crate</span>::{
@@ -910,7 +911,8 @@
         <span class="self">self</span>.line_to(p1);
     }
 
-    <span class="kw">fn </span>push_line(
+    <span class="attr">#[allow(clippy::too_many_arguments)]
+    </span><span class="kw">fn </span>push_line(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         outside: <span class="kw-2">&amp;mut </span><span class="self">Self</span>,
         p0: Point,

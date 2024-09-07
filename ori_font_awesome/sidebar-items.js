@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["IconCode","IconFont"],"fn":["icon"],"struct":["Icon"]};
+window.SIDEBAR_ITEMS = {"enum":["IconCode","IconFont"],"fn":["icon"],"struct":["Icon","IconStyle"]};
