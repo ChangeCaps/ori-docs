@@ -274,6 +274,19 @@
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
 
 <span class="kw">use crate</span>::{
@@ -309,19 +322,23 @@
     </span><span class="kw">pub </span>axis: Axis,
 
     <span class="doccomment">/// The transition of the scrollbar.
-    </span><span class="kw">pub </span>transition: Transition,
+    </span><span class="attr">#[styled(default = Transition::ease(<span class="number">0.1</span>))]
+    </span><span class="kw">pub </span>transition: Styled&lt;Transition&gt;,
 
     <span class="doccomment">/// The inset of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>inset: f32,
+    #[styled(default = <span class="number">8.0</span>)]
+    </span><span class="kw">pub </span>inset: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The width of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>width: f32,
+    #[styled(default = <span class="number">6.0</span>)]
+    </span><span class="kw">pub </span>width: Styled&lt;f32&gt;,
 
     <span class="doccomment">/// The radius of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    </span><span class="kw">pub </span>border_radius: BorderRadius,
+    #[styled(default = BorderRadius::all(<span class="number">3.0</span>))]
+    </span><span class="kw">pub </span>border_radius: Styled&lt;BorderRadius&gt;,
 
     <span class="doccomment">/// The color of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
@@ -340,29 +357,38 @@
         <span class="self">Self </span>{
             content: Pod::new(content),
             axis,
-            transition: Transition::ease(<span class="number">0.1</span>),
-            width: <span class="number">6.0</span>,
-            inset: <span class="number">8.0</span>,
-            border_radius: BorderRadius::all(<span class="number">3.0</span>),
+            transition: key(<span class="string">"scroll.transition"</span>),
+            width: key(<span class="string">"scroll.width"</span>),
+            inset: key(<span class="string">"scroll.inset"</span>),
+            border_radius: key(<span class="string">"scroll.border_radius"</span>),
             color: key(<span class="string">"scroll.color"</span>),
             knob_color: key(<span class="string">"scroll.knob_color"</span>),
         }
     }
 
-    <span class="kw">fn </span>scrollbar_rect(<span class="kw-2">&amp;</span><span class="self">self</span>, rect: Rect) -&gt; Rect {
+    <span class="kw">fn </span>scrollbar_rect(<span class="kw-2">&amp;</span><span class="self">self</span>, style: <span class="kw-2">&amp;</span>ScrollStyle, rect: Rect) -&gt; Rect {
         <span class="kw">let </span>(major, minor) = <span class="self">self</span>.axis.unpack(rect.size());
 
-        <span class="kw">let </span>length = major - <span class="self">self</span>.inset * <span class="number">2.0</span>;
+        <span class="kw">let </span>length = major - style.inset * <span class="number">2.0</span>;
 
-        <span class="kw">let </span>major_min = <span class="self">self</span>.inset;
-        <span class="kw">let </span>minor_min = minor - <span class="self">self</span>.width - <span class="self">self</span>.inset;
+        <span class="kw">let </span>major_min = style.inset;
+        <span class="kw">let </span>minor_min = minor - style.width - style.inset;
         <span class="kw">let </span>offset = <span class="self">self</span>.axis.pack::&lt;Vector&gt;(major_min, minor_min);
 
-        Rect::min_size(rect.top_left() + offset, <span class="self">self</span>.axis.pack(length, <span class="self">self</span>.width))
+        Rect::min_size(
+            rect.top_left() + offset,
+            <span class="self">self</span>.axis.pack(length, style.width),
+        )
     }
 
-    <span class="kw">fn </span>scrollbar_knob_rect(<span class="kw-2">&amp;</span><span class="self">self</span>, rect: Rect, overflow: f32, scroll: f32) -&gt; Rect {
-        <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(rect);
+    <span class="kw">fn </span>scrollbar_knob_rect(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        style: <span class="kw-2">&amp;</span>ScrollStyle,
+        rect: Rect,
+        overflow: f32,
+        scroll: f32,
+    ) -&gt; Rect {
+        <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(style, rect);
 
         <span class="kw">let </span>(major_min, minor_min) = <span class="self">self</span>.axis.unpack(scrollbar_rect.min);
         <span class="kw">let </span>(major_size, minor_size) = <span class="self">self</span>.axis.unpack(scrollbar_rect.size());
@@ -432,7 +458,7 @@
         </span><span class="kw">if let </span>Event::PointerMoved(e) = event {
             <span class="kw">let </span>local = cx.local(e.position);
 
-            <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(cx.rect());
+            <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(<span class="kw-2">&amp;</span>state.style, cx.rect());
             state.scrollbar_hot = scrollbar_rect.contains(local);
 
             <span class="kw">if </span>cx.is_active() {
@@ -465,12 +491,12 @@
 
         <span class="kw">let </span>on = cx.is_hot() || cx.has_hot() || cx.is_active() || state.scrollbar_hot;
 
-        <span class="kw">if </span>!<span class="self">self</span>.transition.complete(state.t, on) {
+        <span class="kw">if </span>!state.style.transition.complete(state.t, on) {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>(<span class="self">self</span>.transition).step(<span class="kw-2">&amp;mut </span>state.t, on, <span class="kw-2">*</span>dt) {
+            <span class="kw">if </span>(state.style.transition).step(<span class="kw-2">&amp;mut </span>state.t, on, <span class="kw-2">*</span>dt) {
                 cx.animate();
                 cx.draw();
             }
@@ -534,17 +560,17 @@
         <span class="kw">let </span>knob_color = state.style.knob_color.fade(<span class="number">0.9</span>);
 
         cx.quad(
-            <span class="self">self</span>.scrollbar_rect(cx.rect()),
-            track_color.fade(<span class="self">self</span>.transition.get(state.t)),
-            <span class="self">self</span>.border_radius,
+            <span class="self">self</span>.scrollbar_rect(<span class="kw-2">&amp;</span>state.style, cx.rect()),
+            track_color.fade(state.style.transition.get(state.t)),
+            state.style.border_radius,
             <span class="number">0.0</span>,
             Color::TRANSPARENT,
         );
 
         cx.quad(
-            <span class="self">self</span>.scrollbar_knob_rect(cx.rect(), overflow, state.scroll),
-            knob_color.fade(<span class="self">self</span>.transition.get(state.t)),
-            <span class="self">self</span>.border_radius,
+            <span class="self">self</span>.scrollbar_knob_rect(<span class="kw-2">&amp;</span>state.style, cx.rect(), overflow, state.scroll),
+            knob_color.fade(state.style.transition.get(state.t)),
+            state.style.border_radius,
             <span class="number">0.0</span>,
             Color::TRANSPARENT,
         );
