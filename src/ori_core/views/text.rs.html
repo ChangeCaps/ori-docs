@@ -226,7 +226,7 @@
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    style::{key, Styled},
+    style::{Styled, CONTRAST},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -283,7 +283,7 @@
     </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of the text.
-    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="attr">#[styled(default -&gt; CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The horizontal alignment of the text.
@@ -304,15 +304,15 @@
     </span><span class="kw">pub fn </span>new(text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             text: text.into(),
-            font_size: key(<span class="string">"text.font_size"</span>),
-            font_family: key(<span class="string">"text.font_family"</span>),
-            font_weight: key(<span class="string">"text.font_weight"</span>),
-            font_stretch: key(<span class="string">"text.font_stretch"</span>),
-            font_style: key(<span class="string">"text.font_style"</span>),
-            color: key(<span class="string">"text.color"</span>),
-            align: key(<span class="string">"text.align"</span>),
-            line_height: key(<span class="string">"text.line_height"</span>),
-            wrap: key(<span class="string">"text.wrap"</span>),
+            font_size: TextStyle::FONT_SIZE.into(),
+            font_family: TextStyle::FONT_FAMILY.into(),
+            font_weight: TextStyle::FONT_WEIGHT.into(),
+            font_stretch: TextStyle::FONT_STRETCH.into(),
+            font_style: TextStyle::FONT_STYLE.into(),
+            color: TextStyle::COLOR.into(),
+            align: TextStyle::ALIGN.into(),
+            line_height: TextStyle::LINE_HEIGHT.into(),
+            wrap: TextStyle::WRAP.into(),
         }
     }
 

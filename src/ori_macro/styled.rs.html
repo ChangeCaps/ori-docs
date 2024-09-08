@@ -292,9 +292,35 @@
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
-<span class="kw">use </span>syn::{parse_quote, parse_quote_spanned};
+<span class="kw">use </span>syn::{parse_quote, parse_quote_spanned, spanned::Spanned};
 
 <span class="kw">use crate</span>::{find_core, rebuild};
 
@@ -324,6 +350,7 @@
     <span class="kw">let </span>style_fields = style_fields(name, <span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_styled_fields = style_styled_fields(<span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_rebuild_fields = style_rebuild_fields(<span class="kw-2">&amp;</span>data.fields);
+    <span class="kw">let </span>style_style_key_fields = style_style_key_fields(<span class="kw-2">&amp;</span>style_name_snake, <span class="kw-2">&amp;</span>data.fields);
 
     <span class="kw">let </span>style_doc = <span class="macro">format!</span>(<span class="string">"The derived style for [`{}`]."</span>, name);
     <span class="kw">let </span>style_styled_doc = <span class="macro">format!</span>(<span class="string">"The style of [`{}`]."</span>, name);
@@ -338,6 +365,8 @@
         }
 
         <span class="kw">impl </span>#style_name {
+            #(#style_style_key_fields)*
+
             <span class="attr">#[doc = #style_styled_doc]
             #[allow(unused)]
             </span>#vis <span class="kw">fn </span>styled #impl_generics (
@@ -488,7 +517,7 @@
                     default = <span class="prelude-val">Some</span>(input.parse::&lt;syn::Expr&gt;()<span class="question-mark">?</span>);
                 } <span class="kw">else if </span>input.peek(<span class="macro">syn::Token!</span>[-&gt;]) {
                     input.parse::&lt;<span class="macro">syn::Token!</span>[-&gt;]&gt;()<span class="question-mark">?</span>;
-                    <span class="kw">let </span>style = input.parse::&lt;syn::LitStr&gt;()<span class="question-mark">?</span>;
+                    <span class="kw">let </span>style = input.parse::&lt;syn::Expr&gt;()<span class="question-mark">?</span>;
 
                     <span class="kw">if </span>input.peek(or) {
                         input.parse::&lt;or&gt;()<span class="question-mark">?</span>;
@@ -526,6 +555,29 @@
             ).expect(<span class="macro">concat!</span>(<span class="string">"missing style for `"</span>, <span class="macro">stringify!</span>(#ident), <span class="string">"`"</span>))
         },
     }
+}
+
+<span class="kw">fn </span>style_style_key_fields&lt;<span class="lifetime">'a</span>&gt;(
+    name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
+    fields: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>syn::Fields,
+) -&gt; <span class="kw">impl </span>Iterator&lt;Item = TokenStream&gt; + <span class="lifetime">'a </span>{
+    <span class="kw">let </span>ori_core = find_core();
+
+    fields.iter().filter_map(<span class="kw">move </span>|field| {
+        <span class="kw">let </span>vis = <span class="kw-2">&amp;</span>field.vis;
+        <span class="kw">let </span>ident = field.ident.as_ref().unwrap();
+        <span class="kw">let </span>ident = syn::Ident::new(<span class="kw-2">&amp;</span>ident.to_string().to_uppercase(), ident.span());
+        <span class="kw">let </span>ty = get_styled(<span class="kw-2">&amp;</span>field.ty)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>name = <span class="macro">format!</span>(<span class="string">"{}.{}"</span>, name, ident);
+
+        <span class="kw">let </span>doc = <span class="macro">format!</span>(<span class="string">"The style key of [`{}::{}`]."</span>, name, ident);
+
+        <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
+            <span class="attr">#[doc = #doc]
+            </span>#vis <span class="kw">const </span>#ident: #ori_core::style::Style&lt;#ty&gt; = #ori_core::style::Style::new(#name);
+        })
+    })
 }
 
 <span class="kw">fn </span>get_styled(ty: <span class="kw-2">&amp;</span>syn::Type) -&gt; <span class="prelude-ty">Option</span>&lt;syn::Type&gt; {

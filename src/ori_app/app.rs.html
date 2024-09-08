@@ -774,7 +774,7 @@
     },
     layout::{Point, Size, Space, Vector},
     log::trace,
-    style::Styles,
+    style::{Styles, BACKGROUND},
     view::{any, AnyState, BoxedView, View, ViewState},
     views::opaque,
     window::{Cursor, Window, WindowId, WindowSizing, WindowSnapshot, WindowUpdate},
@@ -1511,7 +1511,7 @@
             <span class="prelude-val">Some</span>(color) =&gt; color,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="kw">let </span>styles = (<span class="self">self</span>.contexts.get::&lt;Styles&gt;()).expect(<span class="string">"app has styles context"</span>);
-                styles.get_or(Color::WHITE, <span class="string">"palette.background"</span>)
+                styles.get_or(Color::WHITE, BACKGROUND)
             }
         };
 

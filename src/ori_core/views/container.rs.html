@@ -150,7 +150,7 @@
     event::Event,
     layout::{Size, Space},
     rebuild::Rebuild,
-    style::{key, Styled},
+    style::{Styled, OUTLINE, SURFACE},
     view::{Pod, State, View},
 };
 
@@ -182,7 +182,7 @@
 
     <span class="doccomment">/// The background color.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.surface" </span>or Color::WHITE)]
+    #[styled(default -&gt; SURFACE or Color::WHITE)]
     </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius.
@@ -197,7 +197,7 @@
 
     <span class="doccomment">/// The border color.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.outline" </span>or Color::BLACK)]
+    #[styled(default -&gt; OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// Whether to mask the content.
@@ -211,11 +211,11 @@
     </span><span class="kw">pub fn </span>new(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content: Pod::new(content),
-            background: key(<span class="string">"container.background"</span>),
-            border_radius: key(<span class="string">"container.border_radius"</span>),
-            border_width: key(<span class="string">"container.border_width"</span>),
-            border_color: key(<span class="string">"container.border_color"</span>),
-            mask: key(<span class="string">"container.mask"</span>),
+            background: ContainerStyle::BACKGROUND.into(),
+            border_radius: ContainerStyle::BORDER_RADIUS.into(),
+            border_width: ContainerStyle::BORDER_WIDTH.into(),
+            border_color: ContainerStyle::BORDER_COLOR.into(),
+            mask: ContainerStyle::MASK.into(),
         }
     }
 }

@@ -208,7 +208,7 @@
     event::Event,
     layout::{Padding, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{key, Styled},
+    style::{Styled, OUTLINE, SURFACE_HIGHER},
     transition::Transition,
     view::{Pod, State, View},
 };
@@ -245,7 +245,7 @@
 
     <span class="doccomment">/// The color of the button.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.surface_higher" </span>or Color::WHITE)]
+    #[styled(default -&gt; SURFACE_HIGHER or Color::WHITE)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius.
@@ -260,7 +260,7 @@
 
     <span class="doccomment">/// The border color.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.outline" </span>or Color::BLACK)]
+    #[styled(default -&gt; OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 
@@ -269,13 +269,13 @@
     </span><span class="kw">pub fn </span>new(content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content: Pod::new(content),
-            padding: key(<span class="string">"button.padding"</span>),
-            fancy: key(<span class="string">"button.fancy"</span>),
-            transition: key(<span class="string">"button.transition"</span>),
-            color: key(<span class="string">"button.color"</span>),
-            border_radius: key(<span class="string">"button.border_radius"</span>),
-            border_width: key(<span class="string">"button.border_width"</span>),
-            border_color: key(<span class="string">"button.border_color"</span>),
+            padding: ButtonStyle::PADDING.into(),
+            fancy: ButtonStyle::FANCY.into(),
+            transition: ButtonStyle::TRANSITION.into(),
+            color: ButtonStyle::COLOR.into(),
+            border_radius: ButtonStyle::BORDER_RADIUS.into(),
+            border_width: ButtonStyle::BORDER_WIDTH.into(),
+            border_color: ButtonStyle::BORDER_COLOR.into(),
         }
     }
 }

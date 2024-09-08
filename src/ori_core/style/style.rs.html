@@ -342,16 +342,12 @@
 <a href="#342" id="342">342</a>
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-<a href="#349" id="349">349</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     collections::HashMap,
     fmt::Debug,
     hash::{BuildHasherDefault, Hasher},
+    marker::PhantomData,
     sync::Arc,
 };
 
@@ -438,9 +434,10 @@
     </span><span class="kw">pub fn </span>insert&lt;T: <span class="lifetime">'static</span>&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str, styled: Styled&lt;T&gt;) {
         <span class="kw">match </span>styled {
             Styled::Value(value) =&gt; <span class="self">self</span>.insert_value(key, value),
-            Styled::Key(style) =&gt; {
+            Styled::Style(style) =&gt; {
                 <span class="kw">let </span>key = hash_style_key(key.as_bytes());
-                Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, StyleEntry::Key(style));
+                <span class="kw">let </span>value = StyleEntry::Key(style.key);
+                Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.styles).insert(key, value);
             }
             Styled::Computed(derived) =&gt; <span class="self">self</span>.insert_value(key, derived(<span class="self">self</span>)),
         }
@@ -503,11 +500,11 @@
     <span class="doccomment">/// Get a style.
     </span><span class="attr">#[track_caller]
     #[inline(always)]
-    </span><span class="kw">pub fn </span>get_keyed&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: u64) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
+    </span><span class="kw">pub fn </span>get&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, style: Style&lt;T&gt;) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
     {
-        <span class="kw">match </span><span class="self">self</span>.get_ref::&lt;T&gt;(key) {
+        <span class="kw">match </span><span class="self">self</span>.get_ref::&lt;T&gt;(style.key) {
             <span class="prelude-val">Ok</span>(value) =&gt; <span class="prelude-val">Some</span>(value.clone()),
             <span class="prelude-val">Err</span>(GetRefError::TypeMismatch) =&gt; {
                 <span class="macro">panic!</span>(
@@ -522,56 +519,49 @@
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
     #[inline(always)]
-    </span><span class="kw">pub fn </span>get_keyed_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: T, key: u64) -&gt; T
+    </span><span class="kw">pub fn </span>get_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: T, style: Style&lt;T&gt;) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
     {
-        <span class="self">self</span>.get_keyed(key).unwrap_or(default)
+        <span class="self">self</span>.get(style).unwrap_or(default)
     }
 
     <span class="doccomment">/// Get a style, or a default value.
     </span><span class="attr">#[track_caller]
     #[inline(always)]
-    </span><span class="kw">pub fn </span>get_keyed_or_else&lt;T, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: F, key: u64) -&gt; T
+    </span><span class="kw">pub fn </span>get_or_else&lt;T, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: F, style: Style&lt;T&gt;) -&gt; T
     <span class="kw">where
         </span>T: Clone + <span class="lifetime">'static</span>,
         F: FnOnce() -&gt; T,
     {
-        <span class="self">self</span>.get_keyed(key).unwrap_or_else(default)
-    }
-
-    <span class="doccomment">/// Get a style.
-    </span><span class="attr">#[track_caller]
-    #[inline(always)]
-    </span><span class="kw">pub fn </span>get&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
-    <span class="kw">where
-        </span>T: Clone + <span class="lifetime">'static</span>,
-    {
-        <span class="kw">let </span>key = hash_style_key(key.as_bytes());
-        <span class="self">self</span>.get_keyed(key)
-    }
-
-    <span class="doccomment">/// Get a style, or a default value.
-    </span><span class="attr">#[track_caller]
-    #[inline(always)]
-    </span><span class="kw">pub fn </span>get_or&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: T, key: <span class="kw-2">&amp;</span>str) -&gt; T
-    <span class="kw">where
-        </span>T: Clone + <span class="lifetime">'static</span>,
-    {
-        <span class="self">self</span>.get(key).unwrap_or(default)
-    }
-
-    <span class="doccomment">/// Get a style, or a default value.
-    </span><span class="attr">#[track_caller]
-    #[inline(always)]
-    </span><span class="kw">pub fn </span>get_or_else&lt;T, F&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, default: F, key: <span class="kw-2">&amp;</span>str) -&gt; T
-    <span class="kw">where
-        </span>T: Clone + <span class="lifetime">'static</span>,
-        F: FnOnce() -&gt; T,
-    {
-        <span class="self">self</span>.get(key).unwrap_or_else(default)
+        <span class="self">self</span>.get(style).unwrap_or_else(default)
     }
 }
+
+<span class="doccomment">/// A style.
+</span><span class="kw">pub struct </span>Style&lt;T: <span class="question-mark">?</span>Sized&gt; {
+    key: u64,
+    marker: PhantomData&lt;<span class="kw">fn</span>(<span class="kw-2">&amp;</span>T)&gt;,
+}
+
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Style&lt;T&gt; {
+    <span class="doccomment">/// Create a new style.
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">pub const fn </span>new(key: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            key: hash_style_key(key.as_bytes()),
+            marker: PhantomData,
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Clone <span class="kw">for </span>Style&lt;T&gt; {
+    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw-2">*</span><span class="self">self
+    </span>}
+}
+
+<span class="kw">impl</span>&lt;T: <span class="question-mark">?</span>Sized&gt; Copy <span class="kw">for </span>Style&lt;T&gt; {}
 
 <span class="doccomment">/// Create a style value.
 </span><span class="kw">pub fn </span>val&lt;T&gt;(val: <span class="kw">impl </span>Into&lt;T&gt;) -&gt; Styled&lt;T&gt; {
@@ -580,7 +570,7 @@
 
 <span class="doccomment">/// Create a style key.
 </span><span class="kw">pub const fn </span>key&lt;T&gt;(key: <span class="kw-2">&amp;</span>str) -&gt; Styled&lt;T&gt; {
-    Styled::key(key)
+    Styled::Style(Style::new(key))
 }
 
 <span class="doccomment">/// Create a computed style.
@@ -600,19 +590,13 @@
     </span>Value(T),
 
     <span class="doccomment">/// A style key.
-    </span>Key(u64),
+    </span>Style(Style&lt;T&gt;),
 
     <span class="doccomment">/// A derived style.
     </span>Computed(Computed&lt;T&gt;),
 }
 
 <span class="kw">impl</span>&lt;T&gt; Styled&lt;T&gt; {
-    <span class="doccomment">/// Create a new styled value, from a style key.
-    </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub const fn </span>key(key: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::Key(hash_style_key(key.as_bytes()))
-    }
-
     <span class="doccomment">/// Get the value, or a style from the styles.
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, styles: <span class="kw-2">&amp;</span>Styles) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
@@ -621,7 +605,7 @@
     {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Value(value) =&gt; <span class="prelude-val">Some</span>(value.clone()),
-            <span class="self">Self</span>::Key(key) =&gt; styles.get_keyed::&lt;T&gt;(<span class="kw-2">*</span>key),
+            <span class="self">Self</span>::Style(style) =&gt; styles.get(<span class="kw-2">*</span>style),
             <span class="self">Self</span>::Computed(derived) =&gt; <span class="prelude-val">Some</span>(derived(styles)),
         }
     }
@@ -650,7 +634,7 @@
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Value(value) =&gt; <span class="macro">write!</span>(f, <span class="string">"Styled::Value({:?})"</span>, value),
-            <span class="self">Self</span>::Key(key) =&gt; <span class="macro">write!</span>(f, <span class="string">"Styled::Key({:?})"</span>, key),
+            <span class="self">Self</span>::Style(style) =&gt; <span class="macro">write!</span>(f, <span class="string">"Styled::Style({:?})"</span>, style.key),
             <span class="self">Self</span>::Computed(<span class="kw">_</span>) =&gt; <span class="macro">write!</span>(f, <span class="string">"Styled::Computed(...)"</span>),
         }
     }
@@ -659,6 +643,12 @@
 <span class="kw">impl</span>&lt;T&gt; From&lt;T&gt; <span class="kw">for </span>Styled&lt;T&gt; {
     <span class="kw">fn </span>from(value: T) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Value(value)
+    }
+}
+
+<span class="kw">impl</span>&lt;T&gt; From&lt;Style&lt;T&gt;&gt; <span class="kw">for </span>Styled&lt;T&gt; {
+    <span class="kw">fn </span>from(style: Style&lt;T&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Style(style)
     }
 }
 
@@ -681,7 +671,7 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
+    <span class="kw">use crate</span>::{canvas::Color, style::Style};
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>style_macro() {
@@ -693,7 +683,7 @@
             },
         };
 
-        <span class="macro">assert_eq!</span>(styles.get(<span class="string">"button.color"</span>), <span class="prelude-val">Some</span>(Color::BLUE));
+        <span class="macro">assert_eq!</span>(styles.get(Style::new(<span class="string">"button.color"</span>)), <span class="prelude-val">Some</span>(Color::BLUE));
     }
 }
 </code></pre></div></section></main></body></html>

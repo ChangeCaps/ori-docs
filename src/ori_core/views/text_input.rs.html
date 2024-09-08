@@ -693,7 +693,7 @@
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{Event, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
-    style::{key, Styled},
+    style::{Styled, CONTRAST, CONTRAST_LOW},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -756,11 +756,11 @@
     </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of the text.
-    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    </span><span class="attr">#[styled(default -&gt; CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the placeholder text.
-    </span><span class="attr">#[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::grayscale(<span class="number">0.9</span>))]
+    </span><span class="attr">#[styled(default -&gt; CONTRAST_LOW or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>placeholder_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The vertical alignment of the text.
@@ -791,16 +791,16 @@
             on_submit: <span class="prelude-val">None</span>,
             placeholder: String::from(<span class="string">"..."</span>),
             multiline: <span class="bool-val">false</span>,
-            font_size: key(<span class="string">"text_input.font_size"</span>),
-            font_family: key(<span class="string">"text_input.font_family"</span>),
-            font_weight: key(<span class="string">"text_input.font_weight"</span>),
-            font_stretch: key(<span class="string">"text_input.font_stretch"</span>),
-            font_style: key(<span class="string">"text_input.font_style"</span>),
-            color: key(<span class="string">"text_input.color"</span>),
-            placeholder_color: key(<span class="string">"text_input.placeholder_color"</span>),
-            align: key(<span class="string">"text_input.align"</span>),
-            line_height: key(<span class="string">"text_input.line_height"</span>),
-            wrap: key(<span class="string">"text_input.wrap"</span>),
+            font_size: TextInputStyle::FONT_SIZE.into(),
+            font_family: TextInputStyle::FONT_FAMILY.into(),
+            font_weight: TextInputStyle::FONT_WEIGHT.into(),
+            font_stretch: TextInputStyle::FONT_STRETCH.into(),
+            font_style: TextInputStyle::FONT_STYLE.into(),
+            color: TextInputStyle::COLOR.into(),
+            placeholder_color: TextInputStyle::PLACEHOLDER_COLOR.into(),
+            align: TextInputStyle::ALIGN.into(),
+            line_height: TextInputStyle::LINE_HEIGHT.into(),
+            wrap: TextInputStyle::WRAP.into(),
         }
     }
 

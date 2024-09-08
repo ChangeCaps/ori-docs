@@ -336,7 +336,7 @@
     event::Event,
     layout::{pt, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{key, Styled},
+    style::{Styled, CONTRAST, OUTLINE, SURFACE_HIGHER},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -393,7 +393,7 @@
 
     <span class="doccomment">/// The color of text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    #[styled(default -&gt; CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The horizontal alignment of the text.
@@ -410,7 +410,7 @@
 
     <span class="doccomment">/// The background color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.surface_higher" </span>or Color::WHITE)]
+    #[styled(default -&gt; SURFACE_HIGHER or Color::WHITE)]
     </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius of the text.
@@ -425,7 +425,7 @@
 
     <span class="doccomment">/// The border color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.outline" </span>or Color::BLACK)]
+    #[styled(default -&gt; OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 
@@ -435,21 +435,21 @@
         <span class="self">Self </span>{
             content: Pod::new(content),
             text: text.into(),
-            delay: key(<span class="string">"tooltip.delay"</span>),
-            padding: key(<span class="string">"tooltip.padding"</span>),
-            font_size: key(<span class="string">"tooltip.font_size"</span>),
-            font_family: key(<span class="string">"tooltip.font_family"</span>),
-            font_weight: key(<span class="string">"tooltip.font_weight"</span>),
-            font_stretch: key(<span class="string">"tooltip.font_stretch"</span>),
-            font_style: key(<span class="string">"tooltip.font_style"</span>),
-            color: key(<span class="string">"tooltip.color"</span>),
-            align: key(<span class="string">"tooltip.align"</span>),
-            line_height: key(<span class="string">"tooltip.line_height"</span>),
-            wrap: key(<span class="string">"tooltip.wrap"</span>),
-            background: key(<span class="string">"tooltip.background"</span>),
-            border_radius: key(<span class="string">"tooltip.border_radius"</span>),
-            border_width: key(<span class="string">"tooltip.border_width"</span>),
-            border_color: key(<span class="string">"tooltip.border_color"</span>),
+            delay: TooltipStyle::DELAY.into(),
+            padding: TooltipStyle::PADDING.into(),
+            font_size: TooltipStyle::FONT_SIZE.into(),
+            font_family: TooltipStyle::FONT_FAMILY.into(),
+            font_weight: TooltipStyle::FONT_WEIGHT.into(),
+            font_stretch: TooltipStyle::FONT_STRETCH.into(),
+            font_style: TooltipStyle::FONT_STYLE.into(),
+            color: TooltipStyle::COLOR.into(),
+            align: TooltipStyle::ALIGN.into(),
+            line_height: TooltipStyle::LINE_HEIGHT.into(),
+            wrap: TooltipStyle::WRAP.into(),
+            background: TooltipStyle::BACKGROUND.into(),
+            border_radius: TooltipStyle::BORDER_RADIUS.into(),
+            border_width: TooltipStyle::BORDER_WIDTH.into(),
+            border_color: TooltipStyle::BORDER_COLOR.into(),
         }
     }
 

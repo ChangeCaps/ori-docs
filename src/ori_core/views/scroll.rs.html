@@ -295,7 +295,7 @@
     event::Event,
     layout::{Axis, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{key, Styled},
+    style::{Styled, SURFACE_HIGH, SURFACE_HIGHER},
     transition::Transition,
     view::{Pod, State, View},
 };
@@ -342,12 +342,12 @@
 
     <span class="doccomment">/// The color of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.surface_high" </span>or Color::grayscale(<span class="number">0.9</span>))]
+    #[styled(default -&gt; SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the scrollbar knob.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.surface_higher" </span>or Color::grayscale(<span class="number">0.8</span>))]
+    #[styled(default -&gt; SURFACE_HIGHER or Color::grayscale(<span class="number">0.8</span>))]
     </span><span class="kw">pub </span>knob_color: Styled&lt;Color&gt;,
 }
 
@@ -357,12 +357,12 @@
         <span class="self">Self </span>{
             content: Pod::new(content),
             axis,
-            transition: key(<span class="string">"scroll.transition"</span>),
-            width: key(<span class="string">"scroll.width"</span>),
-            inset: key(<span class="string">"scroll.inset"</span>),
-            border_radius: key(<span class="string">"scroll.border_radius"</span>),
-            color: key(<span class="string">"scroll.color"</span>),
-            knob_color: key(<span class="string">"scroll.knob_color"</span>),
+            transition: ScrollStyle::TRANSITION.into(),
+            inset: ScrollStyle::INSET.into(),
+            width: ScrollStyle::WIDTH.into(),
+            border_radius: ScrollStyle::BORDER_RADIUS.into(),
+            color: ScrollStyle::COLOR.into(),
+            knob_color: ScrollStyle::KNOB_COLOR.into(),
         }
     }
 

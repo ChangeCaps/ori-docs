@@ -158,7 +158,7 @@
     context::{BaseCx, BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     layout::{Size, Space},
-    style::{key, Styled},
+    style::{Styled, CONTRAST},
     text::{FontStretch, FontStyle, TextAttributes, TextBuffer},
     view::View,
 };
@@ -192,7 +192,7 @@
 
     <span class="doccomment">/// The color of the icon.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; <span class="string">"palette.contrast" </span>or Color::BLACK)]
+    #[styled(default -&gt; CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 }
 
@@ -202,8 +202,8 @@
         <span class="self">Self </span>{
             icon: icon.into(),
             solid: <span class="bool-val">false</span>,
-            size: key(<span class="string">"icon.size"</span>),
-            color: key(<span class="string">"icon.color"</span>),
+            size: IconStyle::SIZE.into(),
+            color: IconStyle::COLOR.into(),
         }
     }
 

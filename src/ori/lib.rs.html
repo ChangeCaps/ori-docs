@@ -79,6 +79,11 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(missing_docs)]
 #![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
 
@@ -139,7 +144,12 @@
         log::{debug, error, info, trace, warn},
         rebuild::Rebuild,
         style,
-        style::{comp, key, val, Styled, Styles, Theme},
+        style::{
+            comp, key, val, Style, Styled, Styles, Theme, ACCENT, ACCENT_LOW, BACKGROUND, CONTRAST,
+            CONTRAST_LOW, DANGER, DANGER_LOW, INFO, INFO_LOW, OUTLINE, OUTLINE_LOW, PRIMARY,
+            PRIMARY_LOW, SECONDARY, SECONDARY_LOW, SUCCESS, SUCCESS_LOW, SURFACE, SURFACE_HIGH,
+            SURFACE_HIGHER, SURFACE_HIGHEST, SURFACE_LOW, SURFACE_LOWER, WARNING, WARNING_LOW,
+        },
         text::{
             include_font, FontFamily, FontSource, FontStretch, FontStyle, FontWeight, Fonts,
             TextAlign, TextBuffer, TextWrap,
