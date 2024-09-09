@@ -760,6 +760,15 @@
 <a href="#760" id="760">760</a>
 <a href="#761" id="761">761</a>
 <a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -768,7 +777,7 @@
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
-        CloseRequested, Code, Event, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
+        CloseRequested, Code, Event, Ime, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
         PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
         WindowMaximized, WindowResized, WindowScaled,
     },
@@ -798,6 +807,7 @@
     ui: UiBuilder&lt;T&gt;,
     view: BoxedView&lt;T&gt;,
     cursor: Cursor,
+    ime: <span class="prelude-ty">Option</span>&lt;Ime&gt;,
     state: AnyState,
     canvas: Canvas,
     view_state: ViewState,
@@ -1010,9 +1020,9 @@
         window_id: WindowId,
         pointer_id: PointerId,
         position: Point,
-    ) {
+    ) -&gt; bool {
         <span class="kw">let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) <span class="kw">else </span>{
-            <span class="kw">return</span>;
+            <span class="kw">return </span><span class="bool-val">false</span>;
         };
 
         <span class="kw">let </span>delta = window_state.window.move_pointer(pointer_id, position);
@@ -1025,7 +1035,7 @@
             delta,
         });
 
-        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event)
     }
 
     <span class="doccomment">/// A pointer left the window.
@@ -1077,7 +1087,7 @@
         pointer_id: PointerId,
         button: PointerButton,
         pressed: bool,
-    ) {
+    ) -&gt; bool {
         <span class="kw">let </span>position = <span class="self">self
             </span>.pointer_position(window_id, pointer_id)
             .unwrap_or(Point::ZERO);
@@ -1094,7 +1104,7 @@
                 button,
             });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event)
         } <span class="kw">else </span>{
             <span class="kw">let </span>clicked = (<span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id)).map_or(<span class="bool-val">false</span>, <span class="kw">move </span>|window_state| {
                 window_state.window.release_pointer(pointer_id, button)
@@ -1108,7 +1118,7 @@
                 button,
             });
 
-            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+            <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event)
         }
     }
 
@@ -1169,6 +1179,7 @@
             ui,
             view,
             cursor: Cursor::Default,
+            ime: <span class="prelude-val">None</span>,
             state,
             canvas: Canvas::new(),
             view_state,
@@ -1336,6 +1347,13 @@
                 <span class="self">self</span>.requests.push(AppRequest::UpdateWindow(id, update));
 
                 window_state.cursor = cursor;
+            }
+
+            <span class="kw">if </span>window_state.ime.as_ref() != window_state.view_state.ime() {
+                <span class="kw">let </span>update = WindowUpdate::Ime(window_state.view_state.ime().cloned());
+                <span class="self">self</span>.requests.push(AppRequest::UpdateWindow(id, update));
+
+                window_state.ime = window_state.view_state.ime().cloned();
             }
         }
     }

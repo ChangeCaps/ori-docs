@@ -430,6 +430,9 @@
 <a href="#430" id="430">430</a>
 <a href="#431" id="431">431</a>
 <a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     sync::atomic::{AtomicUsize, Ordering},
@@ -437,7 +440,7 @@
 
 <span class="kw">use crate</span>::{
     canvas::Color,
-    event::{PointerButton, PointerId},
+    event::{Ime, PointerButton, PointerId},
     image::Image,
     layout::{Point, Size, Vector},
     view::ViewId,
@@ -785,6 +788,9 @@
 
     <span class="doccomment">/// Set the cursor of the window.
     </span>Cursor(Cursor),
+
+    <span class="doccomment">/// Set the ime state of the window.
+    </span>Ime(<span class="prelude-ty">Option</span>&lt;Ime&gt;),
 }
 
 <span class="doccomment">/// The state of a window.

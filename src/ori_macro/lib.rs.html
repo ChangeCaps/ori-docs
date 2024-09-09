@@ -190,7 +190,6 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Macros for the Ori crate.
 
 </span><span class="attr">#![warn(missing_docs)]
@@ -239,16 +238,15 @@
     }
 }
 
-<span class="attr">#[allow(dead_code)]
-</span><span class="kw">fn </span>find_winit() -&gt; syn::Path {
-    <span class="kw">match </span>proc_macro_crate::crate_name(<span class="string">"ori-winit"</span>) {
+<span class="kw">fn </span>find_shell() -&gt; syn::Path {
+    <span class="kw">match </span>proc_macro_crate::crate_name(<span class="string">"ori-shell"</span>) {
         <span class="prelude-val">Ok</span>(krate) =&gt; found_crate(krate),
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>proc_macro_crate::crate_name(<span class="string">"ori"</span>) {
             <span class="prelude-val">Ok</span>(krate) =&gt; {
                 <span class="kw">let </span>ori = found_crate(krate);
-                <span class="macro">syn::parse_quote!</span>(#ori::winit)
+                <span class="macro">syn::parse_quote!</span>(#ori::shell)
             }
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">syn::parse_quote!</span>(ori::winit),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">syn::parse_quote!</span>(ori::shell),
         },
     }
 }

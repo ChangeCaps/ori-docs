@@ -202,9 +202,16 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
+    event::Ime,
     layout::{Affine, Point, Rect, Size},
     view::{ViewFlags, ViewState},
     window::Cursor,
@@ -314,6 +321,11 @@
     <span class="doccomment">/// Set the cursor of the view.
     </span><span class="kw">pub fn </span>set_cursor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: <span class="prelude-ty">Option</span>&lt;Cursor&gt;) {
         <span class="self">self</span>.view_state.set_cursor(cursor);
+    }
+
+    <span class="doccomment">/// Set the ime of the view.
+    </span><span class="kw">pub fn </span>set_ime(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ime: <span class="prelude-ty">Option</span>&lt;Ime&gt;) {
+        <span class="self">self</span>.view_state.set_ime(ime);
     }
 
     <span class="doccomment">/// Set whether the view is hot.

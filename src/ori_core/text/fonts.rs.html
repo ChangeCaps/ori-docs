@@ -375,14 +375,14 @@
         buffer: <span class="kw-2">&amp;</span>Buffer,
         paint: Paint,
         offset: Vector,
-        scale: f32,
+        _scale: f32,
     ) {
         <span class="kw">let </span><span class="kw-2">mut </span>paint = paint;
         paint.anti_alias = AntiAlias::Full;
 
         <span class="kw">for </span>run <span class="kw">in </span>buffer.layout_runs() {
             <span class="kw">for </span>glyph <span class="kw">in </span>run.glyphs {
-                <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), scale);
+                <span class="kw">let </span>physical = glyph.physical((<span class="number">0.0</span>, <span class="number">0.0</span>), <span class="number">1.0</span>);
                 <span class="kw">let </span>curve = <span class="self">self</span>.get_glyphs(physical.cache_key);
                 <span class="kw">let </span>offset = Vector::new(
                     glyph.x + glyph.x_offset,

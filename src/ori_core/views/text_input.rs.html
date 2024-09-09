@@ -682,6 +682,8 @@
 <a href="#682" id="682">682</a>
 <a href="#683" id="683">683</a>
 <a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Shaping,
@@ -691,7 +693,7 @@
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Event, Key, KeyPressed},
+    event::{Event, Ime, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
     style::{Styled, CONTRAST, CONTRAST_LOW},
     text::{
@@ -1222,6 +1224,7 @@
                     <span class="kw">if </span>cx.is_focused() {
                         (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                         cx.set_focused(<span class="bool-val">false</span>);
+                        cx.set_ime(<span class="prelude-val">None</span>);
                         cx.draw();
                     }
 
@@ -1229,6 +1232,7 @@
                 }
 
                 cx.set_focused(<span class="bool-val">true</span>);
+                cx.set_ime(<span class="prelude-val">Some</span>(Ime::default()));
                 cx.animate();
 
                 state.blink = <span class="number">0.0</span>;

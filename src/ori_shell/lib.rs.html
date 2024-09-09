@@ -141,6 +141,25 @@
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
 <a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(clippy::module_inception)]
 #![warn(missing_docs)]
 
@@ -164,6 +183,10 @@
     </span><span class="attr">#[cfg(wayland_platform)]
     </span>Wayland(platform::wayland::WaylandError),
 
+    <span class="doccomment">/// Android error.
+    </span><span class="attr">#[cfg(android_platform)]
+    </span>Android(platform::android::AndroidError),
+
     <span class="doccomment">/// No platform feature enabled.
     </span>NoPlatform,
 }
@@ -182,6 +205,13 @@
     }
 }
 
+<span class="attr">#[cfg(android_platform)]
+</span><span class="kw">impl </span>From&lt;platform::android::AndroidError&gt; <span class="kw">for </span>RunError {
+    <span class="kw">fn </span>from(err: platform::android::AndroidError) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::Android(err)
+    }
+}
+
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>RunError {
     <span class="attr">#[allow(unused_variables, unreachable_patterns)]
     </span><span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter&lt;<span class="lifetime">'_</span>&gt;) -&gt; std::fmt::Result {
@@ -191,6 +221,9 @@
 
             <span class="attr">#[cfg(wayland_platform)]
             </span>RunError::Wayland(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
+
+            <span class="attr">#[cfg(android_platform)]
+            </span>RunError::Android(err) =&gt; <span class="macro">write!</span>(f, <span class="string">"{}"</span>, err),
 
             RunError::NoPlatform =&gt; <span class="macro">write!</span>(f, <span class="string">"no platform feature enabled"</span>),
 
@@ -270,6 +303,11 @@
     <span class="attr">#[cfg(x11_platform)]
     </span>{
         <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::x11::run(app, data)<span class="question-mark">?</span>);
+    }
+
+    <span class="attr">#[cfg(android_platform)]
+    </span>{
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::android::run(app, data)<span class="question-mark">?</span>);
     }
 
     <span class="attr">#[allow(unreachable_code)]
