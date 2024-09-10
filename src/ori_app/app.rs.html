@@ -783,13 +783,13 @@
     },
     layout::{Point, Size, Space, Vector},
     log::trace,
-    style::{Styles, BACKGROUND},
+    style::{Styles, Theme},
     view::{any, AnyState, BoxedView, View, ViewState},
     views::opaque,
     window::{Cursor, Window, WindowId, WindowSizing, WindowSnapshot, WindowUpdate},
 };
 
-<span class="kw">use crate</span>::{AppBuilder, AppCommand, AppRequest, AppDelegate, DelegateCx, UiBuilder};
+<span class="kw">use crate</span>::{AppBuilder, AppCommand, AppDelegate, AppRequest, DelegateCx, UiBuilder};
 
 <span class="doccomment">/// Information needed to render a window.
 </span><span class="kw">pub struct </span>WindowRenderState&lt;<span class="lifetime">'a</span>&gt; {
@@ -1529,7 +1529,7 @@
             <span class="prelude-val">Some</span>(color) =&gt; color,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="kw">let </span>styles = (<span class="self">self</span>.contexts.get::&lt;Styles&gt;()).expect(<span class="string">"app has styles context"</span>);
-                styles.get_or(Color::WHITE, BACKGROUND)
+                styles.get_or(Color::WHITE, Theme::BACKGROUND)
             }
         };
 

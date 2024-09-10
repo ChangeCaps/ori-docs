@@ -344,7 +344,7 @@
     image::Image,
     layout::{Affine, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{Styled, ACCENT, OUTLINE, PRIMARY},
+    style::{Styled, Theme},
     view::View,
 };
 
@@ -377,7 +377,7 @@
 
     <span class="doccomment">/// The border color of the color picker.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; OUTLINE or Color::BLACK)]
+    #[styled(default -&gt; Theme::OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The width of the sliders.
@@ -387,12 +387,12 @@
 
     <span class="doccomment">/// The color of the lightness slider.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; PRIMARY or Color::BLUE)]
+    #[styled(default -&gt; Theme::PRIMARY or Color::BLUE)]
     </span><span class="kw">pub </span>lightness_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the alpha slider.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; ACCENT or Color::RED)]
+    #[styled(default -&gt; Theme::ACCENT or Color::RED)]
     </span><span class="kw">pub </span>alpha_color: Styled&lt;Color&gt;,
 }
 

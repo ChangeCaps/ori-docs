@@ -265,7 +265,7 @@
     event::{Event, PointerButton},
     layout::{Affine, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{Styled, OUTLINE, PRIMARY},
+    style::{Styled, Theme},
     transition::Transition,
     view::{Pod, State, View},
 };
@@ -312,7 +312,7 @@
 
     <span class="doccomment">/// The color of the icon.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; PRIMARY or Color::BLUE)]
+    #[styled(default -&gt; Theme::PRIMARY or Color::BLUE)]
     </span><span class="kw">pub </span>icon_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The background color of the header.
@@ -332,7 +332,7 @@
 
     <span class="doccomment">/// The color of the border of the header.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; OUTLINE or Color::BLACK)]
+    #[styled(default -&gt; Theme::OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 

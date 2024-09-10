@@ -150,7 +150,7 @@
     event::Event,
     layout::{Size, Space},
     rebuild::Rebuild,
-    style::{Styled, OUTLINE, SURFACE},
+    style::{Styled, Theme},
     view::{Pod, State, View},
 };
 
@@ -182,7 +182,7 @@
 
     <span class="doccomment">/// The background color.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; SURFACE or Color::WHITE)]
+    #[styled(default -&gt; Theme::SURFACE or Color::WHITE)]
     </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius.
@@ -197,7 +197,7 @@
 
     <span class="doccomment">/// The border color.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; OUTLINE or Color::BLACK)]
+    #[styled(default -&gt; Theme::OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// Whether to mask the content.

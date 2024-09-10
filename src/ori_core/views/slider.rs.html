@@ -207,7 +207,7 @@
     event::Event,
     layout::{Axis, Rect, Size, Space},
     rebuild::Rebuild,
-    style::{Styled, OUTLINE, PRIMARY, SURFACE_HIGH},
+    style::{Styled, Theme},
     view::View,
 };
 
@@ -250,12 +250,12 @@
 
     <span class="doccomment">/// The foreground color of the slider.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; PRIMARY or Color::BLUE)]
+    #[styled(default -&gt; Theme::PRIMARY or Color::BLUE)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The background color of the slider.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
+    #[styled(default -&gt; Theme::SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius of the slider.
@@ -270,7 +270,7 @@
 
     <span class="doccomment">/// The border color of the slider.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; OUTLINE or Color::BLACK)]
+    #[styled(default -&gt; Theme::OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 

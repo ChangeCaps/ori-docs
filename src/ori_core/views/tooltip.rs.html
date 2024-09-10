@@ -336,7 +336,7 @@
     event::Event,
     layout::{pt, Padding, Point, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{Styled, CONTRAST, OUTLINE, SURFACE_HIGHER},
+    style::{Styled, Theme},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -393,7 +393,7 @@
 
     <span class="doccomment">/// The color of text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; CONTRAST or Color::BLACK)]
+    #[styled(default -&gt; Theme::CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The horizontal alignment of the text.
@@ -410,7 +410,7 @@
 
     <span class="doccomment">/// The background color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; SURFACE_HIGHER or Color::WHITE)]
+    #[styled(default -&gt; Theme::SURFACE_HIGHER or Color::WHITE)]
     </span><span class="kw">pub </span>background: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The border radius of the text.
@@ -425,7 +425,7 @@
 
     <span class="doccomment">/// The border color of the text.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; OUTLINE or Color::BLACK)]
+    #[styled(default -&gt; Theme::OUTLINE or Color::BLACK)]
     </span><span class="kw">pub </span>border_color: Styled&lt;Color&gt;,
 }
 

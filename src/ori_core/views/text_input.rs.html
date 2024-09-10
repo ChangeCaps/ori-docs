@@ -695,7 +695,7 @@
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{Event, Ime, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
-    style::{Styled, CONTRAST, CONTRAST_LOW},
+    style::{Styled, Theme},
     text::{
         FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
         TextBuffer, TextWrap,
@@ -758,11 +758,11 @@
     </span><span class="kw">pub </span>font_style: Styled&lt;FontStyle&gt;,
 
     <span class="doccomment">/// The color of the text.
-    </span><span class="attr">#[styled(default -&gt; CONTRAST or Color::BLACK)]
+    </span><span class="attr">#[styled(default -&gt; Theme::CONTRAST or Color::BLACK)]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the placeholder text.
-    </span><span class="attr">#[styled(default -&gt; CONTRAST_LOW or Color::grayscale(<span class="number">0.9</span>))]
+    </span><span class="attr">#[styled(default -&gt; Theme::CONTRAST_LOW or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>placeholder_color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The vertical alignment of the text.

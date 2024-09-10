@@ -295,7 +295,7 @@
     event::Event,
     layout::{Axis, Rect, Size, Space, Vector},
     rebuild::Rebuild,
-    style::{Styled, SURFACE_HIGH, SURFACE_HIGHER},
+    style::{Styled, Theme},
     transition::Transition,
     view::{Pod, State, View},
 };
@@ -342,12 +342,12 @@
 
     <span class="doccomment">/// The color of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
+    #[styled(default -&gt; Theme::SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the scrollbar knob.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; SURFACE_HIGHER or Color::grayscale(<span class="number">0.8</span>))]
+    #[styled(default -&gt; Theme::SURFACE_HIGHER or Color::grayscale(<span class="number">0.8</span>))]
     </span><span class="kw">pub </span>knob_color: Styled&lt;Color&gt;,
 }
 
