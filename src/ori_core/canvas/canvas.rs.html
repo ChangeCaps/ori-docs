@@ -464,15 +464,15 @@
     <span class="doccomment">/// The transformation of the pattern.
     </span><span class="kw">pub </span>transform: Affine,
 
-    <span class="doccomment">/// The opacity of the pattern.
-    </span><span class="kw">pub </span>opacity: f32,
+    <span class="doccomment">/// The color of the pattern.
+    </span><span class="kw">pub </span>color: Color,
 }
 
 <span class="kw">impl </span>Hash <span class="kw">for </span>Pattern {
     <span class="kw">fn </span>hash&lt;H: Hasher&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>H) {
         <span class="self">self</span>.image.hash(state);
         <span class="self">self</span>.transform.hash(state);
-        <span class="self">self</span>.opacity.to_bits().hash(state);
+        <span class="self">self</span>.color.hash(state);
     }
 }
 
@@ -481,7 +481,7 @@
         <span class="self">Self </span>{
             image: value,
             transform: Affine::IDENTITY,
-            opacity: <span class="number">1.0</span>,
+            color: Color::WHITE,
         }
     }
 }

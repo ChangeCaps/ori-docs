@@ -638,7 +638,7 @@
                     image: image.clone(),
                     transform: Affine::translate(cx.rect().top_left() - cx.rect().center())
                         * Affine::scale(Vector::from(cx.size() / image.size())),
-                    opacity: <span class="number">1.0</span>,
+                    color: Color::WHITE,
                 };
 
                 cx.fill(

@@ -52,7 +52,7 @@
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
-    canvas::Pattern,
+    canvas::{Color, Pattern},
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
     image::Image,
@@ -99,7 +99,7 @@
             Pattern {
                 image: <span class="self">self</span>.clone(),
                 transform: Affine::scale(scale),
-                opacity: <span class="number">1.0</span>,
+                color: Color::WHITE,
             },
         );
     }

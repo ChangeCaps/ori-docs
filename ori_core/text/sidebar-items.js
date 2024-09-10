@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["FontFamily","FontSource","FontStretch","FontStyle","TextAlign","TextWrap"],"macro":["include_font"],"struct":["FontWeight","Fonts","TextAttributes","TextBuffer"]};
+window.SIDEBAR_ITEMS = {"enum":["FontFamily","FontSource","FontStretch","FontStyle","TextAlign","TextWrap"],"macro":["include_font"],"struct":["AtlasGlyph","FontAtlas","FontWeight","Fonts","TextAttributes","TextBuffer"]};

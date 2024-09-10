@@ -260,17 +260,10 @@
 <a href="#260" id="260">260</a>
 <a href="#261" id="261">261</a>
 <a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
-    canvas::{BorderRadius, BorderWidth, Canvas, Curve},
-    canvas::{FillRule, Mask, Paint, Stroke},
+    canvas::{BorderRadius, BorderWidth, Canvas, Color, Curve, FillRule, Mask, Paint, Stroke},
     layout::{Affine, Point, Rect, Size, Vector},
     text::{Fonts, TextBuffer},
     view::ViewState,
@@ -394,23 +387,18 @@
     }
 
     <span class="doccomment">/// Draw a text buffer.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer, paint: <span class="kw">impl </span>Into&lt;Paint&gt;, offset: Vector) {
-        <span class="self">self</span>.text_raw(buffer.raw(), paint, offset);
+    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>TextBuffer, color: Color, offset: Vector) {
+        <span class="self">self</span>.text_raw(buffer.raw(), color, offset);
     }
 
     <span class="doccomment">/// Draw a raw text buffer.
-    </span><span class="kw">pub fn </span>text_raw(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        buffer: <span class="kw-2">&amp;</span>cosmic_text::Buffer,
-        paint: <span class="kw">impl </span>Into&lt;Paint&gt;,
-        offset: Vector,
-    ) {
+    </span><span class="kw">pub fn </span>text_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buffer: <span class="kw-2">&amp;</span>cosmic_text::Buffer, color: Color, offset: Vector) {
         <span class="kw">let </span>scale = <span class="self">self</span>.window().scale;
         <span class="kw">let </span>contexts = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.base.contexts;
         <span class="kw">let </span>canvas = <span class="kw-2">&amp;mut *</span><span class="self">self</span>.canvas;
 
         <span class="kw">let </span>fonts = contexts.get_or_default::&lt;Fonts&gt;();
-        fonts.draw_buffer(canvas, buffer, paint.into(), offset, scale);
+        fonts.draw_buffer(canvas, buffer, color, offset, scale);
     }
 
     <span class="doccomment">/// Draw a rectangle with rounded corners and a border.
