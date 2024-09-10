@@ -98,11 +98,11 @@
     window::Window,
 };
 
-<span class="kw">use crate</span>::{App, AppRequest, Delegate, IntoUiBuilder};
+<span class="kw">use crate</span>::{App, AppRequest, AppDelegate, IntoUiBuilder};
 
 <span class="doccomment">/// A builder for an [`App`].
 </span><span class="kw">pub struct </span>AppBuilder&lt;T&gt; {
-    delegates: Vec&lt;Box&lt;<span class="kw">dyn </span>Delegate&lt;T&gt;&gt;&gt;,
+    delegates: Vec&lt;Box&lt;<span class="kw">dyn </span>AppDelegate&lt;T&gt;&gt;&gt;,
     requests: Vec&lt;AppRequest&lt;T&gt;&gt;,
     styles: Styles,
     fonts: Fonts,
@@ -126,7 +126,7 @@
     }
 
     <span class="doccomment">/// Add a delegate to the application.
-    </span><span class="kw">pub fn </span>delegate(<span class="kw-2">mut </span><span class="self">self</span>, delegate: <span class="kw">impl </span>Delegate&lt;T&gt; + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>delegate(<span class="kw-2">mut </span><span class="self">self</span>, delegate: <span class="kw">impl </span>AppDelegate&lt;T&gt; + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.delegates.push(Box::new(delegate));
         <span class="self">self
     </span>}

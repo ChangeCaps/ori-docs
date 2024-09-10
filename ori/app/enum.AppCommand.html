@@ -22,7 +22,7 @@
 ) -&gt; <a class="enum" href="../prelude/enum.AppCommand.html" title="enum ori::prelude::AppCommand">AppCommand</a><div class="where">where
     V: <a class="trait" href="../prelude/trait.View.html" title="trait ori::prelude::View">View</a> + 'static,</div></h4></section></summary><div class="docblock"><p>Convenience method to open a window with a view.</p>
 <p>Note that <code>V</code> must implement <code>View&lt;()&gt;</code>, and therefore cannot access the data of the
-application. If you need to access the data, you can implement a <a href="../prelude/trait.Delegate.html" title="trait ori::prelude::Delegate"><code>Delegate</code></a> instead.</p>
+application. If you need to access the data, you can implement a <a href="crate::Delegate"><code>Delegate</code></a> instead.</p>
 <h5 id="example-1"><a class="doc-anchor" href="#example-1">§</a>Example</h5>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">fn </span>ui() -&gt; <span class="kw">impl </span>View {
     <span class="comment">// Here we create a button that opens a new window when clicked.

@@ -156,7 +156,7 @@
 }
 
 <span class="doccomment">/// A delegate for handling events in an application.
-</span><span class="kw">pub trait </span>Delegate&lt;T&gt; {
+</span><span class="kw">pub trait </span>AppDelegate&lt;T&gt; {
     <span class="doccomment">/// Called when the application is initialized.
     </span><span class="kw">fn </span>init(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>DelegateCx&lt;T&gt;, data: <span class="kw-2">&amp;mut </span>T) {
         <span class="kw">let _ </span>= (cx, data);

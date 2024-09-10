@@ -789,7 +789,7 @@
     window::{Cursor, Window, WindowId, WindowSizing, WindowSnapshot, WindowUpdate},
 };
 
-<span class="kw">use crate</span>::{AppBuilder, AppCommand, AppRequest, Delegate, DelegateCx, UiBuilder};
+<span class="kw">use crate</span>::{AppBuilder, AppCommand, AppRequest, AppDelegate, DelegateCx, UiBuilder};
 
 <span class="doccomment">/// Information needed to render a window.
 </span><span class="kw">pub struct </span>WindowRenderState&lt;<span class="lifetime">'a</span>&gt; {
@@ -931,7 +931,7 @@
 </span><span class="kw">pub struct </span>App&lt;T&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) windows: HashMap&lt;WindowId, WindowState&lt;T&gt;&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) modifiers: Modifiers,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) delegates: Vec&lt;Box&lt;<span class="kw">dyn </span>Delegate&lt;T&gt;&gt;&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) delegates: Vec&lt;Box&lt;<span class="kw">dyn </span>AppDelegate&lt;T&gt;&gt;&gt;,
     <span class="kw">pub</span>(<span class="kw">crate</span>) proxy: CommandProxy,
     <span class="kw">pub</span>(<span class="kw">crate</span>) receiver: CommandReceiver,
     <span class="kw">pub</span>(<span class="kw">crate</span>) requests: Vec&lt;AppRequest&lt;T&gt;&gt;,
