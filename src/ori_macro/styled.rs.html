@@ -318,6 +318,7 @@
 <a href="#318" id="318">318</a>
 <a href="#319" id="319">319</a>
 <a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::{parse_quote, parse_quote_spanned, spanned::Spanned};
@@ -341,20 +342,21 @@
     <span class="kw">let </span>ori_core = find_core();
 
     <span class="kw">let </span>vis = <span class="kw-2">&amp;</span>input.vis;
-    <span class="kw">let </span>name = <span class="kw-2">&amp;</span>input.ident;
+    <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>input.ident;
+    <span class="kw">let </span>name = ident.to_string();
 
     <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
-    <span class="kw">let </span>style_name = syn::Ident::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}Style"</span>, name), name.span());
-    <span class="kw">let </span>style_name_snake = pascal_to_snake(<span class="kw-2">&amp;</span>name.to_string());
-    <span class="kw">let </span>style_fields = style_fields(name, <span class="kw-2">&amp;</span>data.fields);
+    <span class="kw">let </span>style_name = syn::Ident::new(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"{}Style"</span>, ident), ident.span());
+    <span class="kw">let </span>style_name_snake = pascal_to_snake(<span class="kw-2">&amp;</span>ident.to_string());
+    <span class="kw">let </span>style_fields = style_fields(ident, <span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_styled_fields = style_styled_fields(<span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_rebuild_fields = style_rebuild_fields(<span class="kw-2">&amp;</span>data.fields);
-    <span class="kw">let </span>style_style_key_fields = style_style_key_fields(<span class="kw-2">&amp;</span>style_name_snake, <span class="kw-2">&amp;</span>data.fields);
+    <span class="kw">let </span>style_style_key_fields = style_style_key_fields(<span class="kw-2">&amp;</span>name, <span class="kw-2">&amp;</span>data.fields);
 
-    <span class="kw">let </span>style_doc = <span class="macro">format!</span>(<span class="string">"The derived style for [`{}`]."</span>, name);
-    <span class="kw">let </span>style_styled_doc = <span class="macro">format!</span>(<span class="string">"The style of [`{}`]."</span>, name);
-    <span class="kw">let </span>style_rebuild_doc = <span class="macro">format!</span>(<span class="string">"Rebuild the style of [`{}`]."</span>, name);
+    <span class="kw">let </span>style_doc = <span class="macro">format!</span>(<span class="string">"The derived style for [`{}`]."</span>, ident);
+    <span class="kw">let </span>style_styled_doc = <span class="macro">format!</span>(<span class="string">"The style of [`{}`]."</span>, ident);
+    <span class="kw">let </span>style_rebuild_doc = <span class="macro">format!</span>(<span class="string">"Rebuild the style of [`{}`]."</span>, ident);
     <span class="kw">let </span>style_into_styles_fields = style_into_styles_fields(<span class="kw-2">&amp;</span>data.fields);
 
     <span class="kw">let </span>expanded = <span class="macro">quote!</span> {
@@ -370,7 +372,7 @@
             <span class="attr">#[doc = #style_styled_doc]
             #[allow(unused)]
             </span>#vis <span class="kw">fn </span>styled #impl_generics (
-                styled: <span class="kw-2">&amp;</span>#name #ty_generics,
+                styled: <span class="kw-2">&amp;</span>#ident #ty_generics,
                 styles: <span class="kw-2">&amp;</span>#ori_core::style::Styles
             ) -&gt; <span class="self">Self
             </span>#where_clause
@@ -384,7 +386,7 @@
             #[allow(unused)]
             </span>#vis <span class="kw">fn </span>rebuild #impl_generics (
                 <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-                styled: <span class="kw-2">&amp;</span>#name #ty_generics,
+                styled: <span class="kw-2">&amp;</span>#ident #ty_generics,
                 cx: <span class="kw-2">&amp;mut </span>#ori_core::context::RebuildCx
             )
             #where_clause
