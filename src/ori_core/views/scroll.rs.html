@@ -287,7 +287,22 @@
 <a href="#287" id="287">287</a>
 <a href="#288" id="288">288</a>
 <a href="#289" id="289">289</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, is_mobile, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::{BorderRadius, Color},
@@ -312,9 +327,10 @@
 
 <span class="doccomment">/// A scrollable view.
 </span><span class="attr">#[example(name = <span class="string">"scroll"</span>, width = <span class="number">400</span>, height = <span class="number">300</span>)]
-#[derive(Styled, Rebuild)]
+#[derive(Styled, Build, Rebuild)]
 </span><span class="kw">pub struct </span>Scroll&lt;V&gt; {
     <span class="doccomment">/// The content.
+    </span><span class="attr">#[build(ignore)]
     </span><span class="kw">pub </span>content: Pod&lt;V&gt;,
 
     <span class="doccomment">/// The axis of the scroll.
@@ -413,6 +429,7 @@
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>ScrollState {
     style: ScrollStyle,
+    dragging: bool,
     scrollbar_hot: bool,
     scroll: f32,
     t: f32,
@@ -424,6 +441,7 @@
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span>state = ScrollState {
             style: ScrollStyle::styled(<span class="self">self</span>, cx.styles()),
+            dragging: <span class="bool-val">false</span>,
             scrollbar_hot: <span class="bool-val">false</span>,
             scroll: <span class="number">0.0</span>,
             t: <span class="number">0.0</span>,
@@ -473,7 +491,19 @@
                 content.translate(<span class="self">self</span>.axis.pack(-state.scroll, <span class="number">0.0</span>));
 
                 cx.draw();
+            } <span class="kw">else if </span>state.dragging {
+                state.scroll -= <span class="self">self</span>.axis.major(e.delta);
+                state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
+                cx.draw();
             }
+        }
+
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; cx.has_hot() &amp;&amp; <span class="macro">is_mobile!</span>() {
+            state.dragging = <span class="bool-val">true</span>;
+        }
+
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerReleased(<span class="kw">_</span>)) {
+            state.dragging = <span class="bool-val">false</span>;
         }
 
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.scrollbar_hot {
