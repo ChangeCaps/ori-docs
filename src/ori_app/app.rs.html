@@ -842,8 +842,8 @@
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, base: <span class="kw-2">&amp;mut </span>BaseCx, rebuild: <span class="kw-2">&amp;mut </span>bool, event: <span class="kw-2">&amp;</span>Event) {
         <span class="kw">let </span>t = Instant::now();
 
-        <span class="kw">let </span>hot = <span class="self">self</span>.window.is_hovered(<span class="self">self</span>.view_state.id());
-        <span class="self">self</span>.view_state.set_hot(hot);
+        <span class="kw">let </span>hovered = <span class="self">self</span>.window.is_hovered(<span class="self">self</span>.view_state.id());
+        <span class="self">self</span>.view_state.set_hovered(hovered);
         <span class="self">self</span>.view_state.prepare();
 
         <span class="kw">let </span><span class="kw-2">mut </span>cx = EventCx::new(base, <span class="kw-2">&amp;mut </span><span class="self">self</span>.view_state, rebuild);

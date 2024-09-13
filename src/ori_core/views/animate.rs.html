@@ -227,20 +227,20 @@
     Animate::new(animate)
 }
 
-<span class="doccomment">/// Animate a view when hot changes.
-</span><span class="kw">pub fn </span>transition_hot&lt;T, V&gt;(
+<span class="doccomment">/// Animate a view when hovered changes.
+</span><span class="kw">pub fn </span>transition_hovered&lt;T, V&gt;(
     transition: Transition,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, f32) -&gt; V + <span class="lifetime">'static</span>,
 ) -&gt; Animate&lt;T, V, f32&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
-        <span class="kw">if </span>cx.is_hot() || cx.has_hot_changed() {
+        <span class="kw">if </span>cx.is_hovered() || cx.has_hovered_changed() {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>transition.step(t, cx.is_hot() || cx.has_hot(), <span class="kw-2">*</span>dt) {
+            <span class="kw">if </span>transition.step(t, cx.is_hovered() || cx.has_hovered(), <span class="kw-2">*</span>dt) {
                 cx.animate();
                 <span class="kw">return </span><span class="prelude-val">Some</span>(view(cx, data, transition.get(<span class="kw-2">*</span>t)));
             }

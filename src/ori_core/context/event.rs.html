@@ -328,12 +328,12 @@
         <span class="self">self</span>.view_state.set_ime(ime);
     }
 
-    <span class="doccomment">/// Set whether the view is hot.
+    <span class="doccomment">/// Set whether the view is hovered.
     ///
-    /// Returns `true` if the hot state changed.
-    </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) -&gt; bool {
-        <span class="kw">let </span>updated = <span class="self">self</span>.is_hot() != hot;
-        <span class="self">self</span>.view_state.set_hot(hot);
+    /// Returns `true` if the hovered state changed.
+    </span><span class="kw">pub fn </span>set_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hovered: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_hovered() != hovered;
+        <span class="self">self</span>.view_state.set_hovered(hovered);
         updated
     }
 
@@ -355,9 +355,9 @@
         updated
     }
 
-    <span class="doccomment">/// Get whether the view was hot last call.
-    </span><span class="kw">pub fn </span>was_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::HOT)
+    <span class="doccomment">/// Get whether the view was hovered last call.
+    </span><span class="kw">pub fn </span>was_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::HOVERED)
     }
 
     <span class="doccomment">/// Get whether the view was focused last call.
@@ -370,9 +370,9 @@
         <span class="self">self</span>.view_state.prev_flags.contains(ViewFlags::ACTIVE)
     }
 
-    <span class="doccomment">/// Get whether a child view was hot last call.
-    </span><span class="kw">pub fn </span>had_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">let </span>flags = <span class="self">self</span>.view_state.prev_flags &amp; (ViewFlags::HOT | ViewFlags::HAS_HOT);
+    <span class="doccomment">/// Get whether a child view was hovered last call.
+    </span><span class="kw">pub fn </span>had_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">let </span>flags = <span class="self">self</span>.view_state.prev_flags &amp; (ViewFlags::HOVERED | ViewFlags::HAS_HOVERED);
         flags != ViewFlags::empty()
     }
 
@@ -388,9 +388,9 @@
         flags != ViewFlags::empty()
     }
 
-    <span class="doccomment">/// Get whether the view's hot state changed.
-    </span><span class="kw">pub fn </span>hot_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.was_hot() != <span class="self">self</span>.is_hot()
+    <span class="doccomment">/// Get whether the view's hovered state changed.
+    </span><span class="kw">pub fn </span>hovered_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.was_hovered() != <span class="self">self</span>.is_hovered()
     }
 
     <span class="doccomment">/// Get whether the view's focused state changed.
@@ -403,9 +403,9 @@
         <span class="self">self</span>.was_active() != <span class="self">self</span>.is_active()
     }
 
-    <span class="doccomment">/// Get whether a child view's hot state changed.
-    </span><span class="kw">pub fn </span>has_hot_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.had_hot() != <span class="self">self</span>.has_hot()
+    <span class="doccomment">/// Get whether a child view's hovered state changed.
+    </span><span class="kw">pub fn </span>has_hovered_changed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.had_hovered() != <span class="self">self</span>.has_hovered()
     }
 
     <span class="doccomment">/// Get whether a child view's focused state changed.

@@ -503,14 +503,14 @@
     <span class="doccomment">/// Flags that indicate state of a view.
     </span><span class="attr">#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
     </span><span class="kw">pub struct </span>ViewFlags: u8 {
-        <span class="doccomment">/// The view is hot.
-        </span><span class="kw">const </span>HOT = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
+        <span class="doccomment">/// The view is hovered.
+        </span><span class="kw">const </span>HOVERED = <span class="number">1 </span>&lt;&lt; <span class="number">0</span>;
         <span class="doccomment">/// The view is focused.
         </span><span class="kw">const </span>FOCUSED = <span class="number">1 </span>&lt;&lt; <span class="number">1</span>;
         <span class="doccomment">/// The view is active.
         </span><span class="kw">const </span>ACTIVE = <span class="number">1 </span>&lt;&lt; <span class="number">2</span>;
-        <span class="doccomment">/// The view has a hot child.
-        </span><span class="kw">const </span>HAS_HOT = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
+        <span class="doccomment">/// The view has a hovered child.
+        </span><span class="kw">const </span>HAS_HOVERED = <span class="number">1 </span>&lt;&lt; <span class="number">3</span>;
         <span class="doccomment">/// The view has a focused child.
         </span><span class="kw">const </span>HAS_FOCUSED = <span class="number">1 </span>&lt;&lt; <span class="number">4</span>;
         <span class="doccomment">/// The view has an active child.
@@ -518,11 +518,11 @@
         <span class="doccomment">/// The view is focusable.
         </span><span class="kw">const </span>FOCUSABLE = <span class="number">1 </span>&lt;&lt; <span class="number">6</span>;
 
-        <span class="doccomment">/// Equivalent to `Self::HOT | Self::FOCUSED | Self::ACTIVE`.
-        </span><span class="kw">const </span>IS = <span class="self">Self</span>::HOT.bits() | <span class="self">Self</span>::FOCUSED.bits() | <span class="self">Self</span>::ACTIVE.bits();
+        <span class="doccomment">/// Equivalent to `Self::HOVERED | Self::FOCUSED | Self::ACTIVE`.
+        </span><span class="kw">const </span>IS = <span class="self">Self</span>::HOVERED.bits() | <span class="self">Self</span>::FOCUSED.bits() | <span class="self">Self</span>::ACTIVE.bits();
 
-        <span class="doccomment">/// Equivalent to `Self::HAS_HOT | Self::HAS_FOCUSED | Self::HAS_ACTIVE`.
-        </span><span class="kw">const </span>HAS = <span class="self">Self</span>::HAS_HOT.bits() | <span class="self">Self</span>::HAS_FOCUSED.bits() | <span class="self">Self</span>::HAS_ACTIVE.bits();
+        <span class="doccomment">/// Equivalent to `Self::HAS_HOVERED | Self::HAS_FOCUSED | Self::HAS_ACTIVE`.
+        </span><span class="kw">const </span>HAS = <span class="self">Self</span>::HAS_HOVERED.bits() | <span class="self">Self</span>::HAS_FOCUSED.bits() | <span class="self">Self</span>::HAS_ACTIVE.bits();
     }
 }
 
@@ -659,14 +659,14 @@
         <span class="self">self</span>.id
     }
 
-    <span class="doccomment">/// Get whether the view is hot.
-    </span><span class="kw">pub fn </span>is_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.flags.contains(ViewFlags::HOT)
+    <span class="doccomment">/// Get whether the view is hovered.
+    </span><span class="kw">pub fn </span>is_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.flags.contains(ViewFlags::HOVERED)
     }
 
-    <span class="doccomment">/// Set whether the view is hot.
-    </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) {
-        <span class="self">self</span>.flags.set(ViewFlags::HOT, hot);
+    <span class="doccomment">/// Set whether the view is hovered.
+    </span><span class="kw">pub fn </span>set_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hovered: bool) {
+        <span class="self">self</span>.flags.set(ViewFlags::HOVERED, hovered);
     }
 
     <span class="doccomment">/// Get whether the view is focused.
@@ -689,9 +689,9 @@
         <span class="self">self</span>.flags.set(ViewFlags::ACTIVE, active);
     }
 
-    <span class="doccomment">/// Get whether the view has a hot child.
-    </span><span class="kw">pub fn </span>has_hot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">let </span>flags = <span class="self">self</span>.flags &amp; (ViewFlags::HOT | ViewFlags::HAS_HOT);
+    <span class="doccomment">/// Get whether the view has a hovered child.
+    </span><span class="kw">pub fn </span>has_hovered(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">let </span>flags = <span class="self">self</span>.flags &amp; (ViewFlags::HOVERED | ViewFlags::HAS_HOVERED);
         flags != ViewFlags::empty()
     }
 
@@ -941,7 +941,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_propagate() {
-        <span class="macro">assert_eq!</span>(ViewFlags::HOT.has(), ViewFlags::HAS_HOT);
+        <span class="macro">assert_eq!</span>(ViewFlags::HOVERED.has(), ViewFlags::HAS_HOVERED);
         <span class="macro">assert_eq!</span>(ViewFlags::FOCUSED.has(), ViewFlags::HAS_FOCUSED);
         <span class="macro">assert_eq!</span>(ViewFlags::ACTIVE.has(), ViewFlags::HAS_ACTIVE);
     }

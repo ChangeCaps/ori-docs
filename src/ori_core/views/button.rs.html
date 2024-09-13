@@ -282,7 +282,7 @@
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>ButtonState {
-    <span class="kw">pub </span>hot: f32,
+    <span class="kw">pub </span>hovered: f32,
     <span class="kw">pub </span>active: f32,
     <span class="kw">pub </span>style: ButtonStyle,
 }
@@ -292,7 +292,7 @@
 
     <span class="kw">fn </span>build(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cx: <span class="kw-2">&amp;mut </span>BuildCx, data: <span class="kw-2">&amp;mut </span>T) -&gt; <span class="self">Self</span>::State {
         <span class="kw">let </span>state = ButtonState {
-            hot: <span class="number">0.0</span>,
+            hovered: <span class="number">0.0</span>,
             active: <span class="number">0.0</span>,
             style: ButtonStyle::styled(<span class="self">self</span>, cx.styles()),
         };
@@ -322,12 +322,12 @@
     ) {
         <span class="self">self</span>.content.event(content, cx, data, event);
 
-        <span class="kw">if </span>cx.hot_changed() || cx.active_changed() {
+        <span class="kw">if </span>cx.hovered_changed() || cx.active_changed() {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>(state.style.transition).step(<span class="kw-2">&amp;mut </span>state.hot, cx.is_hot(), <span class="kw-2">*</span>dt)
+            <span class="kw">if </span>(state.style.transition).step(<span class="kw-2">&amp;mut </span>state.hovered, cx.is_hovered(), <span class="kw-2">*</span>dt)
                 || (state.style.transition).step(<span class="kw-2">&amp;mut </span>state.active, cx.is_active(), <span class="kw-2">*</span>dt)
             {
                 cx.animate();
@@ -358,10 +358,10 @@
             <span class="kw">let </span>dim = state.style.color.darken(<span class="number">0.025</span>);
             <span class="kw">let </span>bright = state.style.color.lighten(<span class="number">0.05</span>);
 
-            <span class="kw">let </span>hot = state.style.transition.get(state.hot);
+            <span class="kw">let </span>hovered = state.style.transition.get(state.hovered);
             <span class="kw">let </span>active = state.style.transition.get(state.active);
 
-            <span class="kw">let </span>face = state.style.color.mix(bright, hot).mix(dim, active);
+            <span class="kw">let </span>face = state.style.color.mix(bright, hovered).mix(dim, active);
 
             <span class="kw">if </span>state.style.fancy == <span class="number">0.0 </span>{
                 cx.quad(

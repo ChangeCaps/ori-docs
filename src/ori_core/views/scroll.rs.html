@@ -430,7 +430,7 @@
 </span><span class="kw">pub struct </span>ScrollState {
     style: ScrollStyle,
     dragging: bool,
-    scrollbar_hot: bool,
+    scrollbar_hovered: bool,
     scroll: f32,
     t: f32,
 }
@@ -442,7 +442,7 @@
         <span class="kw">let </span>state = ScrollState {
             style: ScrollStyle::styled(<span class="self">self</span>, cx.styles()),
             dragging: <span class="bool-val">false</span>,
-            scrollbar_hot: <span class="bool-val">false</span>,
+            scrollbar_hovered: <span class="bool-val">false</span>,
             scroll: <span class="number">0.0</span>,
             t: <span class="number">0.0</span>,
         };
@@ -477,7 +477,7 @@
             <span class="kw">let </span>local = cx.local(e.position);
 
             <span class="kw">let </span>scrollbar_rect = <span class="self">self</span>.scrollbar_rect(<span class="kw-2">&amp;</span>state.style, cx.rect());
-            state.scrollbar_hot = scrollbar_rect.contains(local);
+            state.scrollbar_hovered = scrollbar_rect.contains(local);
 
             <span class="kw">if </span>cx.is_active() {
                 <span class="kw">let </span>scroll_start = <span class="self">self</span>.axis.major(scrollbar_rect.min);
@@ -498,7 +498,7 @@
             }
         }
 
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; cx.has_hot() &amp;&amp; <span class="macro">is_mobile!</span>() {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; cx.has_hovered() &amp;&amp; <span class="macro">is_mobile!</span>() {
             state.dragging = <span class="bool-val">true</span>;
         }
 
@@ -506,7 +506,7 @@
             state.dragging = <span class="bool-val">false</span>;
         }
 
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.scrollbar_hot {
+        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.scrollbar_hovered {
             cx.set_active(<span class="bool-val">true</span>);
             cx.draw();
         }
@@ -519,7 +519,7 @@
         <span class="comment">// propagate event
         </span><span class="self">self</span>.content.event(content, cx, data, event);
 
-        <span class="kw">let </span>on = cx.is_hot() || cx.has_hot() || cx.is_active() || state.scrollbar_hot;
+        <span class="kw">let </span>on = cx.is_hovered() || cx.has_hovered() || cx.is_active() || state.scrollbar_hovered;
 
         <span class="kw">if </span>!state.style.transition.complete(state.t, on) {
             cx.animate();

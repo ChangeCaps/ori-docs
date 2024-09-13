@@ -283,10 +283,10 @@
     }
 
     <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, content: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">let </span>is_hot = content.is_hot() || (content.has_hot() &amp;&amp; <span class="self">self</span>.descendants);
+        <span class="kw">let </span>is_hovered = content.is_hovered() || (content.has_hovered() &amp;&amp; <span class="self">self</span>.descendants);
 
         <span class="kw">match </span>event {
-            Event::PointerPressed(e) <span class="kw">if </span>is_hot &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
+            Event::PointerPressed(e) <span class="kw">if </span>is_hovered &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Press {
                     (<span class="self">self</span>.callback)(cx, data);
                 }

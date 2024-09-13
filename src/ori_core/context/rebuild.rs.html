@@ -193,12 +193,12 @@
         <span class="self">self</span>.view_state.set_cursor(cursor);
     }
 
-    <span class="doccomment">/// Set whether the view is hot.
+    <span class="doccomment">/// Set whether the view is hovered.
     ///
-    /// Returns `true` if the hot state changed.
-    </span><span class="kw">pub fn </span>set_hot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hot: bool) -&gt; bool {
-        <span class="kw">let </span>updated = <span class="self">self</span>.is_hot() != hot;
-        <span class="self">self</span>.view_state.set_hot(hot);
+    /// Returns `true` if the hovered state changed.
+    </span><span class="kw">pub fn </span>set_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hovered: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_hovered() != hovered;
+        <span class="self">self</span>.view_state.set_hovered(hovered);
         updated
     }
 

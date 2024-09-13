@@ -269,12 +269,12 @@
         _data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
     ) {
-        <span class="kw">if </span>cx.hot_changed() {
+        <span class="kw">if </span>cx.hovered_changed() {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">let </span>on = cx.is_hot() &amp;&amp; !cx.is_active();
+            <span class="kw">let </span>on = cx.is_hovered() &amp;&amp; !cx.is_active();
             <span class="kw">if </span>style.transition.step(t, on, <span class="kw-2">*</span>dt) {
                 cx.animate();
             }

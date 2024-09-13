@@ -326,7 +326,7 @@
             Event::PointerPressed(e) =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
 
-                <span class="kw">if </span>cx.is_hot() {
+                <span class="kw">if </span>cx.is_hovered() {
                     <span class="kw">let </span>value = <span class="self">self</span>.axis.unpack(local).<span class="number">0 </span>/ style.length;
                     <span class="kw">let </span>value = denormalize(value, <span class="kw-2">&amp;</span><span class="self">self</span>.range);
 
