@@ -708,6 +708,15 @@
 <a href="#708" id="708">708</a>
 <a href="#709" id="709">709</a>
 <a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Selection, Shaping,
@@ -717,7 +726,7 @@
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Event, Ime, Key, KeyPressed},
+    event::{Capitalize, Event, Ime, Key, KeyPressed},
     layout::{Point, Rect, Size, Space, Vector},
     style::{Styled, Theme},
     text::{
@@ -760,6 +769,12 @@
     ///
     /// When disabled (the default), the input will only accept a single line of text.
     </span><span class="kw">pub </span>multiline: bool,
+
+    <span class="doccomment">/// How the text should be capitalized.
+    ///
+    /// This only affects text input from IMEs, eg. on-screen keyboards like the ones on mobile
+    /// devices.
+    </span><span class="kw">pub </span>capitalize: Capitalize,
 
     <span class="doccomment">/// The font size of the text.
     </span><span class="attr">#[styled(default = <span class="number">16.0</span>)]
@@ -817,6 +832,7 @@
             on_submit: <span class="prelude-val">None</span>,
             placeholder: String::from(<span class="string">"..."</span>),
             multiline: <span class="bool-val">false</span>,
+            capitalize: Capitalize::Sentences,
             font_size: TextInputStyle::FONT_SIZE.into(),
             font_family: TextInputStyle::FONT_FAMILY.into(),
             font_weight: TextInputStyle::FONT_WEIGHT.into(),
@@ -953,7 +969,7 @@
         text
     }
 
-    <span class="kw">fn </span>ime(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Ime {
+    <span class="kw">fn </span>ime(<span class="kw-2">&amp;</span><span class="self">self</span>, multiline: bool, capitalize: Capitalize) -&gt; Ime {
         <span class="kw">let </span>selection = <span class="kw">match </span><span class="self">self</span>.editor.selection_bounds() {
             <span class="prelude-val">Some</span>((start, end)) =&gt; start.index..end.index,
             <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.editor.cursor().index..<span class="self">self</span>.editor.cursor().index,
@@ -963,6 +979,8 @@
             text: <span class="self">self</span>.text(),
             selection,
             compose: <span class="prelude-val">None</span>,
+            multiline,
+            capitalize,
         }
     }
 
@@ -1264,7 +1282,7 @@
                     }
                 }
 
-                cx.set_ime(<span class="prelude-val">Some</span>(state.ime()));
+                cx.set_ime(<span class="prelude-val">Some</span>(state.ime(<span class="self">self</span>.multiline, <span class="self">self</span>.capitalize)));
             }
             Event::PointerPressed(e) =&gt; {
                 <span class="kw">if </span>!cx.is_hovered() {
@@ -1293,7 +1311,7 @@
                     },
                 );
 
-                cx.set_ime(<span class="prelude-val">Some</span>(state.ime()));
+                cx.set_ime(<span class="prelude-val">Some</span>(state.ime(<span class="self">self</span>.multiline, <span class="self">self</span>.capitalize)));
             }
             Event::PointerReleased(<span class="kw">_</span>) =&gt; {
                 state.dragging = <span class="bool-val">false</span>;
