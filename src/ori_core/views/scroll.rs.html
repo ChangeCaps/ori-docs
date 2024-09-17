@@ -358,12 +358,12 @@
 
     <span class="doccomment">/// The color of the scrollbar.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; Theme::SURFACE_HIGH or Color::grayscale(<span class="number">0.9</span>))]
+    #[styled(default -&gt; Theme::CONTRAST_LOW or Color::grayscale(<span class="number">0.9</span>))]
     </span><span class="kw">pub </span>color: Styled&lt;Color&gt;,
 
     <span class="doccomment">/// The color of the scrollbar knob.
     </span><span class="attr">#[rebuild(draw)]
-    #[styled(default -&gt; Theme::SURFACE_HIGHER or Color::grayscale(<span class="number">0.8</span>))]
+    #[styled(default -&gt; Theme::CONTRAST or Color::grayscale(<span class="number">0.8</span>))]
     </span><span class="kw">pub </span>knob_color: Styled&lt;Color&gt;,
 }
 
