@@ -290,6 +290,7 @@
 <a href="#290" id="290">290</a>
 <a href="#291" id="291">291</a>
 <a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{collections::HashMap, hash::BuildHasherDefault, io, sync::Arc};
 
 <span class="kw">use </span>cosmic_text::{Buffer, CacheKey, Command, FontSystem, SwashCache};
@@ -478,8 +479,9 @@
         scale: f32,
     ) {
         <span class="kw">let </span>low_performance = <span class="macro">cfg!</span>(any(target_os = <span class="string">"android"</span>, target_os = <span class="string">"ios"</span>));
+        <span class="kw">let </span>size = buffer.metrics().font_size * scale;
 
-        <span class="kw">if </span>low_performance {
+        <span class="kw">if </span>low_performance &amp;&amp; size &lt; <span class="number">64.0 </span>{
             <span class="self">self</span>.draw_buffer_bitmap(canvas, buffer, color, offset, scale);
         } <span class="kw">else </span>{
             <span class="self">self</span>.draw_buffer_outline(canvas, buffer, color, offset);
