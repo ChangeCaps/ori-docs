@@ -103,19 +103,19 @@
 };
 
 <span class="doccomment">/// Create a new [`EventHandler`], with a before callback.
-</span><span class="kw">pub fn </span>on_event_before&lt;T, V&gt;(
-    content: V,
+</span><span class="kw">pub fn </span>on_event_before&lt;T&gt;(
+    view: <span class="kw">impl </span>View&lt;T&gt;,
     handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>,
-) -&gt; EventHandler&lt;T, V&gt; {
-    EventHandler::new(content).before(handler)
+) -&gt; EventHandler&lt;T, <span class="kw">impl </span>View&lt;T&gt;&gt; {
+    EventHandler::new(view).before(handler)
 }
 
 <span class="doccomment">/// Create a new [`EventHandler`], with an after callback.
-</span><span class="kw">pub fn </span>on_event&lt;T, V&gt;(
-    content: V,
+</span><span class="kw">pub fn </span>on_event&lt;T&gt;(
+    view: <span class="kw">impl </span>View&lt;T&gt;,
     handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>,
-) -&gt; EventHandler&lt;T, V&gt; {
-    EventHandler::new(content).after(handler)
+) -&gt; EventHandler&lt;T, <span class="kw">impl </span>View&lt;T&gt;&gt; {
+    EventHandler::new(view).after(handler)
 }
 
 <span class="doccomment">/// A view that handles events.

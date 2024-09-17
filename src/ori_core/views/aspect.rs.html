@@ -87,6 +87,11 @@
 <a href="#87" id="87">87</a>
 <a href="#88" id="88">88</a>
 <a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -94,6 +99,11 @@
     rebuild::Rebuild,
     view::{Pod, State, View},
 };
+
+<span class="doccomment">/// Create a new [`Aspect`] view.
+</span><span class="kw">pub fn </span>aspect&lt;T&gt;(aspect: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Aspect&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Aspect::new(aspect, view)
+}
 
 <span class="doccomment">/// A view that lays out its content with a fixed aspect ratio.
 </span><span class="attr">#[derive(Rebuild)]
@@ -108,7 +118,7 @@
 
 <span class="kw">impl</span>&lt;V&gt; Aspect&lt;V&gt; {
     <span class="doccomment">/// Creates a new `Aspect` view.
-    </span><span class="kw">pub fn </span>new(content: V, aspect: f32) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(aspect: f32, content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content: Pod::new(content),
             aspect,

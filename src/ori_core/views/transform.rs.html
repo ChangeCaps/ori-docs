@@ -100,28 +100,28 @@
 };
 
 <span class="doccomment">/// Create a new [`Transform`] view.
-</span><span class="kw">pub fn </span>transform&lt;V&gt;(transform: Affine, content: V) -&gt; Transform&lt;V&gt; {
-    Transform::new(transform, content)
+</span><span class="kw">pub fn </span>transform&lt;T&gt;(transform: Affine, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Transform&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Transform::new(transform, view)
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that translates its content.
-</span><span class="kw">pub fn </span>translate&lt;V&gt;(translation: <span class="kw">impl </span>Into&lt;Vector&gt;, content: V) -&gt; Transform&lt;V&gt; {
-    Transform::new(Affine::translate(translation.into()), content)
+</span><span class="kw">pub fn </span>translate&lt;T&gt;(translation: <span class="kw">impl </span>Into&lt;Vector&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Transform&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Transform::new(Affine::translate(translation.into()), view)
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that rotates its content.
-</span><span class="kw">pub fn </span>rotate&lt;V&gt;(degrees: f32, content: V) -&gt; Transform&lt;V&gt; {
-    Transform::new(Affine::rotate(degrees), content)
+</span><span class="kw">pub fn </span>rotate&lt;T&gt;(degrees: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Transform&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Transform::new(Affine::rotate(degrees), view)
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that rotates its content in degrees.
-</span><span class="kw">pub fn </span>rotate_degrees&lt;V&gt;(degrees: f32, content: V) -&gt; Transform&lt;V&gt; {
-    rotate(degrees.to_radians(), content)
+</span><span class="kw">pub fn </span>rotate_degrees&lt;T&gt;(degrees: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Transform&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    rotate(degrees.to_radians(), view)
 }
 
 <span class="doccomment">/// Create a new [`Transform`] view that scales its content.
-</span><span class="kw">pub fn </span>scale&lt;V&gt;(scale: <span class="kw">impl </span>Into&lt;Vector&gt;, content: V) -&gt; Transform&lt;V&gt; {
-    Transform::new(Affine::scale(scale.into()), content)
+</span><span class="kw">pub fn </span>scale&lt;T&gt;(scale: <span class="kw">impl </span>Into&lt;Vector&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Transform&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Transform::new(Affine::scale(scale.into()), view)
 }
 
 <span class="doccomment">/// A view that transforms its content.

@@ -361,13 +361,13 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Wrap`].
-</span><span class="kw">pub fn </span>hwrap&lt;V&gt;(content: V) -&gt; Wrap&lt;V&gt; {
-    Wrap::new(Axis::Horizontal, content)
+</span><span class="kw">pub fn </span>hwrap&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Wrap&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
+    Wrap::new(Axis::Horizontal, view)
 }
 
 <span class="doccomment">/// Create a vertical [`Wrap`].
-</span><span class="kw">pub fn </span>vwrap&lt;V&gt;(content: V) -&gt; Wrap&lt;V&gt; {
-    Wrap::new(Axis::Vertical, content)
+</span><span class="kw">pub fn </span>vwrap&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Wrap&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
+    Wrap::new(Axis::Vertical, view)
 }
 
 <span class="doccomment">/// Create a horizontal [`Wrap`], with a vector of content.
@@ -381,12 +381,12 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Wrap`], with dynamic content.
-</span><span class="kw">pub fn </span>hwrap_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+</span><span class="kw">pub fn </span>hwrap_any&lt;<span class="lifetime">'a</span>, T&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
     Wrap::horizontal_any()
 }
 
 <span class="doccomment">/// Create a vertical [`Wrap`], with dynamic content.
-</span><span class="kw">pub fn </span>vwrap_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+</span><span class="kw">pub fn </span>vwrap_any&lt;<span class="lifetime">'a</span>, T&gt;() -&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
     Wrap::vertical_any()
 }
 

@@ -72,11 +72,11 @@
 };
 
 <span class="doccomment">/// Create a new [`RebuildHandler`].
-</span><span class="kw">pub fn </span>on_rebuild&lt;T, V&gt;(
-    content: V,
+</span><span class="kw">pub fn </span>on_rebuild&lt;T&gt;(
+    view: <span class="kw">impl </span>View&lt;T&gt;,
     rebuild: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>RebuildCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; RebuildHandler&lt;T, V&gt; {
-    RebuildHandler::new(content, rebuild)
+) -&gt; RebuildHandler&lt;T, <span class="kw">impl </span>View&lt;T&gt;&gt; {
+    RebuildHandler::new(view, rebuild)
 }
 
 <span class="doccomment">/// A view that handles rebuilds.

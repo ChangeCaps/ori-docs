@@ -82,6 +82,9 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -90,11 +93,14 @@
 };
 
 <span class="doccomment">/// Create a new [`Focus`].
-</span><span class="kw">pub fn </span>focus&lt;T, U, V: View&lt;U&gt;&gt;(
-    focus: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Lens&lt;U&gt;) + <span class="lifetime">'static</span>,
+</span><span class="kw">pub fn </span>focus&lt;T, U, V&gt;(
     content: V,
-) -&gt; Focus&lt;T, U, V&gt; {
-    Focus::new(content, focus)
+    focus: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Lens&lt;U&gt;) + <span class="lifetime">'static</span>,
+) -&gt; Focus&lt;T, U, V&gt;
+<span class="kw">where
+    </span>V: View&lt;U&gt;,
+{
+    Focus::new(focus, content)
 }
 
 <span class="doccomment">/// A lens used by [`Focus`].
@@ -111,7 +117,7 @@
 
 <span class="kw">impl</span>&lt;T, U, V&gt; Focus&lt;T, U, V&gt; {
     <span class="doccomment">/// Create a new [`Focus`].
-    </span><span class="kw">pub fn </span>new(content: V, focus: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Lens&lt;U&gt;) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(focus: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;mut </span>Lens&lt;U&gt;) + <span class="lifetime">'static</span>, content: V) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             content,
             focus: Box::new(focus),

@@ -142,28 +142,28 @@
 };
 
 <span class="doccomment">/// Create a new [`Pad`] view.
-</span><span class="kw">pub fn </span>pad&lt;V&gt;(padding: <span class="kw">impl </span>Into&lt;Padding&gt;, content: V) -&gt; Pad&lt;V&gt; {
-    Pad::new(padding, content)
+</span><span class="kw">pub fn </span>pad&lt;T&gt;(padding: <span class="kw">impl </span>Into&lt;Padding&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Pad&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Pad::new(padding, view)
 }
 
 <span class="doccomment">/// Create a new [`Pad`] view adding padding to the top.
-</span><span class="kw">pub fn </span>pad_top&lt;V&gt;(padding: f32, content: V) -&gt; Pad&lt;V&gt; {
-    Pad::new([padding, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], content)
+</span><span class="kw">pub fn </span>pad_top&lt;T&gt;(padding: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Pad&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Pad::new([padding, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>], view)
 }
 
 <span class="doccomment">/// Create a new [`Pad`] view adding padding to the right.
-</span><span class="kw">pub fn </span>pad_right&lt;V&gt;(padding: f32, content: V) -&gt; Pad&lt;V&gt; {
-    Pad::new([<span class="number">0.0</span>, padding, <span class="number">0.0</span>, <span class="number">0.0</span>], content)
+</span><span class="kw">pub fn </span>pad_right&lt;T&gt;(padding: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Pad&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Pad::new([<span class="number">0.0</span>, padding, <span class="number">0.0</span>, <span class="number">0.0</span>], view)
 }
 
 <span class="doccomment">/// Create a new [`Pad`] view adding padding to the bottom.
-</span><span class="kw">pub fn </span>pad_bottom&lt;V&gt;(padding: f32, content: V) -&gt; Pad&lt;V&gt; {
-    Pad::new([<span class="number">0.0</span>, <span class="number">0.0</span>, padding, <span class="number">0.0</span>], content)
+</span><span class="kw">pub fn </span>pad_bottom&lt;T&gt;(padding: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Pad&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Pad::new([<span class="number">0.0</span>, <span class="number">0.0</span>, padding, <span class="number">0.0</span>], view)
 }
 
 <span class="doccomment">/// Create a new [`Pad`] view adding padding to the left.
-</span><span class="kw">pub fn </span>pad_left&lt;V&gt;(padding: f32, content: V) -&gt; Pad&lt;V&gt; {
-    Pad::new([<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, padding], content)
+</span><span class="kw">pub fn </span>pad_left&lt;T&gt;(padding: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Pad&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Pad::new([<span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, padding], view)
 }
 
 <span class="doccomment">/// A view that adds padding to its content.

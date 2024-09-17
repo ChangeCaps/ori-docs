@@ -73,6 +73,9 @@
 <a href="#73" id="73">73</a>
 <a href="#74" id="74">74</a>
 <a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -84,7 +87,10 @@
 </span><span class="kw">pub fn </span>on_build&lt;T, V&gt;(
     content: V,
     after: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>BuildCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; BuildHandler&lt;T, V&gt; {
+) -&gt; BuildHandler&lt;T, V&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     BuildHandler::new(content).after(after)
 }
 

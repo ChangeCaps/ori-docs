@@ -316,13 +316,13 @@
 };
 
 <span class="doccomment">/// Create a new horizontal [`Scroll`].
-</span><span class="kw">pub fn </span>hscroll&lt;V&gt;(content: V) -&gt; Scroll&lt;V&gt; {
-    Scroll::new(Axis::Horizontal, content)
+</span><span class="kw">pub fn </span>hscroll&lt;T&gt;(view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Scroll&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Scroll::new(Axis::Horizontal, view)
 }
 
 <span class="doccomment">/// Create a new vertical [`Scroll`].
-</span><span class="kw">pub fn </span>vscroll&lt;V&gt;(content: V) -&gt; Scroll&lt;V&gt; {
-    Scroll::new(Axis::Vertical, content)
+</span><span class="kw">pub fn </span>vscroll&lt;T&gt;(view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Scroll&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Scroll::new(Axis::Vertical, view)
 }
 
 <span class="doccomment">/// A scrollable view.

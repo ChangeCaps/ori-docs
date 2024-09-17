@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["main","reloadable"],"mod":["app","core","log","prelude"]};
+window.SIDEBAR_ITEMS = {"attr":["main"],"mod":["app","core","log","prelude"]};

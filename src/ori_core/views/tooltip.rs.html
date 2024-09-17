@@ -345,8 +345,8 @@
 };
 
 <span class="doccomment">/// Create a new [`Tooltip`] view.
-</span><span class="kw">pub fn </span>tooltip&lt;V&gt;(content: V, text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Tooltip&lt;V&gt; {
-    Tooltip::new(content, text)
+</span><span class="kw">pub fn </span>tooltip&lt;T&gt;(view: <span class="kw">impl </span>View&lt;T&gt;, text: <span class="kw">impl </span>Into&lt;SmolStr&gt;) -&gt; Tooltip&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Tooltip::new(view, text)
 }
 
 <span class="doccomment">/// A view that displays some text when the content is hovered.

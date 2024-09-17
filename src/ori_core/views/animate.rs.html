@@ -212,6 +212,21 @@
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -223,7 +238,10 @@
 <span class="doccomment">/// Create a new [`Animate`].
 </span><span class="kw">pub fn </span>animate&lt;T, V, S&gt;(
     animate: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Option</span>&lt;V&gt; + <span class="lifetime">'static</span>,
-) -&gt; Animate&lt;T, V, S&gt; {
+) -&gt; Animate&lt;T, V, S&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     Animate::new(animate)
 }
 
@@ -231,7 +249,10 @@
 </span><span class="kw">pub fn </span>transition_hovered&lt;T, V&gt;(
     transition: Transition,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, f32) -&gt; V + <span class="lifetime">'static</span>,
-) -&gt; Animate&lt;T, V, f32&gt; {
+) -&gt; Animate&lt;T, V, f32&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
@@ -259,7 +280,10 @@
 </span><span class="kw">pub fn </span>transition_active&lt;T, V&gt;(
     transition: Transition,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, f32) -&gt; V + <span class="lifetime">'static</span>,
-) -&gt; Animate&lt;T, V, f32&gt; {
+) -&gt; Animate&lt;T, V, f32&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
@@ -287,7 +311,10 @@
 </span><span class="kw">pub fn </span>transition_focused&lt;T, V&gt;(
     transition: Transition,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, f32) -&gt; V + <span class="lifetime">'static</span>,
-) -&gt; Animate&lt;T, V, f32&gt; {
+) -&gt; Animate&lt;T, V, f32&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
@@ -316,7 +343,10 @@
     transition: Transition,
     active: bool,
     <span class="kw-2">mut </span>view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, f32) -&gt; V + <span class="lifetime">'static</span>,
-) -&gt; Animate&lt;T, V, f32&gt; {
+) -&gt; Animate&lt;T, V, f32&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     <span class="kw">let </span><span class="kw-2">mut </span>built = <span class="bool-val">false</span>;
 
     animate(<span class="kw">move </span>|t: <span class="kw-2">&amp;mut </span>f32, cx, data: <span class="kw-2">&amp;mut </span>T, event| {
@@ -338,7 +368,7 @@
 
 <span class="doccomment">/// A view that animates.
 ///
-/// For an example, see [`animate`](https://github.com/ChangeCaps/ori/blob/main/examples/animate.rs).
+/// For an example, see [`animate`](https://github.com/ori-ui/ori/blob/main/examples/animate.rs).
 </span><span class="kw">pub struct </span>Animate&lt;T, V, S = ()&gt; {
     <span class="doccomment">/// The animation callback.
     </span><span class="attr">#[allow(clippy::type_complexity)]

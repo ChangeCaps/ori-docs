@@ -255,6 +255,10 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build, Styled};
@@ -271,7 +275,11 @@
 };
 
 <span class="doccomment">/// Create a new [`Collapsing`].
-</span><span class="kw">pub fn </span>collapsing&lt;T, H, V&gt;(header: H, content: V) -&gt; Collapsing&lt;T, H, V&gt; {
+</span><span class="kw">pub fn </span>collapsing&lt;T, H, V&gt;(header: H, content: V) -&gt; Collapsing&lt;T, H, V&gt;
+<span class="kw">where
+    </span>H: View&lt;T&gt;,
+    V: View&lt;T&gt;,
+{
     Collapsing::new(header, content)
 }
 

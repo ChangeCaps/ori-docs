@@ -79,11 +79,11 @@
 };
 
 <span class="doccomment">/// Create a new [`DrawHandler`].
-</span><span class="kw">pub fn </span>on_draw&lt;T, V&gt;(
-    content: V,
+</span><span class="kw">pub fn </span>on_draw&lt;T&gt;(
+    view: <span class="kw">impl </span>View&lt;T&gt;,
     on_draw: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>DrawCx, <span class="kw-2">&amp;mut </span>T) + <span class="lifetime">'static</span>,
-) -&gt; DrawHandler&lt;T, V&gt; {
-    DrawHandler::new(content).on_draw(on_draw)
+) -&gt; DrawHandler&lt;T, <span class="kw">impl </span>View&lt;T&gt;&gt; {
+    DrawHandler::new(view).on_draw(on_draw)
 }
 
 <span class="doccomment">/// A view that hooks into the draw cycle.

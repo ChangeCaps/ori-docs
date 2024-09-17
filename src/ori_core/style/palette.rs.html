@@ -169,10 +169,7 @@
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-</pre></div><pre class="rust"><code><span class="kw">use crate</span>::{canvas::Color, style};
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::canvas::Color;
 
 <span class="kw">use super</span>::{Style, Styles};
 
@@ -252,7 +249,7 @@
 
 <span class="kw">impl </span>From&lt;Theme&gt; <span class="kw">for </span>Styles {
     <span class="kw">fn </span>from(theme: Theme) -&gt; <span class="self">Self </span>{
-        <span class="kw">fn </span>emphasize(color: Color, is_light: bool, level: i32) -&gt; Color {
+        <span class="kw">fn </span>surf(color: Color, is_light: bool, level: i32) -&gt; Color {
             <span class="kw">let </span>level = level <span class="kw">as </span>f32;
 
             <span class="kw">if </span>is_light {
@@ -280,35 +277,32 @@
 
         <span class="kw">let </span>is_light = theme.background.luminocity() &gt; <span class="number">0.5</span>;
 
-        <span class="macro">style!</span> {
-            <span class="string">"palette" </span>{
-                <span class="string">"background"</span>: theme.background,
-                <span class="string">"surface_lower"</span>: emphasize(theme.surface, is_light, -<span class="number">2</span>),
-                <span class="string">"surface_low"</span>: emphasize(theme.surface, is_light, -<span class="number">1</span>),
-                <span class="string">"surface"</span>: theme.surface,
-                <span class="string">"surface_high"</span>: emphasize(theme.surface, is_light, <span class="number">1</span>),
-                <span class="string">"surface_higher"</span>: emphasize(theme.surface, is_light, <span class="number">2</span>),
-                <span class="string">"surface_highest"</span>: emphasize(theme.surface, is_light, <span class="number">3</span>),
-                <span class="string">"outline"</span>: theme.outline,
-                <span class="string">"outline_low"</span>: low(theme.outline, is_light),
-                <span class="string">"contrast"</span>: theme.contrast,
-                <span class="string">"contrast_low"</span>: contrast_low(theme.contrast, is_light),
-                <span class="string">"primary"</span>: theme.primary,
-                <span class="string">"primary_low"</span>: low(theme.primary, is_light),
-                <span class="string">"secondary"</span>: theme.secondary,
-                <span class="string">"secondary_low"</span>: low(theme.secondary, is_light),
-                <span class="string">"accent"</span>: theme.accent,
-                <span class="string">"accent_low"</span>: low(theme.accent, is_light),
-                <span class="string">"danger"</span>: theme.danger,
-                <span class="string">"danger_low"</span>: low(theme.danger, is_light),
-                <span class="string">"success"</span>: theme.success,
-                <span class="string">"success_low"</span>: low(theme.success, is_light),
-                <span class="string">"warning"</span>: theme.warning,
-                <span class="string">"warning_low"</span>: low(theme.warning, is_light),
-                <span class="string">"info"</span>: theme.info,
-                <span class="string">"info_low"</span>: low(theme.info, is_light),
-            },
-        }
+        Styles::new()
+            .with(Theme::BACKGROUND, theme.background)
+            .with(Theme::SURFACE_LOWER, surf(theme.surface, is_light, -<span class="number">2</span>))
+            .with(Theme::SURFACE_LOW, surf(theme.surface, is_light, -<span class="number">1</span>))
+            .with(Theme::SURFACE, theme.surface)
+            .with(Theme::SURFACE_HIGH, surf(theme.surface, is_light, <span class="number">1</span>))
+            .with(Theme::SURFACE_HIGHER, surf(theme.surface, is_light, <span class="number">2</span>))
+            .with(Theme::SURFACE_HIGHEST, surf(theme.surface, is_light, <span class="number">3</span>))
+            .with(Theme::OUTLINE, theme.outline)
+            .with(Theme::OUTLINE_LOW, low(theme.outline, is_light))
+            .with(Theme::CONTRAST, theme.contrast)
+            .with(Theme::CONTRAST_LOW, contrast_low(theme.contrast, is_light))
+            .with(Theme::PRIMARY, theme.primary)
+            .with(Theme::PRIMARY_LOW, low(theme.primary, is_light))
+            .with(Theme::SECONDARY, theme.secondary)
+            .with(Theme::SECONDARY_LOW, low(theme.secondary, is_light))
+            .with(Theme::ACCENT, theme.accent)
+            .with(Theme::ACCENT_LOW, low(theme.accent, is_light))
+            .with(Theme::DANGER, theme.danger)
+            .with(Theme::DANGER_LOW, low(theme.danger, is_light))
+            .with(Theme::SUCCESS, theme.success)
+            .with(Theme::SUCCESS_LOW, low(theme.success, is_light))
+            .with(Theme::WARNING, theme.warning)
+            .with(Theme::WARNING_LOW, low(theme.warning, is_light))
+            .with(Theme::INFO, theme.info)
+            .with(Theme::INFO_LOW, low(theme.info, is_light))
     }
 }
 
@@ -320,30 +314,30 @@
 
 <span class="attr">#[allow(missing_docs)]
 </span><span class="kw">impl </span>Theme {
-    <span class="kw">pub const </span>BACKGROUND: Style&lt;Color&gt; = Style::new(<span class="string">"palette.background"</span>);
-    <span class="kw">pub const </span>SURFACE_LOWER: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface_lower"</span>);
-    <span class="kw">pub const </span>SURFACE_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface_low"</span>);
-    <span class="kw">pub const </span>SURFACE: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface"</span>);
-    <span class="kw">pub const </span>SURFACE_HIGH: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface_high"</span>);
-    <span class="kw">pub const </span>SURFACE_HIGHER: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface_higher"</span>);
-    <span class="kw">pub const </span>SURFACE_HIGHEST: Style&lt;Color&gt; = Style::new(<span class="string">"palette.surface_highest"</span>);
-    <span class="kw">pub const </span>OUTLINE: Style&lt;Color&gt; = Style::new(<span class="string">"palette.outline"</span>);
-    <span class="kw">pub const </span>OUTLINE_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.outline_low"</span>);
-    <span class="kw">pub const </span>CONTRAST: Style&lt;Color&gt; = Style::new(<span class="string">"palette.contrast"</span>);
-    <span class="kw">pub const </span>CONTRAST_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.contrast_low"</span>);
-    <span class="kw">pub const </span>PRIMARY: Style&lt;Color&gt; = Style::new(<span class="string">"palette.primary"</span>);
-    <span class="kw">pub const </span>PRIMARY_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.primary_low"</span>);
-    <span class="kw">pub const </span>SECONDARY: Style&lt;Color&gt; = Style::new(<span class="string">"palette.secondary"</span>);
-    <span class="kw">pub const </span>SECONDARY_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.secondary_low"</span>);
-    <span class="kw">pub const </span>ACCENT: Style&lt;Color&gt; = Style::new(<span class="string">"palette.accent"</span>);
-    <span class="kw">pub const </span>ACCENT_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.accent_low"</span>);
-    <span class="kw">pub const </span>DANGER: Style&lt;Color&gt; = Style::new(<span class="string">"palette.danger"</span>);
-    <span class="kw">pub const </span>DANGER_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.danger_low"</span>);
-    <span class="kw">pub const </span>SUCCESS: Style&lt;Color&gt; = Style::new(<span class="string">"palette.success"</span>);
-    <span class="kw">pub const </span>SUCCESS_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.success_low"</span>);
-    <span class="kw">pub const </span>WARNING: Style&lt;Color&gt; = Style::new(<span class="string">"palette.warning"</span>);
-    <span class="kw">pub const </span>WARNING_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.warning_low"</span>);
-    <span class="kw">pub const </span>INFO: Style&lt;Color&gt; = Style::new(<span class="string">"palette.info"</span>);
-    <span class="kw">pub const </span>INFO_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"palette.info_low"</span>);
+    <span class="kw">pub const </span>BACKGROUND: Style&lt;Color&gt; = Style::new(<span class="string">"theme.background"</span>);
+    <span class="kw">pub const </span>SURFACE_LOWER: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface_lower"</span>);
+    <span class="kw">pub const </span>SURFACE_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface_low"</span>);
+    <span class="kw">pub const </span>SURFACE: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface"</span>);
+    <span class="kw">pub const </span>SURFACE_HIGH: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface_high"</span>);
+    <span class="kw">pub const </span>SURFACE_HIGHER: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface_higher"</span>);
+    <span class="kw">pub const </span>SURFACE_HIGHEST: Style&lt;Color&gt; = Style::new(<span class="string">"theme.surface_highest"</span>);
+    <span class="kw">pub const </span>OUTLINE: Style&lt;Color&gt; = Style::new(<span class="string">"theme.outline"</span>);
+    <span class="kw">pub const </span>OUTLINE_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.outline_low"</span>);
+    <span class="kw">pub const </span>CONTRAST: Style&lt;Color&gt; = Style::new(<span class="string">"theme.contrast"</span>);
+    <span class="kw">pub const </span>CONTRAST_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.contrast_low"</span>);
+    <span class="kw">pub const </span>PRIMARY: Style&lt;Color&gt; = Style::new(<span class="string">"theme.primary"</span>);
+    <span class="kw">pub const </span>PRIMARY_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.primary_low"</span>);
+    <span class="kw">pub const </span>SECONDARY: Style&lt;Color&gt; = Style::new(<span class="string">"theme.secondary"</span>);
+    <span class="kw">pub const </span>SECONDARY_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.secondary_low"</span>);
+    <span class="kw">pub const </span>ACCENT: Style&lt;Color&gt; = Style::new(<span class="string">"theme.accent"</span>);
+    <span class="kw">pub const </span>ACCENT_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.accent_low"</span>);
+    <span class="kw">pub const </span>DANGER: Style&lt;Color&gt; = Style::new(<span class="string">"theme.danger"</span>);
+    <span class="kw">pub const </span>DANGER_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.danger_low"</span>);
+    <span class="kw">pub const </span>SUCCESS: Style&lt;Color&gt; = Style::new(<span class="string">"theme.success"</span>);
+    <span class="kw">pub const </span>SUCCESS_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.success_low"</span>);
+    <span class="kw">pub const </span>WARNING: Style&lt;Color&gt; = Style::new(<span class="string">"theme.warning"</span>);
+    <span class="kw">pub const </span>WARNING_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.warning_low"</span>);
+    <span class="kw">pub const </span>INFO: Style&lt;Color&gt; = Style::new(<span class="string">"theme.info"</span>);
+    <span class="kw">pub const </span>INFO_LOW: Style&lt;Color&gt; = Style::new(<span class="string">"theme.info_low"</span>);
 }
 </code></pre></div></section></main></body></html>

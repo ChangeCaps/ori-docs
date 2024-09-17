@@ -207,30 +207,6 @@
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Macros for the Ori crate.
 
 </span><span class="attr">#![warn(missing_docs)]
@@ -240,7 +216,6 @@
 <span class="kw">mod </span>example;
 <span class="kw">mod </span>font;
 <span class="kw">mod </span>rebuild;
-<span class="kw">mod </span>reload;
 <span class="kw">mod </span>styled;
 
 <span class="kw">fn </span>found_crate(krate: proc_macro_crate::FoundCrate) -&gt; syn::Path {
@@ -262,19 +237,6 @@
                 <span class="macro">syn::parse_quote!</span>(#ori::core)
             }
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">syn::parse_quote!</span>(ori::core),
-        },
-    }
-}
-
-<span class="kw">fn </span>find_reload() -&gt; syn::Path {
-    <span class="kw">match </span>proc_macro_crate::crate_name(<span class="string">"ori-reload"</span>) {
-        <span class="prelude-val">Ok</span>(krate) =&gt; found_crate(krate),
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>proc_macro_crate::crate_name(<span class="string">"ori"</span>) {
-            <span class="prelude-val">Ok</span>(krate) =&gt; {
-                <span class="kw">let </span>ori = found_crate(krate);
-                <span class="macro">syn::parse_quote!</span>(#ori::reload)
-            }
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">syn::parse_quote!</span>(ori::reload),
         },
     }
 }
@@ -329,16 +291,6 @@
 #[proc_macro_derive(Styled, attributes(styled, rebuild))]
 </span><span class="kw">pub fn </span>derive_styled(input: proc_macro::TokenStream) -&gt; manyhow::Result&lt;proc_macro::TokenStream&gt; {
     styled::derive_styled(input)
-}
-
-<span class="doccomment">/// A macro to generate boilerplate for a hot-reloadable function.
-</span><span class="attr">#[manyhow::manyhow]
-#[proc_macro_attribute]
-</span><span class="kw">pub fn </span>reloadable(
-    args: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -&gt; manyhow::Result&lt;proc_macro::TokenStream&gt; {
-    reload::reloadable(args, input)
 }
 
 <span class="doccomment">/// Only include the annotated item on desktop platforms.

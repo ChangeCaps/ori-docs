@@ -184,65 +184,65 @@
 };
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a space.
-</span><span class="kw">pub fn </span>constrain&lt;V&gt;(space: <span class="kw">impl </span>Into&lt;Space&gt;, content: V) -&gt; Constrain&lt;V&gt; {
-    Constrain::new(space.into(), content)
+</span><span class="kw">pub fn </span>constrain&lt;T&gt;(space: <span class="kw">impl </span>Into&lt;Space&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Constrain::new(space.into(), view)
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, cosntraining its content to a size.
-</span><span class="kw">pub fn </span>size&lt;V&gt;(size: <span class="kw">impl </span>Into&lt;Size&gt;, content: V) -&gt; Constrain&lt;V&gt; {
-    Constrain::new(Space::from_size(size.into()), content)
+</span><span class="kw">pub fn </span>size&lt;T&gt;(size: <span class="kw">impl </span>Into&lt;Size&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Constrain::new(Space::from_size(size.into()), view)
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a minimum size.
-</span><span class="kw">pub fn </span>min_size&lt;V&gt;(min_size: <span class="kw">impl </span>Into&lt;Size&gt;, content: V) -&gt; Constrain&lt;V&gt; {
-    Constrain::new(Space::new(min_size.into(), Size::FILL), content)
+</span><span class="kw">pub fn </span>min_size&lt;T&gt;(min_size: <span class="kw">impl </span>Into&lt;Size&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Constrain::new(Space::new(min_size.into(), Size::FILL), view)
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a maximum size.
-</span><span class="kw">pub fn </span>max_size&lt;V&gt;(max_size: <span class="kw">impl </span>Into&lt;Size&gt;, content: V) -&gt; Constrain&lt;V&gt; {
-    Constrain::new(Space::new(Size::ZERO, max_size.into()), content)
+</span><span class="kw">pub fn </span>max_size&lt;T&gt;(max_size: <span class="kw">impl </span>Into&lt;Size&gt;, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    Constrain::new(Space::new(Size::ZERO, max_size.into()), view)
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a width.
-</span><span class="kw">pub fn </span>width&lt;V&gt;(width: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>width&lt;T&gt;(width: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.min.width = width;
     constrain.space.max.width = width;
     constrain
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a height.
-</span><span class="kw">pub fn </span>height&lt;V&gt;(height: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>height&lt;T&gt;(height: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.min.height = height;
     constrain.space.max.height = height;
     constrain
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a minimum width.
-</span><span class="kw">pub fn </span>min_width&lt;V&gt;(min_width: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>min_width&lt;T&gt;(min_width: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.min.width = min_width;
     constrain
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a minimum height.
-</span><span class="kw">pub fn </span>min_height&lt;V&gt;(min_height: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>min_height&lt;T&gt;(min_height: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.min.height = min_height;
     constrain
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a maximum width.
-</span><span class="kw">pub fn </span>max_width&lt;V&gt;(max_width: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>max_width&lt;T&gt;(max_width: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.max.width = max_width;
     constrain
 }
 
 <span class="doccomment">/// Create a new [`Constrain`]ed view, constraining its content to a maximum height.
-</span><span class="kw">pub fn </span>max_height&lt;V&gt;(max_height: f32, content: V) -&gt; Constrain&lt;V&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(content);
+</span><span class="kw">pub fn </span>max_height&lt;T&gt;(max_height: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Constrain&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>constrain = Constrain::unbounded(view);
     constrain.space.max.height = max_height;
     constrain
 }

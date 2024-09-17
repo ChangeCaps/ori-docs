@@ -422,13 +422,13 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`].
-</span><span class="kw">pub fn </span>hstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
-    Stack::horizontal(content)
+</span><span class="kw">pub fn </span>hstack&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Stack&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
+    Stack::horizontal(view)
 }
 
 <span class="doccomment">/// Create a vertical [`Stack`].
-</span><span class="kw">pub fn </span>vstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
-    Stack::vertical(content)
+</span><span class="kw">pub fn </span>vstack&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Stack&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
+    Stack::vertical(view)
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`], with vector content.
@@ -442,12 +442,12 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`], with dynamic content.
-</span><span class="kw">pub fn </span>hstack_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+</span><span class="kw">pub fn </span>hstack_any&lt;<span class="lifetime">'a</span>, T&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
     Stack::any_horizontal()
 }
 
 <span class="doccomment">/// Create a vertical [`Stack`], with dynamic content.
-</span><span class="kw">pub fn </span>vstack_any&lt;<span class="lifetime">'a</span>, V&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;V&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+</span><span class="kw">pub fn </span>vstack_any&lt;<span class="lifetime">'a</span>, T&gt;() -&gt; Stack&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
     Stack::any_vertical()
 }
 
