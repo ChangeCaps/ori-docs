@@ -111,13 +111,13 @@
 };
 
 <span class="doccomment">/// Create a new [`Flexible`] view.
-</span><span class="kw">pub fn </span>flex&lt;V&gt;(content: V) -&gt; Flexible&lt;V&gt; {
-    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">false</span>, content)
+</span><span class="kw">pub fn </span>flex&lt;V&gt;(view: V) -&gt; Flexible&lt;V&gt; {
+    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">false</span>, view)
 }
 
 <span class="doccomment">/// Create a new expanded [`Flexible`] view.
-</span><span class="kw">pub fn </span>expand&lt;V&gt;(content: V) -&gt; Flexible&lt;V&gt; {
-    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">true</span>, content)
+</span><span class="kw">pub fn </span>expand&lt;V&gt;(view: V) -&gt; Flexible&lt;V&gt; {
+    Flexible::new(<span class="number">1.0</span>, <span class="bool-val">true</span>, view)
 }
 
 <span class="doccomment">/// The flex value of a view.

@@ -62,8 +62,8 @@
 };
 
 <span class="doccomment">/// Create a new [`Trigger`] view.
-</span><span class="kw">pub fn </span>trigger&lt;V&gt;(content: V) -&gt; Trigger&lt;V&gt; {
-    Trigger::new(content)
+</span><span class="kw">pub fn </span>trigger&lt;V&gt;(view: V) -&gt; Trigger&lt;V&gt; {
+    Trigger::new(view)
 }
 
 <span class="doccomment">/// A view that creates a trigger around the content.

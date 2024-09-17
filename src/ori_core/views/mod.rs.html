@@ -376,8 +376,8 @@
 
     <span class="kw">pub type </span>SavedLayouts = HashMap&lt;String, Rect&gt;;
 
-    <span class="kw">pub fn </span>save_layout&lt;V&gt;(content: V, name: <span class="kw">impl </span>Into&lt;String&gt;) -&gt; LayoutSaver&lt;V&gt; {
-        LayoutSaver::new(content, name)
+    <span class="kw">pub fn </span>save_layout&lt;V&gt;(view: V, name: <span class="kw">impl </span>Into&lt;String&gt;) -&gt; LayoutSaver&lt;V&gt; {
+        LayoutSaver::new(view, name)
     }
 
     <span class="kw">pub struct </span>LayoutSaver&lt;V&gt; {

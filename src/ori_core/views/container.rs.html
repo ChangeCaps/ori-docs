@@ -155,8 +155,8 @@
 };
 
 <span class="doccomment">/// Create a new [`Container`].
-</span><span class="kw">pub fn </span>container&lt;V&gt;(content: V) -&gt; Container&lt;V&gt; {
-    Container::new(content)
+</span><span class="kw">pub fn </span>container&lt;V&gt;(view: V) -&gt; Container&lt;V&gt; {
+    Container::new(view)
 }
 
 <span class="doccomment">/// Create a new [`Container`] with background.
@@ -168,8 +168,8 @@
 ///     background(Color::RED, text("Hello, World!"))
 /// }
 /// ````
-</span><span class="kw">pub fn </span>background&lt;V&gt;(background: <span class="kw">impl </span>Into&lt;Styled&lt;Color&gt;&gt;, content: V) -&gt; Container&lt;V&gt; {
-    Container::new(content).background(background)
+</span><span class="kw">pub fn </span>background&lt;V&gt;(background: <span class="kw">impl </span>Into&lt;Styled&lt;Color&gt;&gt;, view: V) -&gt; Container&lt;V&gt; {
+    Container::new(view).background(background)
 }
 
 <span class="doccomment">/// A container view.
