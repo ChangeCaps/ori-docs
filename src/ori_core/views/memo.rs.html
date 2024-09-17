@@ -81,7 +81,6 @@
 <a href="#81" id="81">81</a>
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
-<a href="#84" id="84">84</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -90,11 +89,10 @@
 };
 
 <span class="doccomment">/// Create a new [`Memo`].
-</span><span class="kw">pub fn </span>memo&lt;T, V, D&gt;(data: D, build: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>) -&gt; Memo&lt;T, V, D&gt;
-<span class="kw">where
-    </span>V: View&lt;T&gt;,
-    D: PartialEq,
-{
+</span><span class="kw">pub fn </span>memo&lt;T, V: View&lt;T&gt;, D: PartialEq&gt;(
+    data: D,
+    build: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>,
+) -&gt; Memo&lt;T, V, D&gt; {
     Memo::new(data, build)
 }
 

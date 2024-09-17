@@ -102,8 +102,8 @@
 }
 
 <span class="doccomment">/// Create a new [`ZStack`] view.
-</span><span class="kw">pub fn </span>zstack&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; ZStack&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
-    ZStack::new(view)
+</span><span class="kw">pub fn </span>zstack&lt;V&gt;(content: V) -&gt; ZStack&lt;V&gt; {
+    ZStack::new(content)
 }
 
 <span class="doccomment">/// A view that overlays its content on top of each other.

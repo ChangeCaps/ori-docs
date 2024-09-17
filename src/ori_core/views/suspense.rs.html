@@ -208,7 +208,7 @@
 
 <span class="kw">impl</span>&lt;F&gt; Suspense&lt;(), F&gt; {
     <span class="doccomment">/// Set the fallback view to display while the future is pending.
-    </span><span class="kw">pub fn </span>fallback&lt;T&gt;(<span class="self">self</span>, fallback: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Suspense&lt;<span class="kw">impl </span>View&lt;T&gt;, F&gt; {
+    </span><span class="kw">pub fn </span>fallback&lt;V&gt;(<span class="self">self</span>, fallback: V) -&gt; Suspense&lt;V, F&gt; {
         Suspense {
             fallback: Pod::new(fallback),
             future: <span class="self">self</span>.future,

@@ -361,13 +361,13 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Wrap`].
-</span><span class="kw">pub fn </span>hwrap&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Wrap&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
-    Wrap::new(Axis::Horizontal, view)
+</span><span class="kw">pub fn </span>hwrap&lt;V&gt;(content: V) -&gt; Wrap&lt;V&gt; {
+    Wrap::new(Axis::Horizontal, content)
 }
 
 <span class="doccomment">/// Create a vertical [`Wrap`].
-</span><span class="kw">pub fn </span>vwrap&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Wrap&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
-    Wrap::new(Axis::Vertical, view)
+</span><span class="kw">pub fn </span>vwrap&lt;V&gt;(content: V) -&gt; Wrap&lt;V&gt; {
+    Wrap::new(Axis::Vertical, content)
 }
 
 <span class="doccomment">/// Create a horizontal [`Wrap`], with a vector of content.

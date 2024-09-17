@@ -101,7 +101,7 @@
 };
 
 <span class="doccomment">/// Create a new [`Aspect`] view.
-</span><span class="kw">pub fn </span>aspect&lt;T&gt;(aspect: f32, view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Aspect&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
+</span><span class="kw">pub fn </span>aspect&lt;V&gt;(aspect: f32, view: V) -&gt; Aspect&lt;V&gt; {
     Aspect::new(aspect, view)
 }
 

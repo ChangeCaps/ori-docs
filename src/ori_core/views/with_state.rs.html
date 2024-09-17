@@ -305,6 +305,14 @@
 <a href="#305" id="305">305</a>
 <a href="#306" id="306">306</a>
 <a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{mem::ManuallyDrop, ptr};
 
 <span class="kw">use crate</span>::{
@@ -343,7 +351,7 @@
 </span><span class="kw">pub fn </span>with_state&lt;S, T, V&gt;(
     build: <span class="kw">impl </span>FnOnce() -&gt; S + <span class="lifetime">'static</span>,
     view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>,
-) -&gt; <span class="kw">impl </span>View&lt;T&gt;
+) -&gt; WithState&lt;S, T, V&gt;
 <span class="kw">where
     </span>V: View&lt;(S, T)&gt;,
 {
@@ -373,7 +381,9 @@
 ///     )
 /// }
 /// ```
-</span><span class="kw">pub fn </span>with_state_default&lt;S, T, V&gt;(view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>) -&gt; <span class="kw">impl </span>View&lt;T&gt;
+</span><span class="kw">pub fn </span>with_state_default&lt;S, T, V&gt;(
+    view: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>S, <span class="kw-2">&amp;mut </span>T) -&gt; V + <span class="lifetime">'static</span>,
+) -&gt; WithState&lt;S, T, V&gt;
 <span class="kw">where
     </span>S: Default + <span class="lifetime">'static</span>,
     V: View&lt;(S, T)&gt;,
@@ -449,14 +459,20 @@
 <span class="doccomment">/// Create a new view unwrapping some state from the data.
 ///
 /// This is equivalent to `focus(|(data, _state), lens| lens(data), view)`.
-</span><span class="kw">pub fn </span>without_state&lt;S, T&gt;(view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; <span class="kw">impl </span>View&lt;(S, T)&gt; {
+</span><span class="kw">pub fn </span>without_state&lt;S, T, V&gt;(view: V) -&gt; <span class="kw">impl </span>View&lt;(S, T)&gt;
+<span class="kw">where
+    </span>V: View&lt;T&gt;,
+{
     focus(view, |(_state, data), lens| lens(data))
 }
 
 <span class="doccomment">/// Create a new view unwrapping some data from the state.
 ///
 /// This is equivalent to `focus(|(_data, state), lens| lens(state), view)`.
-</span><span class="kw">pub fn </span>without_data&lt;S, T&gt;(view: <span class="kw">impl </span>View&lt;S&gt;) -&gt; <span class="kw">impl </span>View&lt;(S, T)&gt; {
+</span><span class="kw">pub fn </span>without_data&lt;S, T, V&gt;(view: V) -&gt; <span class="kw">impl </span>View&lt;(S, T)&gt;
+<span class="kw">where
+    </span>V: View&lt;S&gt;,
+{
     focus(view, |(state, _data), lens| lens(state))
 }
 

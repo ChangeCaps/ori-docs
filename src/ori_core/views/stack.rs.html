@@ -422,13 +422,13 @@
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`].
-</span><span class="kw">pub fn </span>hstack&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Stack&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
-    Stack::horizontal(view)
+</span><span class="kw">pub fn </span>hstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
+    Stack::horizontal(content)
 }
 
 <span class="doccomment">/// Create a vertical [`Stack`].
-</span><span class="kw">pub fn </span>vstack&lt;T&gt;(view: <span class="kw">impl </span>ViewSeq&lt;T&gt;) -&gt; Stack&lt;<span class="kw">impl </span>ViewSeq&lt;T&gt;&gt; {
-    Stack::vertical(view)
+</span><span class="kw">pub fn </span>vstack&lt;V&gt;(content: V) -&gt; Stack&lt;V&gt; {
+    Stack::vertical(content)
 }
 
 <span class="doccomment">/// Create a horizontal [`Stack`], with vector content.

@@ -214,8 +214,8 @@
 };
 
 <span class="doccomment">/// Create a new [`Button`].
-</span><span class="kw">pub fn </span>button&lt;T&gt;(view: <span class="kw">impl </span>View&lt;T&gt;) -&gt; Button&lt;<span class="kw">impl </span>View&lt;T&gt;&gt; {
-    Button::new(view)
+</span><span class="kw">pub fn </span>button&lt;V&gt;(content: V) -&gt; Button&lt;V&gt; {
+    Button::new(content)
 }
 
 <span class="doccomment">/// A button.
