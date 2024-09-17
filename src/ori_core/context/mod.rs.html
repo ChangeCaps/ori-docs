@@ -127,6 +127,80 @@
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Contexts for views.
 
 </span><span class="kw">mod </span>base;
@@ -145,7 +219,12 @@
 <span class="kw">pub use </span>layout::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>rebuild::<span class="kw-2">*</span>;
 
-<span class="kw">use crate</span>::{style::Styles, view::ViewId, window::Window};
+<span class="kw">use crate</span>::{
+    event::{Ime, RequestFocus},
+    style::Styles,
+    view::ViewId,
+    window::{Cursor, Window},
+};
 
 <span class="macro">macro_rules!</span> impl_context {
     (<span class="macro-nonterminal">$ty</span>:ty { $(<span class="macro-nonterminal">$</span><span class="kw">impl</span>:<span class="macro-nonterminal">item</span>)* }) =&gt; {
@@ -254,6 +333,75 @@
     <span class="doccomment">/// Get the property `T` of the view or insert it with a default value.
     </span><span class="kw">pub fn </span>property_or_default&lt;T: <span class="lifetime">'static </span>+ Default&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>T {
         <span class="self">self</span>.view_state.property_or_default()
+    }
+}}
+
+<span class="macro">impl_context!</span> {BuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, RebuildCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt;, EventCx&lt;<span class="lifetime">'_</span>, <span class="lifetime">'_</span>&gt; {
+    <span class="doccomment">/// Request a layout of the view tree.
+    </span><span class="kw">pub fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.view_state.request_layout();
+    }
+
+    <span class="doccomment">/// Request a draw of the view tree.
+    </span><span class="kw">pub fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.view_state.request_draw();
+    }
+
+    <span class="doccomment">/// Request an animation frame.
+    </span><span class="kw">pub fn </span>animate(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.view_state.request_animate();
+    }
+
+    <span class="doccomment">/// Request focus for the view.
+    </span><span class="kw">pub fn </span>focus(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>cmd = RequestFocus(<span class="self">self</span>.window().id(), <span class="self">self</span>.id());
+        <span class="self">self</span>.cmd(cmd);
+    }
+
+    <span class="doccomment">/// Set the cursor of the view.
+    </span><span class="kw">pub fn </span>set_cursor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: <span class="prelude-ty">Option</span>&lt;Cursor&gt;) {
+        <span class="self">self</span>.view_state.set_cursor(cursor);
+    }
+
+    <span class="doccomment">/// Set the ime of the view.
+    </span><span class="kw">pub fn </span>set_ime(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ime: <span class="prelude-ty">Option</span>&lt;Ime&gt;) {
+        <span class="self">self</span>.view_state.set_ime(ime);
+    }
+
+    <span class="doccomment">/// Set whether the view is hovered.
+    ///
+    /// Returns `true` if the hovered state changed.
+    </span><span class="kw">pub fn </span>set_hovered(<span class="kw-2">&amp;mut </span><span class="self">self</span>, hovered: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_hovered() != hovered;
+        <span class="self">self</span>.view_state.set_hovered(hovered);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is focused.
+    ///
+    /// Returns `true` if the focused state changed.
+    </span><span class="kw">pub fn </span>set_focused(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focused: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_focused() != focused;
+        <span class="self">self</span>.view_state.set_focused(focused);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is active.
+    ///
+    /// Returns `true` if the active state changed.
+    </span><span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_active() != active;
+        <span class="self">self</span>.view_state.set_active(active);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is focusable.
+    ///
+    /// Returns `true` if the focusable state changed.
+    </span><span class="kw">pub fn </span>set_focusable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focusable: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_focusable() != focusable;
+        <span class="self">self</span>.view_state.set_focusable(focusable);
+        updated
     }
 }}
 </code></pre></div></section></main></body></html>
