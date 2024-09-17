@@ -156,7 +156,7 @@
     }
 
     <span class="doccomment">/// Request focus for the view.
-    </span><span class="kw">pub fn </span>request_focus(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>focus(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>cmd = RequestFocus(<span class="self">self</span>.window().id(), <span class="self">self</span>.id());
         <span class="self">self</span>.cmd(cmd);
     }
