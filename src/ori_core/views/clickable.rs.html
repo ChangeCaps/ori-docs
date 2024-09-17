@@ -161,13 +161,31 @@
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
 <a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>ori_macro::Build;
 
 <span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Event, PointerButton},
+    event::{Event, Key, PointerButton},
     layout::{Size, Space},
     rebuild::Rebuild,
     view::{Pod, State, View},
@@ -303,6 +321,24 @@
                 }
 
                 content.set_active(<span class="bool-val">false</span>);
+            }
+            Event::KeyPressed(e) <span class="kw">if </span>content.is_focused() =&gt; {
+                <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
+                    <span class="kw">if </span><span class="macro">matches!</span>(<span class="self">self</span>.event, ClickEvent::Press | ClickEvent::Click) {
+                        (<span class="self">self</span>.callback)(cx, data);
+                    }
+
+                    content.set_active(<span class="bool-val">true</span>);
+                }
+            }
+            Event::KeyReleased(e) <span class="kw">if </span>content.is_active() =&gt; {
+                <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
+                    <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
+                        (<span class="self">self</span>.callback)(cx, data);
+                    }
+
+                    content.set_active(<span class="bool-val">false</span>);
+                }
             }
             <span class="kw">_ </span>=&gt; {}
         }

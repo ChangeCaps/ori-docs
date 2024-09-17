@@ -208,10 +208,25 @@
 <a href="#208" id="208">208</a>
 <a href="#209" id="209">209</a>
 <a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
-    event::Ime,
+    event::{Ime, RequestFocus},
     layout::{Affine, Point, Rect, Size},
     view::{ViewFlags, ViewState},
     window::Cursor,
@@ -318,6 +333,12 @@
         <span class="self">self</span>.view_state.request_animate();
     }
 
+    <span class="doccomment">/// Request focus for the view.
+    </span><span class="kw">pub fn </span>request_focus(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">let </span>cmd = RequestFocus(<span class="self">self</span>.window().id(), <span class="self">self</span>.id());
+        <span class="self">self</span>.cmd(cmd);
+    }
+
     <span class="doccomment">/// Set the cursor of the view.
     </span><span class="kw">pub fn </span>set_cursor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cursor: <span class="prelude-ty">Option</span>&lt;Cursor&gt;) {
         <span class="self">self</span>.view_state.set_cursor(cursor);
@@ -352,6 +373,15 @@
     </span><span class="kw">pub fn </span>set_active(<span class="kw-2">&amp;mut </span><span class="self">self</span>, active: bool) -&gt; bool {
         <span class="kw">let </span>updated = <span class="self">self</span>.is_active() != active;
         <span class="self">self</span>.view_state.set_active(active);
+        updated
+    }
+
+    <span class="doccomment">/// Set whether the view is focusable.
+    ///
+    /// Returns `true` if the focusable state changed.
+    </span><span class="kw">pub fn </span>set_focusable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, focusable: bool) -&gt; bool {
+        <span class="kw">let </span>updated = <span class="self">self</span>.is_focusable() != focusable;
+        <span class="self">self</span>.view_state.set_focusable(focusable);
         updated
     }
 

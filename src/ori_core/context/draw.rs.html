@@ -379,7 +379,7 @@
     </span><span class="kw">pub fn </span>stroke(<span class="kw-2">&amp;mut </span><span class="self">self</span>, curve: Curve, stroke: <span class="kw">impl </span>Into&lt;Stroke&gt;, paint: <span class="kw">impl </span>Into&lt;Paint&gt;) {
         <span class="kw">let </span>stroke = stroke.into();
 
-        <span class="kw">if </span>!<span class="self">self</span>.is_visible(curve.bounds().inflate(stroke.width * <span class="number">2.0</span>)) {
+        <span class="kw">if </span>!<span class="self">self</span>.is_visible(curve.bounds().expand(stroke.width * <span class="number">2.0</span>)) {
             <span class="kw">return</span>;
         }
 

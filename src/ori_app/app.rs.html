@@ -769,6 +769,23 @@
 <a href="#769" id="769">769</a>
 <a href="#770" id="770">770</a>
 <a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
@@ -777,9 +794,9 @@
     command::{CommandProxy, CommandReceiver},
     context::{BaseCx, BuildCx, Contexts, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{
-        CloseRequested, Code, Event, Ime, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
+        Code, Event, FocusTarget, Ime, Key, KeyPressed, KeyReleased, Modifiers, PointerButton,
         PointerId, PointerLeft, PointerMoved, PointerPressed, PointerReleased, PointerScrolled,
-        WindowMaximized, WindowResized, WindowScaled,
+        RequestFocus, WindowCloseRequested, WindowMaximized, WindowResized, WindowScaled,
     },
     layout::{Point, Size, Space, Vector},
     log::trace,
@@ -948,7 +965,7 @@
     ///
     /// Returns `true` if the window was closed, i.e. the event was not handled.
     </span><span class="kw">pub fn </span>close_requested(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId) -&gt; bool {
-        <span class="kw">let </span>event = Event::CloseRequested(CloseRequested { window: window_id });
+        <span class="kw">let </span>event = Event::WindowCloseRequested(WindowCloseRequested { window: window_id });
 
         <span class="kw">let </span>handled = <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
 
@@ -1141,6 +1158,18 @@
             });
 
             <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+
+            <span class="kw">if let </span>(<span class="prelude-val">Some</span>(window), Key::Tab) = (<span class="self">self</span>.windows.get(<span class="kw-2">&amp;</span>window_id), key) {
+                <span class="kw">let </span>event = <span class="kw">match </span>window.view_state.has_focused() {
+                    <span class="bool-val">true </span><span class="kw">if </span><span class="self">self</span>.modifiers.shift =&gt; Event::FocusPrev,
+                    <span class="bool-val">false </span><span class="kw">if </span><span class="self">self</span>.modifiers.shift =&gt; Event::FocusGiven(FocusTarget::Prev),
+
+                    <span class="bool-val">true </span>=&gt; Event::FocusNext,
+                    <span class="bool-val">false </span>=&gt; Event::FocusGiven(FocusTarget::Next),
+                };
+
+                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event);
+            }
         } <span class="kw">else </span>{
             <span class="kw">let </span>event = Event::KeyReleased(KeyReleased {
                 key,
@@ -1243,6 +1272,11 @@
                 <span class="self">self</span>.handle_app_command(data, <span class="kw-2">*</span>app_command);
 
                 <span class="kw">continue</span>;
+            }
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(RequestFocus(window, view)) = command.get() {
+                <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusWanted);
+                <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::View(<span class="kw-2">*</span>view)));
             }
 
             <span class="self">self</span>.event(data, <span class="kw-2">&amp;</span>Event::Command(command));

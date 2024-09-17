@@ -328,8 +328,6 @@
 <a href="#328" id="328">328</a>
 <a href="#329" id="329">329</a>
 <a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, Range};
 
 <span class="kw">use </span>ori_macro::{example, Build};
@@ -576,9 +574,7 @@
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
     ) {
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.content.len() {
-            <span class="self">self</span>.content.event_nth(i, content, cx, data, event);
-        }
+        <span class="self">self</span>.content.event(content, cx, data, event);
     }
 
     <span class="kw">fn </span>layout(
