@@ -1301,8 +1301,8 @@
 
                 cx.set_ime(<span class="prelude-val">Some</span>(state.ime(<span class="self">self</span>.multiline, <span class="self">self</span>.capitalize)));
             }
-            Event::PointerPressed(e) =&gt; {
-                cx.set_focused(<span class="bool-val">true</span>);
+            Event::PointerPressed(e) <span class="kw">if </span>cx.is_hovered() =&gt; {
+                cx.focus();
                 cx.animate();
 
                 state.blink = <span class="number">0.0</span>;
