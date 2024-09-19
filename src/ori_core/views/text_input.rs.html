@@ -720,6 +720,33 @@
 <a href="#720" id="720">720</a>
 <a href="#721" id="721">721</a>
 <a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>cosmic_text::{
     Action, Attrs, AttrsList, Buffer, BufferLine, BufferRef, Edit, Editor, LineEnding, Metrics,
     Motion, Selection, Shaping,
@@ -1165,7 +1192,13 @@
         state.style = style;
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
         <span class="kw">if </span>cx.focused_changed() {
             cx.animate();
 
@@ -1184,11 +1217,8 @@
         }
 
         <span class="kw">match </span>event {
-            Event::KeyPressed(e) =&gt; {
-                <span class="kw">if </span>!cx.is_focused() {
-                    <span class="kw">return</span>;
-                }
-
+            Event::KeyPressed(e) <span class="kw">if </span>cx.is_focused() =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>changed = <span class="bool-val">false</span>;
                 <span class="kw">let </span><span class="kw-2">mut </span>submit = <span class="bool-val">false</span>;
 
@@ -1208,6 +1238,7 @@
                         cx.layout();
                         state.blink = <span class="number">0.0</span>;
                         changed = <span class="bool-val">true</span>;
+                        handled = <span class="bool-val">true</span>;
                     }
                 }
 
@@ -1225,36 +1256,47 @@
                     cx.layout();
                     state.blink = <span class="number">0.0</span>;
                     changed = <span class="bool-val">true</span>;
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Escape) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Escape);
                     cx.set_focused(<span class="bool-val">false</span>);
                     cx.draw();
+
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Enter);
                     cx.layout();
                     state.blink = <span class="number">0.0</span>;
+
                     changed = <span class="bool-val">true</span>;
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; !<span class="self">self</span>.multiline {
                     cx.set_focused(<span class="bool-val">false</span>);
+
                     submit = <span class="bool-val">true</span>;
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(motion) = move_key(e) {
                     (state.editor).action(<span class="kw-2">&amp;mut </span>cx.fonts().font_system, Action::Motion(motion));
                     cx.draw();
                     state.blink = <span class="number">0.0</span>;
+
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(<span class="string">'c'</span>) &amp;&amp; e.modifiers.ctrl {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = state.editor.copy_selection() {
                         cx.clipboard().set(selection);
                     }
+
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(<span class="string">'x'</span>) &amp;&amp; e.modifiers.ctrl {
@@ -1264,7 +1306,9 @@
                     }
 
                     state.editor.delete_selection();
+
                     changed = <span class="bool-val">true</span>;
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(<span class="string">'v'</span>) &amp;&amp; e.modifiers.ctrl {
@@ -1272,11 +1316,13 @@
                     state.editor.insert_string(<span class="kw-2">&amp;</span>text, <span class="prelude-val">None</span>);
 
                     cx.layout();
+
                     changed = <span class="bool-val">true</span>;
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>!(changed || submit) {
-                    <span class="kw">return</span>;
+                    <span class="kw">return </span>handled;
                 }
 
                 <span class="kw">let </span>text = state.text();
@@ -1300,6 +1346,8 @@
                 }
 
                 cx.set_ime(<span class="prelude-val">Some</span>(state.ime(<span class="self">self</span>.multiline, <span class="self">self</span>.capitalize)));
+
+                handled
             }
             Event::PointerPressed(e) <span class="kw">if </span>cx.is_hovered() =&gt; {
                 cx.focus();
@@ -1318,25 +1366,29 @@
                 );
 
                 cx.set_ime(<span class="prelude-val">Some</span>(state.ime(<span class="self">self</span>.multiline, <span class="self">self</span>.capitalize)));
-            }
-            Event::PointerReleased(<span class="kw">_</span>) =&gt; {
+
+                <span class="bool-val">true
+            </span>}
+            Event::PointerReleased(<span class="kw">_</span>) <span class="kw">if </span>state.dragging =&gt; {
                 state.dragging = <span class="bool-val">false</span>;
-            }
-            Event::PointerMoved(e) =&gt; {
+
+                <span class="bool-val">true
+            </span>}
+            Event::PointerMoved(e) <span class="kw">if </span>state.dragging =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
 
-                <span class="kw">if </span>state.dragging {
-                    state.editor.action(
-                        <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
-                        Action::Drag {
-                            x: local.x <span class="kw">as </span>i32,
-                            y: local.y <span class="kw">as </span>i32,
-                        },
-                    );
+                state.editor.action(
+                    <span class="kw-2">&amp;mut </span>cx.fonts().font_system,
+                    Action::Drag {
+                        x: local.x <span class="kw">as </span>i32,
+                        y: local.y <span class="kw">as </span>i32,
+                    },
+                );
 
-                    cx.draw();
-                }
-            }
+                cx.draw();
+
+                <span class="bool-val">false
+            </span>}
             Event::Animate(dt) =&gt; {
                 <span class="kw">if </span>cx.is_focused() {
                     cx.animate();
@@ -1344,8 +1396,10 @@
 
                     state.blink += <span class="kw-2">*</span>dt * <span class="number">10.0</span>;
                 }
-            }
-            <span class="kw">_ </span>=&gt; {}
+
+                <span class="bool-val">false
+            </span>}
+            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 

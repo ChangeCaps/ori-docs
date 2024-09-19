@@ -179,6 +179,18 @@
 <a href="#179" id="179">179</a>
 <a href="#180" id="180">180</a>
 <a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>ori_macro::Build;
@@ -300,13 +312,21 @@
         <span class="self">self</span>.content.rebuild(content, cx, data, <span class="kw-2">&amp;</span>old.content);
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, content: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        content: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
         <span class="kw">let </span>is_hovered = content.is_hovered() || (content.has_hovered() &amp;&amp; <span class="self">self</span>.descendants);
+        <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
 
         <span class="kw">match </span>event {
             Event::PointerPressed(e) <span class="kw">if </span>is_hovered &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Press {
                     (<span class="self">self</span>.callback)(cx, data);
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 content.set_active(<span class="bool-val">true</span>);
@@ -314,10 +334,12 @@
             Event::PointerReleased(e) <span class="kw">if </span>content.is_active() &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
                     (<span class="self">self</span>.callback)(cx, data);
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.clicked &amp;&amp; <span class="self">self</span>.event == ClickEvent::Click {
                     (<span class="self">self</span>.callback)(cx, data);
+                    handled = <span class="bool-val">true</span>;
                 }
 
                 content.set_active(<span class="bool-val">false</span>);
@@ -326,6 +348,7 @@
                 <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
                     <span class="kw">if </span><span class="macro">matches!</span>(<span class="self">self</span>.event, ClickEvent::Press | ClickEvent::Click) {
                         (<span class="self">self</span>.callback)(cx, data);
+                        handled = <span class="bool-val">true</span>;
                     }
 
                     content.set_active(<span class="bool-val">true</span>);
@@ -335,6 +358,7 @@
                 <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
                     <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
                         (<span class="self">self</span>.callback)(cx, data);
+                        handled = <span class="bool-val">true</span>;
                     }
 
                     content.set_active(<span class="bool-val">false</span>);
@@ -343,7 +367,7 @@
             <span class="kw">_ </span>=&gt; {}
         }
 
-        <span class="self">self</span>.content.event(content, cx, data, event);
+        <span class="self">self</span>.content.event_maybe(handled, content, cx, data, event)
     }
 
     <span class="kw">fn </span>layout(

@@ -95,6 +95,27 @@
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -105,7 +126,7 @@
 <span class="doccomment">/// Create a new [`EventHandler`], with a before callback.
 </span><span class="kw">pub fn </span>on_event_before&lt;T, V&gt;(
     content: V,
-    handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>,
+    handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>,
 ) -&gt; EventHandler&lt;T, V&gt; {
     EventHandler::new(content).before(handler)
 }
@@ -113,7 +134,7 @@
 <span class="doccomment">/// Create a new [`EventHandler`], with an after callback.
 </span><span class="kw">pub fn </span>on_event&lt;T, V&gt;(
     content: V,
-    handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>,
+    handler: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>,
 ) -&gt; EventHandler&lt;T, V&gt; {
     EventHandler::new(content).after(handler)
 }
@@ -125,11 +146,11 @@
 
     <span class="doccomment">/// The callback before an event is propagated.
     </span><span class="attr">#[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>before: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>&gt;&gt;,
+    </span><span class="kw">pub </span>before: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>&gt;&gt;,
 
     <span class="doccomment">/// The callback after an event is propagated.
     </span><span class="attr">#[allow(clippy::type_complexity)]
-    </span><span class="kw">pub </span>after: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>&gt;&gt;,
+    </span><span class="kw">pub </span>after: <span class="prelude-ty">Option</span>&lt;Box&lt;<span class="kw">dyn </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>&gt;&gt;,
 }
 
 <span class="kw">impl</span>&lt;T, V&gt; EventHandler&lt;T, V&gt; {
@@ -143,13 +164,19 @@
     }
 
     <span class="doccomment">/// Set the callback for before an event is emitted.
-    </span><span class="kw">pub fn </span>before(<span class="kw-2">mut </span><span class="self">self</span>, before: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>before(
+        <span class="kw-2">mut </span><span class="self">self</span>,
+        before: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>,
+    ) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.before = <span class="prelude-val">Some</span>(Box::new(before));
         <span class="self">self
     </span>}
 
     <span class="doccomment">/// Set the callback for when an event is emitted.
-    </span><span class="kw">pub fn </span>after(<span class="kw-2">mut </span><span class="self">self</span>, after: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) + <span class="lifetime">'static</span>) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>after(
+        <span class="kw-2">mut </span><span class="self">self</span>,
+        after: <span class="kw">impl </span>FnMut(<span class="kw-2">&amp;mut </span>EventCx, <span class="kw-2">&amp;mut </span>T, <span class="kw-2">&amp;</span>Event) -&gt; bool + <span class="lifetime">'static</span>,
+    ) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.after = <span class="prelude-val">Some</span>(Box::new(after));
         <span class="self">self
     </span>}
@@ -166,16 +193,31 @@
         <span class="self">self</span>.content.rebuild(state, cx, data, <span class="kw-2">&amp;</span>old.content);
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
+        <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
+
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>before) = <span class="self">self</span>.before {
-            before(cx, data, event);
+            handled = before(cx, data, event);
         }
 
-        <span class="self">self</span>.content.event(state, cx, data, event);
+        <span class="kw">match </span>handled {
+            <span class="bool-val">true </span>=&gt; <span class="kw">_ </span>= <span class="self">self</span>.content.event(state, cx, data, <span class="kw-2">&amp;</span>Event::Update),
+            <span class="bool-val">false </span>=&gt; handled = <span class="self">self</span>.content.event(state, cx, data, event),
+        }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>after) = <span class="self">self</span>.after {
-            after(cx, data, event);
+            <span class="kw">if </span>!handled {
+                handled = after(cx, data, event);
+            }
         }
+
+        handled
     }
 
     <span class="kw">fn </span>layout(

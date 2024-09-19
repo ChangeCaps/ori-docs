@@ -255,6 +255,16 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::f32::consts::{PI, SQRT_2};
 
 <span class="kw">use </span>ori_macro::{example, Build, Styled};
@@ -401,22 +411,27 @@
         (<span class="self">self</span>.content).rebuild(<span class="kw-2">&amp;mut </span>state.content, cx, data, <span class="kw-2">&amp;</span>old.content);
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="self">self</span>.header.event(<span class="kw-2">&amp;mut </span>state.header, cx, data, event);
-        <span class="self">self</span>.content.event(<span class="kw-2">&amp;mut </span>state.content, cx, data, event);
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
+        <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
 
         <span class="kw">match </span>event {
             Event::PointerPressed(event) <span class="kw">if </span>state.header.has_hovered() =&gt; {
-                <span class="kw">if </span>event.button != PointerButton::Primary {
-                    <span class="kw">return</span>;
-                }
+                <span class="kw">if </span><span class="macro">matches!</span>(event.button, PointerButton::Primary) {
+                    state.open = !state.open;
+                    cx.animate();
+                    cx.layout();
 
-                state.open = !state.open;
-                cx.animate();
-                cx.layout();
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_open) = <span class="self">self</span>.on_open {
+                        on_open(cx, data, state.open);
+                    }
 
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref mut </span>on_open) = <span class="self">self</span>.on_open {
-                    on_open(cx, data, state.open);
+                    handled = <span class="bool-val">true</span>;
                 }
             }
             Event::Animate(dt) =&gt; {
@@ -427,6 +442,11 @@
             }
             <span class="kw">_ </span>=&gt; {}
         }
+
+        handled |= (<span class="self">self</span>.header).event_maybe(handled, <span class="kw-2">&amp;mut </span>state.header, cx, data, event);
+        handled |= (<span class="self">self</span>.content).event_maybe(handled, <span class="kw-2">&amp;mut </span>state.content, cx, data, event);
+
+        handled
     }
 
     <span class="kw">fn </span>layout(

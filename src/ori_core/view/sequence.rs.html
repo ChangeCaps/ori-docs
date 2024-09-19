@@ -583,6 +583,16 @@
 <a href="#583" id="583">583</a>
 <a href="#584" id="584">584</a>
 <a href="#585" id="585">585</a>
+<a href="#586" id="586">586</a>
+<a href="#587" id="587">587</a>
+<a href="#588" id="588">588</a>
+<a href="#589" id="589">589</a>
+<a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
@@ -626,7 +636,7 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    );
+    ) -&gt; bool;
 
     <span class="doccomment">/// Layout the nth view.
     </span><span class="kw">fn </span>layout_nth(
@@ -692,8 +702,8 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
-        <span class="self">self</span>[n].event(<span class="kw-2">&amp;mut </span>state[n], cx, data, event);
+    ) -&gt; bool {
+        <span class="self">self</span>[n].event(<span class="kw-2">&amp;mut </span>state[n], cx, data, event)
     }
 
     <span class="kw">fn </span>layout_nth(
@@ -743,8 +753,9 @@
         _cx: <span class="kw-2">&amp;mut </span>EventCx,
         _data: <span class="kw-2">&amp;mut </span>T,
         _event: <span class="kw-2">&amp;</span>Event,
-    ) {
-    }
+    ) -&gt; bool {
+        <span class="bool-val">false
+    </span>}
 
     <span class="kw">fn </span>layout_nth(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -814,10 +825,10 @@
                 cx: <span class="kw-2">&amp;mut </span>EventCx,
                 data: <span class="kw-2">&amp;mut </span>T,
                 event: <span class="kw-2">&amp;</span>Event,
-            ) {
+            ) -&gt; bool {
                 <span class="kw">match </span>n {
                     $(<span class="macro-nonterminal">$index </span>=&gt; <span class="self">self</span>.<span class="macro-nonterminal">$index</span>.event(<span class="kw-2">&amp;mut </span>state.<span class="macro-nonterminal">$index</span>, cx, data, event),)*
-                    <span class="kw">_ </span>=&gt; {},
+                    <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
                 }
             }
 
@@ -1011,26 +1022,36 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) <span class="kw">where
+    ) -&gt; bool
+    <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
         <span class="kw">match </span>event {
             Event::FocusNext =&gt; {
-                <span class="self">Self</span>::switch_focus(<span class="self">self</span>, state, cx, data, event, <span class="number">0</span>..<span class="self">self</span>.len(), <span class="bool-val">true</span>);
+                <span class="self">Self</span>::switch_focus(<span class="self">self</span>, state, cx, data, event, <span class="number">0</span>..<span class="self">self</span>.len(), <span class="bool-val">true</span>)
             }
             Event::FocusPrev =&gt; {
-                <span class="self">Self</span>::switch_focus(<span class="self">self</span>, state, cx, data, event, (<span class="number">0</span>..<span class="self">self</span>.len()).rev(), <span class="bool-val">false</span>);
+                <span class="self">Self</span>::switch_focus(<span class="self">self</span>, state, cx, data, event, (<span class="number">0</span>..<span class="self">self</span>.len()).rev(), <span class="bool-val">false</span>)
             }
             Event::FocusGiven(FocusTarget::Next) =&gt; {
-                <span class="self">Self</span>::give_focus(<span class="self">self</span>, state, cx, data, event, <span class="number">0</span>..<span class="self">self</span>.len());
+                <span class="self">Self</span>::give_focus(<span class="self">self</span>, state, cx, data, event, <span class="number">0</span>..<span class="self">self</span>.len())
             }
             Event::FocusGiven(FocusTarget::Prev) =&gt; {
-                <span class="self">Self</span>::give_focus(<span class="self">self</span>, state, cx, data, event, (<span class="number">0</span>..<span class="self">self</span>.len()).rev());
+                <span class="self">Self</span>::give_focus(<span class="self">self</span>, state, cx, data, event, (<span class="number">0</span>..<span class="self">self</span>.len()).rev())
             }
             <span class="kw">_ </span>=&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
+
                 <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.len() {
-                    <span class="self">self</span>.event_nth(i, state, cx, data, event);
+                    <span class="kw">if </span>handled {
+                        cx.view_state.propagate(<span class="kw-2">&amp;mut </span>state[i]);
+                        <span class="kw">continue</span>;
+                    }
+
+                    handled |= <span class="self">self</span>.event_nth(i, state, cx, data, event);
                 }
+
+                handled
             }
         }
     }
@@ -1043,7 +1064,8 @@
         event: <span class="kw-2">&amp;</span>Event,
         order: <span class="kw">impl </span>IntoIterator&lt;Item = usize&gt;,
         forward: bool,
-    ) <span class="kw">where
+    ) -&gt; bool
+    <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
         <span class="kw">enum </span>State {
@@ -1062,11 +1084,9 @@
                         <span class="kw">continue</span>;
                     }
 
-                    <span class="self">self</span>.event_nth(i, content, cx, data, event);
-
-                    <span class="kw">match </span>content[i].has_focused() {
-                        <span class="bool-val">false </span>=&gt; state = State::GivingFocus,
-                        <span class="bool-val">true </span>=&gt; state = State::Propagating,
+                    <span class="kw">match </span><span class="self">self</span>.event_nth(i, content, cx, data, event) {
+                        <span class="bool-val">true </span>=&gt; state = State::GivingFocus,
+                        <span class="bool-val">false </span>=&gt; state = State::Propagating,
                     }
                 }
                 State::GivingFocus =&gt; {
@@ -1075,9 +1095,7 @@
                         <span class="bool-val">false </span>=&gt; Event::FocusGiven(FocusTarget::Prev),
                     };
 
-                    <span class="self">self</span>.event_nth(i, content, cx, data, <span class="kw-2">&amp;</span>event);
-
-                    <span class="kw">if </span>content[i].has_focused() {
+                    <span class="kw">if </span><span class="self">self</span>.event_nth(i, content, cx, data, <span class="kw-2">&amp;</span>event) {
                         state = State::Propagating;
                     }
                 }
@@ -1086,6 +1104,8 @@
                 }
             }
         }
+
+        <span class="macro">matches!</span>(state, State::Propagating)
     }
 
     <span class="kw">fn </span>give_focus&lt;T&gt;(
@@ -1095,23 +1115,22 @@
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
         content: <span class="kw">impl </span>IntoIterator&lt;Item = usize&gt;,
-    ) <span class="kw">where
+    ) -&gt; bool
+    <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
-        <span class="kw">let </span><span class="kw-2">mut </span>focus_given = <span class="bool-val">false</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
 
         <span class="kw">for </span>i <span class="kw">in </span>content {
-            <span class="kw">if </span>focus_given {
+            <span class="kw">if </span>handled {
                 cx.view_state.propagate(<span class="kw-2">&amp;mut </span>state[i]);
                 <span class="kw">continue</span>;
             }
 
-            <span class="self">self</span>.event_nth(i, state, cx, data, event);
-
-            <span class="kw">if </span>state[i].has_focused() {
-                focus_given = <span class="bool-val">true</span>;
-            }
+            handled |= <span class="self">self</span>.event_nth(i, state, cx, data, event);
         }
+
+        handled
     }
 
     <span class="doccomment">/// Handle an event for the nth view.
@@ -1124,12 +1143,13 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) <span class="kw">where
+    ) -&gt; bool
+    <span class="kw">where
         </span>V: ViewSeq&lt;T&gt;,
     {
         Pod::&lt;V&gt;::event_with(<span class="kw-2">&amp;mut </span>state.view_state[n], cx, event, |cx, event| {
-            (<span class="self">self</span>.views).event_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, event);
-        });
+            (<span class="self">self</span>.views).event_nth(n, <span class="kw-2">&amp;mut </span>state.content, cx, data, event)
+        })
     }
 
     <span class="doccomment">/// Layout the nth view.

@@ -64,6 +64,12 @@
 <a href="#64" id="64">64</a>
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
 </pre></div><pre class="rust"><code><span class="kw">use crate</span>::{
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::Event,
@@ -112,8 +118,14 @@
         <span class="self">self</span>.content.rebuild(state, cx, data, <span class="kw-2">&amp;</span>old.content);
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="self">self</span>.content.event(state, cx, data, event);
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
+        <span class="self">self</span>.content.event(state, cx, data, event)
     }
 
     <span class="kw">fn </span>layout(

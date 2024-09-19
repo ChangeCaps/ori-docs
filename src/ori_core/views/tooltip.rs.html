@@ -327,6 +327,12 @@
 <a href="#327" id="327">327</a>
 <a href="#328" id="328">328</a>
 <a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
 
@@ -555,8 +561,8 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
-        <span class="self">self</span>.content.event(content, cx, data, event);
+    ) -&gt; bool {
+        <span class="kw">let </span>handled = <span class="self">self</span>.content.event(content, cx, data, event);
 
         <span class="kw">if </span>!content.has_hovered() &amp;&amp; state.timer &gt; <span class="number">0.0 </span>{
             state.timer = <span class="number">0.0</span>;
@@ -566,6 +572,8 @@
         <span class="kw">match </span>event {
             Event::WindowResized(<span class="kw">_</span>) =&gt; {
                 cx.layout();
+
+                handled
             }
             Event::PointerMoved(e) =&gt; {
                 <span class="kw">if </span>state.timer &gt; <span class="number">0.0 </span>{
@@ -577,6 +585,8 @@
                     state.position = e.position;
                     cx.animate();
                 }
+
+                handled
             }
             Event::Animate(dt) =&gt; {
                 <span class="kw">if </span>content.has_hovered() &amp;&amp; state.timer &lt; <span class="number">1.0 </span>{
@@ -593,8 +603,10 @@
                 <span class="kw">if </span>state.timer &gt;= <span class="number">0.9 </span>{
                     cx.draw();
                 }
+
+                handled
             }
-            <span class="kw">_ </span>=&gt; {}
+            <span class="kw">_ </span>=&gt; handled,
         }
     }
 

@@ -197,6 +197,14 @@
 <a href="#197" id="197">197</a>
 <a href="#198" id="198">198</a>
 <a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::RangeInclusive;
 
 <span class="kw">use </span>ori_macro::{Build, Styled};
@@ -321,22 +329,28 @@
         style.rebuild(<span class="self">self</span>, cx);
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, style: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        style: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
         <span class="kw">match </span>event {
-            Event::PointerPressed(e) =&gt; {
+            Event::PointerPressed(e) <span class="kw">if </span>cx.is_hovered() =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
 
-                <span class="kw">if </span>cx.is_hovered() {
-                    <span class="kw">let </span>value = <span class="self">self</span>.axis.unpack(local).<span class="number">0 </span>/ style.length;
-                    <span class="kw">let </span>value = denormalize(value, <span class="kw-2">&amp;</span><span class="self">self</span>.range);
+                <span class="kw">let </span>value = <span class="self">self</span>.axis.unpack(local).<span class="number">0 </span>/ style.length;
+                <span class="kw">let </span>value = denormalize(value, <span class="kw-2">&amp;</span><span class="self">self</span>.range);
 
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(on_input) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.on_input {
-                        on_input(cx, data, value);
-                    }
-
-                    cx.set_active(<span class="bool-val">true</span>);
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(on_input) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.on_input {
+                    on_input(cx, data, value);
                 }
-            }
+
+                cx.set_active(<span class="bool-val">true</span>);
+
+                <span class="bool-val">true
+            </span>}
             Event::PointerMoved(e) =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
 
@@ -348,13 +362,15 @@
                         on_input(cx, data, value);
                     }
                 }
-            }
-            Event::PointerReleased(<span class="kw">_</span>) =&gt; {
-                <span class="kw">if </span>cx.is_active() {
-                    cx.set_active(<span class="bool-val">false</span>);
-                }
-            }
-            <span class="kw">_ </span>=&gt; {}
+
+                <span class="bool-val">false
+            </span>}
+            Event::PointerReleased(<span class="kw">_</span>) <span class="kw">if </span>cx.is_active() =&gt; {
+                cx.set_active(<span class="bool-val">false</span>);
+
+                <span class="bool-val">true
+            </span>}
+            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 

@@ -171,6 +171,19 @@
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
 <a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
 
 <span class="kw">use crate</span>::{
@@ -236,7 +249,13 @@
     );
 
     <span class="doccomment">/// Handle an event.
-    </span><span class="kw">fn </span>dyn_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>AnyState, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event);
+    </span><span class="kw">fn </span>dyn_event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span>AnyState,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool;
 
     <span class="doccomment">/// Calculate the layout.
     </span><span class="kw">fn </span>dyn_layout(
@@ -272,10 +291,9 @@
         old: <span class="kw-2">&amp;</span><span class="kw">dyn </span>AnyView&lt;T&gt;,
     ) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(old) = old.as_any().downcast_ref::&lt;V&gt;() {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = state.downcast_mut::&lt;V::State&gt;() {
-                <span class="self">self</span>.rebuild(state, cx, data, old);
-            } <span class="kw">else </span>{
-                <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>);
+            <span class="kw">match </span>state.downcast_mut::&lt;V::State&gt;() {
+                <span class="prelude-val">Some</span>(state) =&gt; <span class="self">self</span>.rebuild(state, cx, data, old),
+                <span class="prelude-val">None </span>=&gt; <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>),
             }
         } <span class="kw">else </span>{
             <span class="kw-2">*</span>cx.view_state = Default::default();
@@ -283,11 +301,16 @@
         }
     }
 
-    <span class="kw">fn </span>dyn_event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>AnyState, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = state.downcast_mut::&lt;V::State&gt;() {
-            <span class="self">self</span>.event(state, cx, data, event);
-        } <span class="kw">else </span>{
-            <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>);
+    <span class="kw">fn </span>dyn_event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span>AnyState,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
+        <span class="kw">match </span>state.downcast_mut::&lt;V::State&gt;() {
+            <span class="prelude-val">Some</span>(state) =&gt; <span class="self">self</span>.event(state, cx, data, event),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 
@@ -298,19 +321,16 @@
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = state.downcast_mut::&lt;V::State&gt;() {
-            <span class="self">self</span>.layout(state, cx, data, space)
-        } <span class="kw">else </span>{
-            <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>);
-            Size::ZERO
+        <span class="kw">match </span>state.downcast_mut::&lt;V::State&gt;() {
+            <span class="prelude-val">Some</span>(state) =&gt; <span class="self">self</span>.layout(state, cx, data, space),
+            <span class="prelude-val">None </span>=&gt; space.min,
         }
     }
 
     <span class="kw">fn </span>dyn_draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span>AnyState, cx: <span class="kw-2">&amp;mut </span>DrawCx, data: <span class="kw-2">&amp;mut </span>T) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(state) = state.downcast_mut::&lt;V::State&gt;() {
-            <span class="self">self</span>.draw(state, cx, data);
-        } <span class="kw">else </span>{
-            <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>);
+        <span class="kw">match </span>state.downcast_mut::&lt;V::State&gt;() {
+            <span class="prelude-val">Some</span>(state) =&gt; <span class="self">self</span>.draw(state, cx, data),
+            <span class="prelude-val">None </span>=&gt; <span class="macro">eprintln!</span>(<span class="string">"Failed to downcast state"</span>),
         }
     }
 }
@@ -326,8 +346,14 @@
         <span class="self">self</span>.as_mut().dyn_rebuild(state, cx, data, old.as_ref());
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
-        <span class="self">self</span>.as_mut().dyn_event(state, cx, data, event);
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
+        <span class="self">self</span>.as_mut().dyn_event(state, cx, data, event)
     }
 
     <span class="kw">fn </span>layout(

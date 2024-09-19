@@ -248,8 +248,8 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
-        <span class="self">self</span>.content.event(state, cx, data, event);
+    ) -&gt; bool {
+        <span class="self">self</span>.content.event(state, cx, data, event)
     }
 
     <span class="kw">fn </span>layout(

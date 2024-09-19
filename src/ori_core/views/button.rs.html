@@ -216,6 +216,9 @@
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
@@ -337,26 +340,29 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
+    ) -&gt; bool {
         <span class="kw">if </span>cx.focused_changed() {
             cx.draw();
         }
 
-        <span class="self">self</span>.content.event(content, cx, data, event);
+        <span class="kw">let </span>handled = <span class="self">self</span>.content.event(content, cx, data, event);
 
         <span class="kw">if </span>cx.hovered_changed() || cx.active_changed() {
             cx.animate();
         }
 
         <span class="kw">if let </span>Event::Animate(dt) = event {
-            <span class="kw">if </span>(state.style.transition).step(<span class="kw-2">&amp;mut </span>state.hovered, cx.is_hovered(), <span class="kw-2">*</span>dt)
-                || (state.style.transition).step(<span class="kw-2">&amp;mut </span>state.active, cx.is_active(), <span class="kw-2">*</span>dt)
-            {
+            <span class="kw">let </span>hover = (state.style.transition).step(<span class="kw-2">&amp;mut </span>state.hovered, cx.is_hovered(), <span class="kw-2">*</span>dt);
+            <span class="kw">let </span>active = (state.style.transition).step(<span class="kw-2">&amp;mut </span>state.active, cx.is_active(), <span class="kw-2">*</span>dt);
+
+            <span class="kw">if </span>hover || active {
                 cx.animate();
             }
 
             cx.draw();
         }
+
+        handled
     }
 
     <span class="kw">fn </span>layout(

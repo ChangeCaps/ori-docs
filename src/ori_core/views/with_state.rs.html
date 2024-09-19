@@ -531,8 +531,8 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
-        with_data_state(data_state, data, |data| view.event(state, cx, data, event));
+    ) -&gt; bool {
+        with_data_state(data_state, data, |data| view.event(state, cx, data, event))
     }
 
     <span class="kw">fn </span>layout(

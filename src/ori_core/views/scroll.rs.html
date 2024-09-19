@@ -302,6 +302,16 @@
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
 <a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, is_mobile, Build, Styled};
 
 <span class="kw">use crate</span>::{
@@ -469,7 +479,7 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
+    ) -&gt; bool {
         <span class="kw">let </span>overflow = <span class="self">self</span>.overflow(content.size(), cx.size());
 
         <span class="comment">// handle ponter event
@@ -498,26 +508,32 @@
             }
         }
 
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; cx.has_hovered() &amp;&amp; <span class="macro">is_mobile!</span>() {
-            state.dragging = <span class="bool-val">true</span>;
-        }
-
-        <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerReleased(<span class="kw">_</span>)) {
-            state.dragging = <span class="bool-val">false</span>;
-        }
+        <span class="kw">let </span><span class="kw-2">mut </span>handled = <span class="bool-val">false</span>;
 
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; state.scrollbar_hovered {
+            handled = <span class="bool-val">true</span>;
             cx.set_active(<span class="bool-val">true</span>);
             cx.draw();
         }
 
         <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerReleased(<span class="kw">_</span>)) &amp;&amp; cx.is_active() {
+            handled = <span class="bool-val">true</span>;
             cx.set_active(<span class="bool-val">false</span>);
             cx.draw();
         }
 
         <span class="comment">// propagate event
-        </span><span class="self">self</span>.content.event(content, cx, data, event);
+        </span>handled = <span class="self">self</span>.content.event_maybe(handled, content, cx, data, event);
+
+        <span class="kw">if </span><span class="macro">is_mobile!</span>() &amp;&amp; !handled {
+            <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerPressed(<span class="kw">_</span>)) &amp;&amp; cx.has_hovered() {
+                state.dragging = <span class="bool-val">true</span>;
+            }
+
+            <span class="kw">if </span><span class="macro">matches!</span>(event, Event::PointerReleased(<span class="kw">_</span>)) &amp;&amp; state.dragging {
+                state.dragging = <span class="bool-val">false</span>;
+            }
+        }
 
         <span class="kw">let </span>on = cx.is_hovered() || cx.has_hovered() || cx.is_active() || state.scrollbar_hovered;
 
@@ -533,7 +549,9 @@
         }
 
         <span class="kw">if let </span>Event::PointerScrolled(e) = event {
-            <span class="kw">if </span>on {
+            <span class="kw">if </span>on &amp;&amp; !handled {
+                handled = <span class="bool-val">true</span>;
+
                 state.scroll -= e.delta.y * <span class="number">10.0</span>;
                 state.scroll = state.scroll.clamp(<span class="number">0.0</span>, overflow);
 
@@ -542,6 +560,8 @@
                 cx.draw();
             }
         }
+
+        handled
     }
 
     <span class="kw">fn </span>layout(

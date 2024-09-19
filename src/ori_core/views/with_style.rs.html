@@ -99,6 +99,7 @@
 <a href="#99" id="99">99</a>
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::mem;
 
 <span class="kw">use crate</span>::{
@@ -175,10 +176,11 @@
         cx: <span class="kw-2">&amp;mut </span>EventCx,
         data: <span class="kw-2">&amp;mut </span>T,
         event: <span class="kw-2">&amp;</span>Event,
-    ) {
+    ) -&gt; bool {
         mem::swap(<span class="kw-2">&amp;mut </span>state.computed_styles, cx.context_mut());
-        <span class="self">self</span>.content.event(content, cx, data, event);
+        <span class="kw">let </span>handled = <span class="self">self</span>.content.event(content, cx, data, event);
         mem::swap(<span class="kw-2">&amp;mut </span>state.computed_styles, cx.context_mut());
+        handled
     }
 
     <span class="kw">fn </span>layout(

@@ -170,6 +170,10 @@
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{cell::RefCell, future::Future};
 
 <span class="kw">use crate</span>::{
@@ -266,19 +270,23 @@
         }
     }
 
-    <span class="kw">fn </span>event(<span class="kw-2">&amp;mut </span><span class="self">self</span>, state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State, cx: <span class="kw-2">&amp;mut </span>EventCx, data: <span class="kw-2">&amp;mut </span>T, event: <span class="kw-2">&amp;</span>Event) {
+    <span class="kw">fn </span>event(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        state: <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        cx: <span class="kw-2">&amp;mut </span>EventCx,
+        data: <span class="kw-2">&amp;mut </span>T,
+        event: <span class="kw-2">&amp;</span>Event,
+    ) -&gt; bool {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(completed) = event.cmd::&lt;SuspenseCompleted&lt;F::Output&gt;&gt;() {
-            <span class="kw">if </span>completed.id != state.id {
-                <span class="kw">return</span>;
+            <span class="kw">if </span>completed.id == state.id {
+                <span class="kw">let </span><span class="kw-2">mut </span>view = completed.view.borrow_mut().take().map(Pod::new);
+                state.future_state = view.as_mut().map(|v| v.build(<span class="kw-2">&amp;mut </span>cx.as_build_cx(), data));
+                state.future = view;
+
+                state.fallback_state.take();
+
+                cx.layout();
             }
-
-            <span class="kw">let </span><span class="kw-2">mut </span>view = completed.view.borrow_mut().take().map(Pod::new);
-            state.future_state = view.as_mut().map(|v| v.build(<span class="kw-2">&amp;mut </span>cx.as_build_cx(), data));
-            state.future = view;
-
-            state.fallback_state.take();
-
-            cx.layout();
         }
 
         <span class="kw">match </span>(
@@ -288,7 +296,7 @@
         ) {
             (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(fut), <span class="prelude-val">Some</span>(fut_state)) =&gt; fut.event(fut_state, cx, data, event),
             (<span class="prelude-val">Some</span>(fallback_state), <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="self">self</span>.fallback.event(fallback_state, cx, data, event),
-            <span class="kw">_ </span>=&gt; {}
+            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
     }
 
