@@ -302,7 +302,7 @@
 
     <span class="attr">#[cfg(x11_platform)]
     </span>{
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::x11::run(app, data)<span class="question-mark">?</span>);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(platform::x11::run(app, data, Default::default())<span class="question-mark">?</span>);
     }
 
     <span class="attr">#[cfg(android_platform)]
