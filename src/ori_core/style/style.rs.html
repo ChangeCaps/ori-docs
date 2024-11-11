@@ -365,6 +365,11 @@
 <a href="#365" id="365">365</a>
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     collections::HashMap,
@@ -595,10 +600,12 @@
     Styled::Computed(Arc::new(Box::new(f)))
 }
 
-<span class="comment">// Box&lt;dyn Fn()&gt; is 16 bytes large, however Arc&lt;Box&lt;dyn Fn()&gt;&gt; is only 8 bytes. since computed
+<span class="doccomment">/// A computed style.
+
+</span><span class="comment">// Box&lt;dyn Fn()&gt; is 16 bytes large, however Arc&lt;Box&lt;dyn Fn()&gt;&gt; is only 8 bytes. since computed
 // styles are used so infrequently, compared to the other variants, it's worth the tradeoff to save
 // memory, even if it costs an extra indirection.
-</span><span class="kw">type </span>Computed&lt;T&gt; = Arc&lt;Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Styles) -&gt; T + Send + Sync&gt;&gt;;
+</span><span class="kw">pub type </span>Computed&lt;T&gt; = Arc&lt;Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>Styles) -&gt; T + Send + Sync&gt;&gt;;
 
 <span class="doccomment">/// A styled value.
 </span><span class="attr">#[derive(Clone)]
@@ -610,6 +617,9 @@
     </span>Style(Style&lt;T&gt;),
 
     <span class="doccomment">/// A derived style.
+    ///
+    /// **Note:** This is by far the least efficient variant, and should only be used when
+    /// necessary.
     </span>Computed(Computed&lt;T&gt;),
 }
 
