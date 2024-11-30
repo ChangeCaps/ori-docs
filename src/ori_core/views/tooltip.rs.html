@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/ori-core/src/views/tooltip.rs`."><title>tooltip.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ori_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/ori-core/src/views/tooltip.rs`."><title>tooltip.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b0742ba02757f159.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="ori_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0 (90b35a623 2024-11-26)" data-channel="1.83.0" data-search-js="search-f0d225181b97f9a4.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">ori_core/views/</div>tooltip.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -300,40 +301,7 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
+<a href="#303" id="303">303</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
@@ -344,8 +312,8 @@
     rebuild::Rebuild,
     style::{Styled, Theme},
     text::{
-        FontFamily, FontStretch, FontStyle, FontWeight, Fonts, TextAlign, TextAttributes,
-        TextBuffer, TextWrap,
+        FontAttributes, FontFamily, FontStretch, FontStyle, FontWeight, Paragraph, TextAlign,
+        TextWrap,
     },
     view::{Pod, State, View},
 };
@@ -458,26 +426,11 @@
             border_color: TooltipStyle::BORDER_COLOR.into(),
         }
     }
-
-    <span class="kw">fn </span>set_attributes(<span class="kw-2">&amp;</span><span class="self">self</span>, fonts: <span class="kw-2">&amp;mut </span>Fonts, buffer: <span class="kw-2">&amp;mut </span>TextBuffer, style: <span class="kw-2">&amp;</span>TooltipStyle) {
-        buffer.set_wrap(fonts, style.wrap);
-        buffer.set_align(style.align);
-        buffer.set_text(
-            fonts,
-            <span class="kw-2">&amp;</span><span class="self">self</span>.text,
-            TextAttributes {
-                family: style.font_family.clone(),
-                weight: style.font_weight,
-                stretch: style.font_stretch,
-                style: style.font_style,
-            },
-        );
-    }
 }
 
 <span class="attr">#[doc(hidden)]
 </span><span class="kw">pub struct </span>TooltipState {
-    <span class="kw">pub </span>buffer: TextBuffer,
+    <span class="kw">pub </span>paragraph: Paragraph,
     <span class="kw">pub </span>timer: f32,
     <span class="kw">pub </span>position: Point,
     <span class="kw">pub </span>style: TooltipStyle,
@@ -490,13 +443,23 @@
         <span class="kw">let </span>style = TooltipStyle::styled(<span class="self">self</span>, cx.styles());
 
         <span class="kw">let </span><span class="kw-2">mut </span>state = TooltipState {
-            buffer: TextBuffer::new(cx.fonts(), style.font_size, <span class="number">1.0</span>),
+            paragraph: Paragraph::new(style.line_height, style.align, style.wrap),
             timer: <span class="number">0.0</span>,
             position: Point::ZERO,
             style,
         };
 
-        <span class="self">self</span>.set_attributes(cx.fonts(), <span class="kw-2">&amp;mut </span>state.buffer, <span class="kw-2">&amp;</span>state.style);
+        state.paragraph.set_text(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.text,
+            FontAttributes {
+                size: state.style.font_size,
+                family: state.style.font_family.clone(),
+                stretch: state.style.font_stretch,
+                weight: state.style.font_weight,
+                style: state.style.font_style,
+                color: state.style.color,
+            },
+        );
 
         (state, <span class="self">self</span>.content.build(cx, data))
     }
@@ -508,49 +471,24 @@
         data: <span class="kw-2">&amp;mut </span>T,
         old: <span class="kw-2">&amp;</span><span class="self">Self</span>,
     ) {
-        <span class="kw">let </span>font_size = state.style.font_size;
-        <span class="kw">let </span>line_height = state.style.line_height;
-        <span class="kw">let </span>wrap = state.style.wrap;
-        <span class="kw">let </span>align = state.style.align;
-        <span class="kw">let </span>font_family = state.style.font_family.clone();
-        <span class="kw">let </span>font_stretch = state.style.font_stretch;
-        <span class="kw">let </span>font_weight = state.style.font_weight;
-        <span class="kw">let </span>font_style = state.style.font_style;
-
         Rebuild::rebuild(<span class="self">self</span>, cx, old);
         state.style.rebuild(<span class="self">self</span>, cx);
 
-        <span class="kw">if </span>state.style.font_size != font_size || state.style.line_height != line_height {
-            (state.buffer).set_metrics(cx.fonts(), state.style.font_size, state.style.line_height);
-        }
+        state.paragraph.line_height = state.style.line_height;
+        state.paragraph.align = state.style.align;
+        state.paragraph.wrap = state.style.wrap;
 
-        <span class="kw">if </span>state.style.wrap != wrap {
-            state.buffer.set_wrap(cx.fonts(), state.style.wrap);
-        }
-
-        <span class="kw">if </span>state.style.align != align {
-            state.buffer.set_align(state.style.align);
-        }
-
-        <span class="kw">if </span><span class="self">self</span>.text != old.text
-            || state.style.font_family != font_family
-            || state.style.font_stretch != font_stretch
-            || state.style.font_weight != font_weight
-            || state.style.font_style != font_style
-        {
-            state.buffer.set_text(
-                cx.fonts(),
-                <span class="kw-2">&amp;</span><span class="self">self</span>.text,
-                TextAttributes {
-                    family: state.style.font_family.clone(),
-                    stretch: state.style.font_stretch,
-                    weight: state.style.font_weight,
-                    style: state.style.font_style,
-                },
-            );
-
-            cx.layout();
-        }
+        state.paragraph.set_text(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.text,
+            FontAttributes {
+                size: state.style.font_size,
+                family: state.style.font_family.clone(),
+                stretch: state.style.font_stretch,
+                weight: state.style.font_weight,
+                style: state.style.font_style,
+                color: state.style.color,
+            },
+        );
 
         (<span class="self">self</span>.content).rebuild(content, cx, data, <span class="kw-2">&amp;</span>old.content);
     }
@@ -612,13 +550,11 @@
 
     <span class="kw">fn </span>layout(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        (state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
+        (_state, content): <span class="kw-2">&amp;mut </span><span class="self">Self</span>::State,
         cx: <span class="kw-2">&amp;mut </span>LayoutCx,
         data: <span class="kw-2">&amp;mut </span>T,
         space: Space,
     ) -&gt; Size {
-        <span class="kw">let </span>window_size = cx.window().size - state.style.padding.size();
-        state.buffer.set_bounds(cx.fonts(), window_size);
         <span class="self">self</span>.content.layout(content, cx, data, space)
     }
 
@@ -637,8 +573,9 @@
 
         <span class="comment">// we need to try to move the tooltip so it fits on the screen
         </span><span class="kw">let </span>window_rect = Rect::min_size(Point::ZERO, cx.window().size);
+        <span class="kw">let </span>text_size = cx.fonts().measure(<span class="kw-2">&amp;</span>state.paragraph, window_rect.width());
 
-        <span class="kw">let </span>size = state.buffer.size() + state.style.padding.size();
+        <span class="kw">let </span>size = text_size + state.style.padding.size();
         <span class="kw">let </span><span class="kw-2">mut </span>offset = Vector::new(-size.width / <span class="number">2.0</span>, <span class="number">20.0</span>);
 
         <span class="kw">let </span>rect = Rect::min_size(state.position + offset, size);
@@ -660,9 +597,8 @@
                 );
 
                 cx.text(
-                    <span class="kw-2">&amp;</span>state.buffer,
-                    state.style.color,
-                    state.style.padding.offset(),
+                    <span class="kw-2">&amp;</span>state.paragraph,
+                    Rect::min_size(state.style.padding.offset().to_point(), text_size),
                 );
             });
         });
