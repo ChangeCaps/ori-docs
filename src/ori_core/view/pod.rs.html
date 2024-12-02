@@ -321,8 +321,7 @@
 <a href="#320" id="320">320</a>
 <a href="#321" id="321">321</a>
 <a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
+<a href="#323" id="323">323</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
@@ -413,14 +412,13 @@
     <span class="kw">where
         </span>V: View&lt;T&gt;,
     {
-        <span class="kw">match </span>handled {
-            <span class="bool-val">false </span>=&gt; <span class="self">self</span>.event(state, cx, data, event),
-            <span class="bool-val">true </span>=&gt; {
-                cx.propagate(<span class="kw-2">&amp;mut </span>state.view_state);
-                <span class="bool-val">true
-            </span>}
+        <span class="kw">if </span>!handled {
+            <span class="kw">return </span><span class="self">self</span>.event(state, cx, data, event);
         }
-    }
+
+        <span class="kw">let _ </span>= <span class="self">self</span>.event(state, cx, data, <span class="kw-2">&amp;</span>Event::Notify);
+        <span class="bool-val">true
+    </span>}
 
     <span class="doccomment">/// Call a closure with the [`BuildCx`] provided by a pod.
     ///

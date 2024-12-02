@@ -1588,7 +1588,7 @@
             <span class="comment">// since hover state is determined by the scene, and since draw modifies the scene,
             // we must update the hover state, and send an UpdateHovered event if needed
             </span><span class="kw">if </span><span class="self">self</span>.update_hovered(window_id) {
-                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::Update);
+                <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>Event::Notify);
             }
         }
 

@@ -211,8 +211,8 @@
     <span class="doccomment">/// A command was sent.
     </span>Command(Command),
 
-    <span class="doccomment">/// View state needs to be updated.
-    </span>Update,
+    <span class="doccomment">/// Event sent when something has changed and the view should be given a chance to update.
+    </span>Notify,
 }
 
 <span class="kw">impl </span>Event {

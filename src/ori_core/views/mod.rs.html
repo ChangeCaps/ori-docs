@@ -372,7 +372,7 @@
     <span class="kw">pub fn </span>test_layout&lt;T&gt;(view: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>View&lt;T&gt;, data: <span class="kw-2">&amp;mut </span>T, space: Space) -&gt; SavedLayouts {
         <span class="kw">let </span><span class="kw-2">mut </span>tester = ViewTester::new(view, data);
         tester.layout(view, data, space);
-        tester.event(view, data, <span class="kw-2">&amp;</span>Event::Update);
+        tester.event(view, data, <span class="kw-2">&amp;</span>Event::Notify);
         tester.contexts.get_or_default::&lt;SavedLayouts&gt;().clone()
     }
 
