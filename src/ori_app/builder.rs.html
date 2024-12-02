@@ -95,7 +95,7 @@
     command::{CommandProxy, CommandWaker},
     context::Contexts,
     style::{Styles, Theme},
-    text::{FontSource, Fonts},
+    text::{include_font, FontSource, Fonts},
     window::Window,
 };
 
@@ -122,7 +122,7 @@
             delegates: Vec::new(),
             requests: Vec::new(),
             styles: Styles::from(Theme::dark()),
-            fonts: Vec::new(),
+            fonts: <span class="macro">vec!</span>[<span class="macro">include_font!</span>(<span class="string">"font"</span>)],
         }
     }
 
