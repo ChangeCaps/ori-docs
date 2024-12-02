@@ -814,7 +814,7 @@
     }
 
     <span class="doccomment">/// Draw a paragraph.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: Paragraph, rect: Rect, bounds: Rect) {
+    </span><span class="kw">pub fn </span>paragraph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: Paragraph, rect: Rect, bounds: Rect) {
         <span class="kw">let </span>primitives = Arc::make_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>.primitives);
 
         primitives.push(Primitive::Paragraph {

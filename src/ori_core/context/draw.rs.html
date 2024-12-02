@@ -267,12 +267,25 @@
 <a href="#266" id="266">266</a>
 <a href="#267" id="267">267</a>
 <a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+    fmt::Display,
+    ops::{Deref, DerefMut},
+};
 
 <span class="kw">use crate</span>::{
     canvas::{BorderRadius, BorderWidth, Canvas, Curve, FillRule, Mask, Paint, Stroke},
     layout::{Affine, Point, Rect, Size, Vector},
-    text::Paragraph,
+    text::{FontAttributes, Paragraph, TextAlign, TextWrap},
     view::ViewState,
 };
 
@@ -393,8 +406,15 @@
         <span class="self">self</span>.canvas.stroke(curve, stroke, paint.into());
     }
 
-    <span class="doccomment">/// Draw a text buffer.
-    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, rect: Rect) {
+    <span class="doccomment">/// Draw some text.
+    </span><span class="kw">pub fn </span>text(<span class="kw-2">&amp;mut </span><span class="self">self</span>, text: <span class="kw">impl </span>Display, rect: Rect, font: FontAttributes) {
+        <span class="kw">let </span><span class="kw-2">mut </span>paragraph = Paragraph::new(<span class="number">1.2</span>, TextAlign::Center, TextWrap::Word);
+        paragraph.set_text(text, font);
+        <span class="self">self</span>.paragraph(<span class="kw-2">&amp;</span>paragraph, rect);
+    }
+
+    <span class="doccomment">/// Draw a paragraph.
+    </span><span class="kw">pub fn </span>paragraph(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, rect: Rect) {
         <span class="kw">let </span>lines = <span class="self">self</span>.fonts().layout(paragraph, rect.width());
 
         <span class="kw">let </span><span class="kw-2">mut </span>bounds: <span class="prelude-ty">Option</span>&lt;Rect&gt; = <span class="prelude-val">None</span>;
@@ -412,7 +432,7 @@
             }
         }
 
-        (<span class="self">self</span>.canvas).text(paragraph.clone(), rect, bounds.unwrap_or_default());
+        (<span class="self">self</span>.canvas).paragraph(paragraph.clone(), rect, bounds.unwrap_or_default());
     }
 
     <span class="doccomment">/// Draw a rectangle with rounded corners and a border.

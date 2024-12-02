@@ -104,11 +104,13 @@
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     fmt::Display,
     hash::{Hash, Hasher},
 };
 
+<span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>smol_str::{format_smolstr, SmolStr};
 
 <span class="kw">use super</span>::{FontAttributes, TextAlign, TextWrap};
@@ -126,7 +128,7 @@
     </span><span class="kw">pub </span>wrap: TextWrap,
 
     text: SmolStr,
-    segments: Vec&lt;Segment&gt;,
+    segments: SmallVec&lt;[Segment; <span class="number">1</span>]&gt;,
 }
 
 <span class="kw">impl </span>Paragraph {
@@ -137,7 +139,7 @@
             align,
             wrap,
             text: SmolStr::default(),
-            segments: Vec::new(),
+            segments: SmallVec::new(),
         }
     }
 
