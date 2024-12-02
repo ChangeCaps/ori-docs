@@ -117,12 +117,7 @@
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#119" id="119">119</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{<span class="self">self</span>, Any},
     future::Future,
 };
@@ -147,13 +142,8 @@
         <span class="self">Self </span>{ contexts, proxy }
     }
 
-    <span class="doccomment">/// Get the [`Fonts`].
-    </span><span class="kw">pub fn </span>fonts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="kw">dyn </span>Fonts {
-        <span class="self">self</span>.context::&lt;Box&lt;<span class="kw">dyn </span>Fonts&gt;&gt;().as_ref()
-    }
-
     <span class="doccomment">/// Get the [`Fonts`] as a mutable reference.
-    </span><span class="kw">pub fn </span>fonts_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Fonts {
+    </span><span class="kw">pub fn </span>fonts(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>Fonts {
         <span class="self">self</span>.context_mut::&lt;Box&lt;<span class="kw">dyn </span>Fonts&gt;&gt;().as_mut()
     }
 

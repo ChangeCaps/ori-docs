@@ -98,10 +98,10 @@
     </span><span class="kw">fn </span>load(<span class="kw-2">&amp;mut </span><span class="self">self</span>, source: FontSource&lt;<span class="lifetime">'_</span>&gt;);
 
     <span class="doccomment">/// Layout the given paragraph with the given max width.
-    </span><span class="kw">fn </span>layout(<span class="kw-2">&amp;</span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, width: f32) -&gt; Vec&lt;TextLayoutLine&gt;;
+    </span><span class="kw">fn </span>layout(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, width: f32) -&gt; Vec&lt;TextLayoutLine&gt;;
 
     <span class="doccomment">/// Measure the given paragraph with the given max width.
-    </span><span class="kw">fn </span>measure(<span class="kw-2">&amp;</span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, width: f32) -&gt; Size;
+    </span><span class="kw">fn </span>measure(<span class="kw-2">&amp;mut </span><span class="self">self</span>, paragraph: <span class="kw-2">&amp;</span>Paragraph, width: f32) -&gt; Size;
 }
 
 <span class="kw">impl dyn </span>Fonts {
