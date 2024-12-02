@@ -895,8 +895,8 @@
                         }
                     }
                     Primitive::Stroke { .. } =&gt; {}
-                    Primitive::Paragraph { rect, .. } =&gt; {
-                        <span class="kw">if </span>rect.contains(point) {
+                    Primitive::Paragraph { bounds, .. } =&gt; {
+                        <span class="kw">if </span>bounds.contains(point) {
                             <span class="kw">return </span>view;
                         }
                     }
