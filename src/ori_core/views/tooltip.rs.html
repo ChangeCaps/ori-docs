@@ -301,7 +301,9 @@
 <a href="#300" id="300">300</a>
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
 
 <span class="kw">use crate</span>::{
@@ -457,6 +459,7 @@
                 stretch: state.style.font_stretch,
                 weight: state.style.font_weight,
                 style: state.style.font_style,
+                ligatures: <span class="bool-val">true</span>,
                 color: state.style.color,
             },
         );
@@ -486,6 +489,7 @@
                 stretch: state.style.font_stretch,
                 weight: state.style.font_weight,
                 style: state.style.font_style,
+                ligatures: <span class="bool-val">true</span>,
                 color: state.style.color,
             },
         );

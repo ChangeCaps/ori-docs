@@ -128,7 +128,15 @@
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
 
 <span class="kw">use crate</span>::{command::Command, view::ViewId, window::WindowId};
 
@@ -140,6 +148,14 @@
 <span class="doccomment">/// A request to focus a view.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>RequestFocus(<span class="kw">pub </span>WindowId, <span class="kw">pub </span>ViewId);
+
+<span class="doccomment">/// A request to focus the next view in the focus chain.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>RequestFocusNext(<span class="kw">pub </span>WindowId);
+
+<span class="doccomment">/// A request to focus the previous view in the focus chain.
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+</span><span class="kw">pub struct </span>RequestFocusPrev(<span class="kw">pub </span>WindowId);
 
 <span class="doccomment">/// A target for focus.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]

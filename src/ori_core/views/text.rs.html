@@ -176,7 +176,8 @@
 <a href="#175" id="175">175</a>
 <a href="#176" id="176">176</a>
 <a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Write};
 
 <span class="kw">use </span>ori_macro::{example, Build, Styled};
 <span class="kw">use </span>smol_str::SmolStr;
@@ -294,6 +295,7 @@
             stretch: style.font_stretch,
             weight: style.font_weight,
             style: style.font_style,
+            ligatures: <span class="bool-val">true</span>,
             color: style.color,
         }
     }
