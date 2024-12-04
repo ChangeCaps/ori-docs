@@ -727,12 +727,53 @@
 <a href="#726" id="726">726</a>
 <a href="#727" id="727">727</a>
 <a href="#728" id="728">728</a>
-<a href="#729" id="729">729</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
-    event::{Capitalize, Event, Key},
+    event::{Capitalize, Event, Ime, Key},
     layout::{Point, Rect, Size, Space},
     style::{Styled, Theme},
     text::{
@@ -916,6 +957,18 @@
         <span class="self">self</span>.move_offset = <span class="prelude-val">None</span>;
     }
 
+    <span class="kw">fn </span>remove_selection(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(selection) = <span class="self">self</span>.selection {
+            <span class="kw">let </span>start = usize::min(<span class="self">self</span>.cursor, selection);
+            <span class="kw">let </span>end = usize::max(<span class="self">self</span>.cursor, selection);
+
+            <span class="self">self</span>.text.drain(start..end);
+            <span class="self">self</span>.set_cursor(start, <span class="bool-val">false</span>);
+
+            <span class="self">self</span>.selection = <span class="prelude-val">None</span>;
+        }
+    }
+
     <span class="kw">fn </span>move_right(<span class="kw-2">&amp;mut </span><span class="self">self</span>, select: bool) {
         <span class="kw">if </span>!select &amp;&amp; <span class="self">self</span>.selection.is_some() {
             <span class="comment">// if the selection is active, clear it
@@ -1024,7 +1077,13 @@
             }
         }
 
-        <span class="self">self</span>.lines[line_index].bounds().right()
+        <span class="kw">let </span>line = <span class="kw-2">&amp;</span><span class="self">self</span>.lines[line_index];
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(glyph) = line.glyphs.last() {
+            glyph.bounds.right()
+        } <span class="kw">else </span>{
+            line.right()
+        }
     }
 
     <span class="kw">fn </span>current_line_number(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
@@ -1152,7 +1211,22 @@
         }
 
         <span class="kw">if </span>cx.is_focused() {
+            <span class="kw">let </span>selection = state.selection.unwrap_or(state.cursor);
+
+            <span class="kw">let </span>min = usize::min(state.cursor, selection);
+            <span class="kw">let </span>max = usize::max(state.cursor, selection);
+
+            cx.set_ime(<span class="prelude-val">Some</span>(Ime {
+                text: state.text.clone(),
+                selection: min..max,
+                compose: <span class="prelude-val">None</span>,
+                multiline: <span class="self">self</span>.multiline,
+                capitalize: <span class="self">self</span>.capitalize,
+            }));
+
             cx.animate();
+        } <span class="kw">else </span>{
+            cx.set_ime(<span class="prelude-val">None</span>);
         }
 
         <span class="kw">match </span>event {
@@ -1168,6 +1242,7 @@
 
             Event::PointerMoved(e) <span class="kw">if </span>state.dragging =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
+                <span class="kw">let </span>local = cx.rect().contain(local);
                 <span class="kw">let </span>cursor = state.select_point(local);
                 state.set_cursor(cursor, <span class="bool-val">true</span>);
 
@@ -1187,6 +1262,7 @@
 
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>text) = e.text {
                     <span class="kw">if </span>!text.chars().any(char::is_control) &amp;&amp; !e.modifiers.ctrl {
+                        state.remove_selection();
                         state.text.insert_str(state.cursor, text);
                         state.set_cursor(state.cursor + text.len(), <span class="bool-val">false</span>);
 
@@ -1195,6 +1271,8 @@
                 }
 
                 <span class="kw">if </span>e.is_key(<span class="string">'v'</span>) &amp;&amp; e.modifiers.ctrl {
+                    state.remove_selection();
+
                     <span class="kw">let </span>text = cx.clipboard().get();
 
                     state.text.insert_str(state.cursor, <span class="kw-2">&amp;</span>text);
@@ -1228,6 +1306,7 @@
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Enter) &amp;&amp; <span class="self">self</span>.multiline {
+                    state.remove_selection();
                     state.text.insert(state.cursor, <span class="string">'\n'</span>);
                     state.set_cursor(state.cursor + <span class="number">1</span>, <span class="bool-val">false</span>);
 
@@ -1245,8 +1324,12 @@
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Backspace) &amp;&amp; state.cursor &gt; <span class="number">0 </span>{
-                    state.move_left(<span class="bool-val">false</span>);
-                    state.text.remove(state.cursor);
+                    <span class="kw">if </span>state.selection.is_some() {
+                        state.remove_selection();
+                    } <span class="kw">else </span>{
+                        state.move_left(<span class="bool-val">false</span>);
+                        state.text.remove(state.cursor);
+                    }
 
                     text_changed = <span class="bool-val">true</span>;
                 }
@@ -1398,10 +1481,13 @@
         <span class="kw">let </span>end = usize::max(state.cursor, selection);
 
         <span class="kw">for </span>line <span class="kw">in </span><span class="kw-2">&amp;</span>state.lines {
+            <span class="kw">let </span>top = line.top();
+            <span class="kw">let </span>bottom = line.bottom();
+
             <span class="kw">if </span>line.glyphs.is_empty() &amp;&amp; line.range.start &gt;= start &amp;&amp; line.range.end &lt;= end {
                 <span class="kw">let </span>rect = Rect::new(
-                    Point::new(line.left(), line.top()),
-                    Point::new(line.left() + <span class="number">4.0</span>, line.bottom()),
+                    Point::new(line.left(), top),
+                    Point::new(line.left() + <span class="number">2.0</span>, bottom),
                 );
 
                 cx.fill_rect(rect, color);
@@ -1426,11 +1512,7 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">let </span>rect = Rect::new(
-                Point::new(left, line.top()),
-                Point::new(right, line.bottom()),
-            );
-
+            <span class="kw">let </span>rect = Rect::new(Point::new(left, top), Point::new(right, bottom));
             cx.fill_rect(rect, color);
         }
     }
