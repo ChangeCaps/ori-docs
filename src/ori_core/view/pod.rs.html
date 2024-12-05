@@ -321,7 +321,9 @@
 <a href="#320" id="320">320</a>
 <a href="#321" id="321">321</a>
 <a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
@@ -474,6 +476,8 @@
 
         <span class="kw">if </span>event.wants_focus() &amp;&amp; view_state.is_focused() {
             view_state.set_focused(<span class="bool-val">false</span>);
+            <span class="self">Self</span>::event_with_inner(view_state, cx, <span class="kw-2">&amp;</span>Event::Notify, f);
+            <span class="kw">return </span><span class="bool-val">true</span>;
         }
 
         <span class="kw">if let </span>Event::FocusGiven(view_id) = event {
