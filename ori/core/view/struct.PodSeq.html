@@ -38,7 +38,7 @@ See <a href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSe
     event: &amp;<a class="enum" href="../../prelude/enum.Event.html" title="enum ori::prelude::Event">Event</a>,
 ) -&gt; <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.bool.html">bool</a><div class="where">where
     V: <a class="trait" href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSeq">ViewSeq</a>&lt;T&gt;,</div></h4></section></summary><div class="docblock"><p>Handle an event.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.event_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#544-553">source</a><h4 class="code-header">pub fn <a href="#method.event_nth" class="fn">event_nth</a>&lt;T&gt;(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.event_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#548-557">source</a><h4 class="code-header">pub fn <a href="#method.event_nth" class="fn">event_nth</a>&lt;T&gt;(
     &amp;mut self,
     n: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.usize.html">usize</a>,
     state: &amp;mut <a class="struct" href="../../prelude/struct.SeqState.html" title="struct ori::prelude::SeqState">SeqState</a>&lt;T, V&gt;,
@@ -48,7 +48,7 @@ See <a href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSe
 ) -&gt; <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.bool.html">bool</a><div class="where">where
     V: <a class="trait" href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSeq">ViewSeq</a>&lt;T&gt;,</div></h4></section></summary><div class="docblock"><p>Handle an event for the nth view.</p>
 <p>This is only useful if you need to handle events in a specific way, otherwise use <a href="../../prelude/struct.PodSeq.html#method.event" title="method ori::prelude::PodSeq::event"><code>Self::event</code></a>.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.layout_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#561-570">source</a><h4 class="code-header">pub fn <a href="#method.layout_nth" class="fn">layout_nth</a>&lt;T&gt;(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.layout_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#565-574">source</a><h4 class="code-header">pub fn <a href="#method.layout_nth" class="fn">layout_nth</a>&lt;T&gt;(
     &amp;mut self,
     n: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.usize.html">usize</a>,
     state: &amp;mut <a class="struct" href="../../prelude/struct.SeqState.html" title="struct ori::prelude::SeqState">SeqState</a>&lt;T, V&gt;,
@@ -57,7 +57,7 @@ See <a href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSe
     space: <a class="struct" href="../../prelude/struct.Space.html" title="struct ori::prelude::Space">Space</a>,
 ) -&gt; <a class="struct" href="../../prelude/struct.Size.html" title="struct ori::prelude::Size">Size</a><div class="where">where
     V: <a class="trait" href="../../prelude/trait.ViewSeq.html" title="trait ori::prelude::ViewSeq">ViewSeq</a>&lt;T&gt;,</div></h4></section></summary><div class="docblock"><p>Layout the nth view.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.draw_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#578-585">source</a><h4 class="code-header">pub fn <a href="#method.draw_nth" class="fn">draw_nth</a>&lt;T&gt;(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.draw_nth" class="method"><a class="src rightside" href="../../../src/ori_core/view/sequence.rs.html#582-589">source</a><h4 class="code-header">pub fn <a href="#method.draw_nth" class="fn">draw_nth</a>&lt;T&gt;(
     &amp;mut self,
     n: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.usize.html">usize</a>,
     state: &amp;mut <a class="struct" href="../../prelude/struct.SeqState.html" title="struct ori::prelude::SeqState">SeqState</a>&lt;T, V&gt;,
