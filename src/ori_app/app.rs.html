@@ -837,7 +837,13 @@
 <a href="#836" id="836">836</a>
 <a href="#837" id="837">837</a>
 <a href="#838" id="838">838</a>
-<a href="#839" id="839">839</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
 <span class="kw">use </span>ori_core::{
@@ -1354,35 +1360,41 @@
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(RequestFocus(window, view)) = command.get() {
-                <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusWanted);
-                <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::View(<span class="kw-2">*</span>view)));
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>RequestFocus(window, view)) = command.get() {
+                <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusWanted);
+                <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::View(view)));
+
+                <span class="kw">continue</span>;
             }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(RequestFocusNext(window)) = command.get() {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(window) {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>RequestFocusNext(window)) = command.get() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window) {
                     <span class="kw">match </span>window_state.view_state.has_focused() {
                         <span class="bool-val">true </span>=&gt; {
-                            <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusNext);
+                            <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusNext);
                         }
                         <span class="bool-val">false </span>=&gt; {
-                            <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::Next));
+                            <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::Next));
                         }
                     }
                 }
+
+                <span class="kw">continue</span>;
             }
 
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(RequestFocusPrev(window)) = command.get() {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(window) {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>RequestFocusPrev(window)) = command.get() {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window) {
                     <span class="kw">match </span>window_state.view_state.has_focused() {
                         <span class="bool-val">true </span>=&gt; {
-                            <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusPrev);
+                            <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusPrev);
                         }
                         <span class="bool-val">false </span>=&gt; {
-                            <span class="self">self</span>.window_event(data, <span class="kw-2">*</span>window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::Prev));
+                            <span class="self">self</span>.window_event(data, window, <span class="kw-2">&amp;</span>Event::FocusGiven(FocusTarget::Prev));
                         }
                     }
                 }
+
+                <span class="kw">continue</span>;
             }
 
             <span class="self">self</span>.event(data, <span class="kw-2">&amp;</span>Event::Command(command));

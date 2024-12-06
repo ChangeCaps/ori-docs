@@ -483,7 +483,7 @@
         <span class="kw">if let </span>Event::FocusGiven(view_id) = event {
             <span class="kw">let </span>focus_given = <span class="kw">match </span>view_id {
                 FocusTarget::Next | FocusTarget::Prev =&gt; view_state.is_focusable(),
-                FocusTarget::View(id) =&gt; view_state.id() == <span class="kw-2">*</span>id,
+                FocusTarget::View(id) =&gt; view_state.id() == <span class="kw-2">*</span>id &amp;&amp; view_state.is_focusable(),
             };
 
             <span class="kw">if </span>focus_given {
