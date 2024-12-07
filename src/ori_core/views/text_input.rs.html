@@ -779,7 +779,12 @@
 <a href="#778" id="778">778</a>
 <a href="#779" id="779">779</a>
 <a href="#780" id="780">780</a>
-<a href="#781" id="781">781</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
@@ -1154,15 +1159,18 @@
             },
         );
 
+        <span class="kw">let </span>text = <span class="self">self</span>.text.clone().unwrap_or_default();
+        <span class="kw">let </span>cursor = text.len();
+
         TextInputState {
             style,
-            text: <span class="self">self</span>.text.clone().unwrap_or_default(),
+            text,
             paragraph,
             lines: Vec::new(),
             dragging: <span class="bool-val">false</span>,
             move_offset: <span class="prelude-val">None</span>,
             blink: <span class="number">0.0</span>,
-            cursor: <span class="number">0</span>,
+            cursor,
             selection: <span class="prelude-val">None</span>,
         }
     }
@@ -1171,6 +1179,10 @@
         state.style.rebuild(<span class="self">self</span>, cx);
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(text) = <span class="kw-2">&amp;</span><span class="self">self</span>.text {
+            <span class="kw">if </span>state.cursor &gt;= state.text.len() {
+                state.cursor = text.len();
+            }
+
             state.text = text.clone();
             state.lines.clear();
 
@@ -1200,8 +1212,6 @@
                 color: state.style.color,
             },
         );
-
-        state.cursor = usize::min(state.cursor, state.text.len());
     }
 
     <span class="kw">fn </span>event(
