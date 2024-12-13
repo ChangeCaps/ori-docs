@@ -843,7 +843,20 @@
 <a href="#842" id="842">842</a>
 <a href="#843" id="843">843</a>
 <a href="#844" id="844">844</a>
-<a href="#845" id="845">845</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
 <span class="kw">use </span>ori_core::{
@@ -1103,6 +1116,19 @@
             window: window_id,
             maximized,
         });
+
+        <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event)
+    }
+
+    <span class="doccomment">/// The decorations state of a window changed.
+    </span><span class="kw">pub fn </span>window_decorated(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: <span class="kw-2">&amp;mut </span>T, window_id: WindowId, decorated: bool) -&gt; bool {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
+            window_state.view_state.request_layout();
+            window_state.window.decorated = decorated;
+            window_state.snapshot.decorated = decorated;
+        }
+
+        <span class="kw">let </span>event = Event::Notify;
 
         <span class="self">self</span>.window_event(data, window_id, <span class="kw-2">&amp;</span>event)
     }
