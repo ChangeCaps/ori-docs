@@ -792,7 +792,12 @@
 <a href="#791" id="791">791</a>
 <a href="#792" id="792">792</a>
 <a href="#793" id="793">793</a>
-<a href="#794" id="794">794</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
@@ -1268,7 +1273,9 @@
         <span class="kw">match </span>event {
             Event::PointerPressed(e) <span class="kw">if </span>cx.is_hovered() =&gt; {
                 <span class="kw">let </span>local = cx.local(e.position);
-                state.set_cursor(state.select_point(local), <span class="bool-val">false</span>);
+                <span class="kw">let </span>cursor = state.select_point(local);
+
+                state.set_cursor(cursor, <span class="bool-val">false</span>);
                 state.dragging = <span class="bool-val">true</span>;
 
                 cx.focus();
@@ -1280,7 +1287,10 @@
                 <span class="kw">let </span>local = cx.local(e.position);
                 <span class="kw">let </span>local = cx.rect().contain(local);
                 <span class="kw">let </span>cursor = state.select_point(local);
-                state.set_cursor(cursor, <span class="bool-val">true</span>);
+
+                <span class="kw">if </span>state.cursor != cursor {
+                    state.set_cursor(cursor, <span class="bool-val">true</span>);
+                }
 
                 cx.draw();
 
