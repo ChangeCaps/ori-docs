@@ -1365,15 +1365,15 @@
                     text_submitted = <span class="bool-val">true</span>;
                 }
 
-                <span class="kw">if </span>e.is_key(Key::Backspace) &amp;&amp; state.cursor &gt; <span class="number">0 </span>{
+                <span class="kw">if </span>e.is_key(Key::Backspace) {
                     <span class="kw">if </span>state.selection.is_some() {
                         state.remove_selection();
-                    } <span class="kw">else </span>{
+                        text_changed = <span class="bool-val">true</span>;
+                    } <span class="kw">else if </span>state.cursor &gt; <span class="number">0 </span>{
                         state.move_left(<span class="bool-val">false</span>);
                         state.text.remove(state.cursor);
+                        text_changed = <span class="bool-val">true</span>;
                     }
-
-                    text_changed = <span class="bool-val">true</span>;
                 }
 
                 <span class="kw">if </span>e.is_key(Key::Right) {
