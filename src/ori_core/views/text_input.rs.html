@@ -808,7 +808,11 @@
 <a href="#807" id="807">807</a>
 <a href="#808" id="808">808</a>
 <a href="#809" id="809">809</a>
-<a href="#810" id="810">810</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
@@ -1506,7 +1510,11 @@
 
         state.lines = cx.layout_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
 
-        <span class="kw">let </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
+        <span class="kw">let </span><span class="kw-2">mut </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
+
+        <span class="kw">let </span>min_height = state.style.font_size * state.style.line_height;
+        size.height = size.height.max(min_height);
+
         space.fit(size)
     }
 
