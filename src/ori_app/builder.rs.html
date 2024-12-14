@@ -164,7 +164,7 @@
     <span class="doccomment">/// Build the application.
     </span><span class="kw">pub fn </span>build(<span class="self">self</span>, waker: CommandWaker, <span class="kw-2">mut </span>fonts: Box&lt;<span class="kw">dyn </span>Fonts&gt;) -&gt; App&lt;T&gt; {
         <span class="kw">for </span>font <span class="kw">in </span><span class="self">self</span>.fonts {
-            fonts.load(font);
+            fonts.load(font, <span class="prelude-val">None</span>);
         }
 
         <span class="kw">let </span>(proxy, receiver) = CommandProxy::new(waker);
