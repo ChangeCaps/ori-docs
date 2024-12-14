@@ -191,7 +191,15 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::marker::PhantomData;
 
 <span class="kw">use </span>ori_macro::Build;
 
@@ -331,6 +339,11 @@
 
                 content.set_active(<span class="bool-val">true</span>);
             }
+
+            Event::PointerPressed(<span class="kw">_</span>) <span class="kw">if </span>!is_hovered =&gt; {
+                content.set_focused(<span class="bool-val">false</span>);
+            }
+
             Event::PointerReleased(e) <span class="kw">if </span>content.is_active() &amp;&amp; <span class="self">self</span>.is_button(e.button) =&gt; {
                 <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
                     (<span class="self">self</span>.callback)(cx, data);
@@ -344,6 +357,7 @@
 
                 content.set_active(<span class="bool-val">false</span>);
             }
+
             Event::KeyPressed(e) <span class="kw">if </span>content.is_focused() =&gt; {
                 <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
                     <span class="kw">if </span><span class="macro">matches!</span>(<span class="self">self</span>.event, ClickEvent::Press | ClickEvent::Click) {
@@ -354,6 +368,7 @@
                     content.set_active(<span class="bool-val">true</span>);
                 }
             }
+
             Event::KeyReleased(e) <span class="kw">if </span>content.is_active() =&gt; {
                 <span class="kw">if </span>e.is_key(Key::Enter) || e.is_key(<span class="string">' '</span>) {
                     <span class="kw">if </span><span class="self">self</span>.event == ClickEvent::Release {
@@ -364,6 +379,7 @@
                     content.set_active(<span class="bool-val">false</span>);
                 }
             }
+
             <span class="kw">_ </span>=&gt; {}
         }
 

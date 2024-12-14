@@ -797,7 +797,13 @@
 <a href="#796" id="796">796</a>
 <a href="#797" id="797">797</a>
 <a href="#798" id="798">798</a>
-<a href="#799" id="799">799</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_macro::{example, Build, Styled};
 
 <span class="kw">use crate</span>::{
     canvas::Color,
@@ -1281,6 +1287,12 @@
                 cx.focus();
 
                 <span class="bool-val">true
+            </span>}
+
+            Event::PointerPressed(<span class="kw">_</span>) =&gt; {
+                cx.set_focused(<span class="bool-val">false</span>);
+
+                <span class="bool-val">false
             </span>}
 
             Event::PointerMoved(e) <span class="kw">if </span>state.dragging =&gt; {

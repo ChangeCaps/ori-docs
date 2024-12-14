@@ -218,7 +218,9 @@
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a></pre></div><pre class="rust"><code><span class="doccomment">//! Contexts for views.
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a></pre></div><pre class="rust"><code><span class="doccomment">//! Contexts for views.
 
 </span><span class="kw">mod </span>base;
 <span class="kw">mod </span>build;
@@ -376,8 +378,10 @@
 
     <span class="doccomment">/// Request focus for the view.
     </span><span class="kw">pub fn </span>focus(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>cmd = RequestFocus(<span class="self">self</span>.window().id(), <span class="self">self</span>.id());
-        <span class="self">self</span>.cmd(cmd);
+        <span class="kw">if </span>!<span class="self">self</span>.is_focused() {
+            <span class="kw">let </span>cmd = RequestFocus(<span class="self">self</span>.window().id(), <span class="self">self</span>.id());
+            <span class="self">self</span>.cmd(cmd);
+        }
     }
 
     <span class="doccomment">/// Request the next focusable view to be focused.
