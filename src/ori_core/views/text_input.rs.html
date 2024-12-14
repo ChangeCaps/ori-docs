@@ -1496,17 +1496,17 @@
                 },
             );
 
-            <span class="kw">let </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>placeholder, space.max.width);
+            <span class="kw">let </span><span class="kw-2">mut </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>placeholder, space.max.width);
+
+            <span class="kw">let </span>min_height = state.style.font_size * state.style.line_height;
+            size.height = size.height.max(min_height);
+
             <span class="kw">return </span>space.fit(size);
         }
 
         state.lines = cx.layout_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
-
-        <span class="kw">let </span>min_height = state.style.font_size * state.style.line_height;
-        size.height = size.height.max(min_height);
-
+        <span class="kw">let </span>size = cx.measure_paragraph(<span class="kw-2">&amp;</span>state.paragraph, space.max.width);
         space.fit(size)
     }
 
