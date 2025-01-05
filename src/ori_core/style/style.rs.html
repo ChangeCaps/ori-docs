@@ -524,7 +524,21 @@
 <a href="#523" id="523">523</a>
 <a href="#524" id="524">524</a>
 <a href="#525" id="525">525</a>
-<a href="#526" id="526">526</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     borrow::Cow,
     collections::HashMap,
@@ -607,7 +621,7 @@
 <span class="kw">type </span>StyleEntry = Styled&lt;Arc&lt;<span class="kw">dyn </span>Any + Send + Sync&gt;&gt;;
 <span class="kw">type </span>StyleConverter = Arc&lt;<span class="kw">dyn </span>Fn(Arc&lt;<span class="kw">dyn </span>Any + Send + Sync&gt;) -&gt; Arc&lt;<span class="kw">dyn </span>Any + Send + Sync&gt;&gt;;
 <span class="kw">type </span>StyleKey = (u64, TypeId);
-<span class="kw">type </span>CacheEntry = Arc&lt;<span class="kw">dyn </span>Any + Send + Sync&gt;;
+<span class="kw">type </span>CacheEntry = <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>Any + Send + Sync&gt;&gt;;
 
 <span class="kw">impl </span>Styles {
     <span class="doccomment">/// Create a new set of styles.
@@ -722,7 +736,10 @@
         <span class="kw">let </span>key = (style.hash ^ stack_hash, TypeId::of::&lt;T&gt;());
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(entry) = <span class="self">self</span>.cache.lock().unwrap().get(<span class="kw-2">&amp;</span>key) {
-            <span class="kw">return </span><span class="prelude-val">Some</span>(entry.downcast_ref::&lt;T&gt;().unwrap().clone());
+            <span class="kw">let </span>entry = entry.as_ref()<span class="question-mark">?</span>;
+            <span class="kw">let </span>style = entry.downcast_ref::&lt;T&gt;()<span class="question-mark">?</span>;
+
+            <span class="kw">return </span><span class="prelude-val">Some</span>(style.clone());
         }
 
         <span class="macro">tracing::trace!</span>(
@@ -746,39 +763,50 @@
             .chain(classes)
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
-        <span class="kw">let </span>entry = <span class="self">Self</span>::get_uncached(<span class="kw-2">&amp;</span><span class="self">self</span>.root, classes.iter().copied())<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>style = <span class="kw">match </span>entry {
-            Styled::Value(value) =&gt; <span class="kw">match </span>value.downcast_ref::&lt;T&gt;() {
-                <span class="prelude-val">Some</span>(value) =&gt; value.clone(),
-                <span class="prelude-val">None </span>=&gt; {
-                    <span class="kw">let </span>signature = (value.as_ref().type_id(), TypeId::of::&lt;T&gt;());
-
-                    <span class="kw">match </span><span class="self">self</span>.converters.get(<span class="kw-2">&amp;</span>signature) {
-                        <span class="prelude-val">Some</span>(converter) =&gt; {
-                            <span class="kw">let </span>value = converter(value.clone());
-                            <span class="kw">let </span>value = value.downcast_ref::&lt;T&gt;().unwrap();
-                            value.clone()
-                        }
-                        <span class="prelude-val">None </span>=&gt; {
-                            <span class="macro">tracing::error!</span>(
-                                <span class="string">"style could not be converted to '{}'"</span>,
-                                std::any::type_name::&lt;T&gt;()
-                            );
-
-                            <span class="kw">return </span><span class="prelude-val">None</span>;
-                        }
-                    }
-                }
-            },
-            Styled::Style(style) =&gt; <span class="self">self</span>.get(style.cast())<span class="question-mark">?</span>,
-            Styled::Computed(..) =&gt; <span class="macro">todo!</span>(),
+        <span class="kw">let </span><span class="prelude-val">Some</span>(style) = <span class="self">self</span>.get_inner::&lt;T&gt;(<span class="kw-2">&amp;</span>classes) <span class="kw">else </span>{
+            <span class="self">self</span>.cache.lock().unwrap().insert(key, <span class="prelude-val">None</span>);
+            <span class="kw">return </span><span class="prelude-val">None</span>;
         };
 
-        <span class="kw">let </span>cache_entry: CacheEntry = Arc::new(style.clone());
+        <span class="kw">let </span>cache_entry: CacheEntry = <span class="prelude-val">Some</span>(Arc::new(style.clone()));
         <span class="self">self</span>.cache.lock().unwrap().insert(key, cache_entry);
 
         <span class="prelude-val">Some</span>(style)
+    }
+
+    <span class="kw">fn </span>get_inner&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, classes: <span class="kw-2">&amp;</span>[(u64, bool)]) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
+    <span class="kw">where
+        </span>T: Clone + Any + Send + Sync,
+    {
+        <span class="kw">let </span>entry = <span class="self">Self</span>::get_uncached(<span class="kw-2">&amp;</span><span class="self">self</span>.root, classes.iter().copied())<span class="question-mark">?</span>;
+
+        <span class="kw">match </span>entry {
+            Styled::Value(value) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = value.downcast_ref::&lt;T&gt;() {
+                    <span class="kw">return </span><span class="prelude-val">Some</span>(value.clone());
+                }
+
+                <span class="kw">let </span>signature = (value.as_ref().type_id(), TypeId::of::&lt;T&gt;());
+
+                <span class="kw">match </span><span class="self">self</span>.converters.get(<span class="kw-2">&amp;</span>signature) {
+                    <span class="prelude-val">Some</span>(converter) =&gt; {
+                        <span class="kw">let </span>value = converter(value.clone());
+                        <span class="kw">let </span>value = value.downcast_ref::&lt;T&gt;().unwrap();
+                        <span class="prelude-val">Some</span>(value.clone())
+                    }
+                    <span class="prelude-val">None </span>=&gt; {
+                        <span class="macro">tracing::error!</span>(
+                            <span class="string">"style could not be converted to '{}'"</span>,
+                            std::any::type_name::&lt;T&gt;()
+                        );
+
+                        <span class="prelude-val">None
+                    </span>}
+                }
+            }
+            Styled::Style(style) =&gt; <span class="self">self</span>.get(style.cast())<span class="question-mark">?</span>,
+            Styled::Computed(..) =&gt; <span class="macro">todo!</span>(),
+        }
     }
 
     <span class="doccomment">/// Get a value from the styles.
