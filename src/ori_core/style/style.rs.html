@@ -776,7 +776,7 @@
 
     <span class="kw">fn </span>get_inner&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, classes: <span class="kw-2">&amp;</span>[(u64, bool)]) -&gt; <span class="prelude-ty">Option</span>&lt;T&gt;
     <span class="kw">where
-        </span>T: Clone + Any + Send + Sync,
+        </span>T: Clone + Send + Sync + <span class="lifetime">'static</span>,
     {
         <span class="kw">let </span>entry = <span class="self">Self</span>::get_uncached(<span class="kw-2">&amp;</span><span class="self">self</span>.root, classes.iter().copied())<span class="question-mark">?</span>;
 
@@ -804,7 +804,7 @@
                     </span>}
                 }
             }
-            Styled::Style(style) =&gt; <span class="self">self</span>.get(style.cast())<span class="question-mark">?</span>,
+            Styled::Style(style) =&gt; <span class="self">self</span>.get(style.cast()),
             Styled::Computed(..) =&gt; <span class="macro">todo!</span>(),
         }
     }
