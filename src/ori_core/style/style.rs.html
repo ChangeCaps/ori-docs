@@ -538,7 +538,8 @@
 <a href="#537" id="537">537</a>
 <a href="#538" id="538">538</a>
 <a href="#539" id="539">539</a>
-<a href="#540" id="540">540</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     borrow::Cow,
     collections::HashMap,
@@ -744,6 +745,7 @@
 
         <span class="macro">tracing::trace!</span>(
             key = %key.<span class="number">0</span>,
+            stack = <span class="question-mark">?</span><span class="self">self</span>.stack,
             <span class="kw">type </span>= <span class="question-mark">?</span>std::any::type_name::&lt;T&gt;(),
             <span class="string">"cache miss for {:?}"</span>,
             style.key
