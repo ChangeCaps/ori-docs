@@ -254,61 +254,7 @@
 <a href="#253" id="253">253</a>
 <a href="#254" id="254">254</a>
 <a href="#255" id="255">255</a>
-<a href="#256" id="256">256</a>
-<a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
-<a href="#260" id="260">260</a>
-<a href="#261" id="261">261</a>
-<a href="#262" id="262">262</a>
-<a href="#263" id="263">263</a>
-<a href="#264" id="264">264</a>
-<a href="#265" id="265">265</a>
-<a href="#266" id="266">266</a>
-<a href="#267" id="267">267</a>
-<a href="#268" id="268">268</a>
-<a href="#269" id="269">269</a>
-<a href="#270" id="270">270</a>
-<a href="#271" id="271">271</a>
-<a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
-<a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a></pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
+<a href="#256" id="256">256</a></pre></div><pre class="rust"><code><span class="kw">use </span>proc_macro2::TokenStream;
 <span class="kw">use </span>quote::quote;
 <span class="kw">use </span>syn::{parse_quote, parse_quote_spanned, spanned::Spanned};
 
@@ -332,7 +278,6 @@
 
     <span class="kw">let </span>vis = <span class="kw-2">&amp;</span>input.vis;
     <span class="kw">let </span>ident = <span class="kw-2">&amp;</span>input.ident;
-    <span class="kw">let </span>name = ident.to_string();
 
     <span class="kw">let </span>(impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
@@ -340,12 +285,10 @@
     <span class="kw">let </span>style_fields = style_fields(ident, <span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_styled_fields = style_styled_fields(<span class="kw-2">&amp;</span>data.fields);
     <span class="kw">let </span>style_rebuild_fields = style_rebuild_fields(<span class="kw-2">&amp;</span>data.fields);
-    <span class="kw">let </span>style_style_key_fields = style_style_key_fields(<span class="kw-2">&amp;</span>name, <span class="kw-2">&amp;</span>data.fields);
 
     <span class="kw">let </span>style_doc = <span class="macro">format!</span>(<span class="string">"The derived style for [`{}`]."</span>, ident);
     <span class="kw">let </span>style_styled_doc = <span class="macro">format!</span>(<span class="string">"The style of [`{}`]."</span>, ident);
     <span class="kw">let </span>style_rebuild_doc = <span class="macro">format!</span>(<span class="string">"Rebuild the style of [`{}`]."</span>, ident);
-    <span class="kw">let </span>style_into_styles_fields = style_into_styles_fields(<span class="kw-2">&amp;</span>style_name, <span class="kw-2">&amp;</span>data.fields);
 
     <span class="kw">let </span>expanded = <span class="macro">quote!</span> {
         <span class="attr">#[doc = #style_doc]
@@ -355,8 +298,6 @@
         }
 
         <span class="kw">impl </span>#style_name {
-            #(#style_style_key_fields)*
-
             <span class="attr">#[doc = #style_styled_doc]
             #[allow(unused)]
             </span>#vis <span class="kw">fn </span>styled #impl_generics (
@@ -392,16 +333,6 @@
                 <span class="kw">if </span>draw {
                     cx.draw();
                 }
-            }
-        }
-
-        <span class="kw">impl </span>::std::convert::From&lt;#style_name&gt; <span class="kw">for </span>#ori_core::style::Styles {
-            <span class="kw">fn </span>from(style: #style_name) -&gt; <span class="self">Self </span>{
-                <span class="kw">let </span><span class="kw-2">mut </span>styles = #ori_core::style::Styles::new();
-
-                #(#style_into_styles_fields)*
-
-                styles
             }
         }
     };
@@ -547,29 +478,6 @@
     }
 }
 
-<span class="kw">fn </span>style_style_key_fields&lt;<span class="lifetime">'a</span>&gt;(
-    name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str,
-    fields: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>syn::Fields,
-) -&gt; <span class="kw">impl </span>Iterator&lt;Item = TokenStream&gt; + <span class="lifetime">'a </span>{
-    <span class="kw">let </span>ori_core = find_core();
-
-    fields.iter().filter_map(<span class="kw">move </span>|field| {
-        <span class="kw">let </span>vis = <span class="kw-2">&amp;</span>field.vis;
-        <span class="kw">let </span>ident = field.ident.as_ref().unwrap();
-        <span class="kw">let </span>ty = get_styled(<span class="kw-2">&amp;</span>field.ty)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>name = <span class="macro">format!</span>(<span class="string">"{}.{}"</span>, name, ident);
-        <span class="kw">let </span>ident = syn::Ident::new(<span class="kw-2">&amp;</span>ident.to_string().to_uppercase(), ident.span());
-
-        <span class="kw">let </span>doc = <span class="macro">format!</span>(<span class="string">"The style key of [`{}::{}`]."</span>, name, ident);
-
-        <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
-            <span class="attr">#[doc = #doc]
-            </span>#vis <span class="kw">const </span>#ident: #ori_core::style::Style&lt;#ty&gt; = #ori_core::style::Style::new(#name);
-        })
-    })
-}
-
 <span class="kw">fn </span>get_styled(ty: <span class="kw-2">&amp;</span>syn::Type) -&gt; <span class="prelude-ty">Option</span>&lt;syn::Type&gt; {
     <span class="kw">let </span>syn::Type::Path(ty) = ty <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">None</span>;
@@ -601,21 +509,5 @@
         }
         <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
     }
-}
-
-<span class="kw">fn </span>style_into_styles_fields&lt;<span class="lifetime">'a</span>&gt;(
-    style_name: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>syn::Ident,
-    fields: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>syn::Fields,
-) -&gt; <span class="kw">impl </span>Iterator&lt;Item = TokenStream&gt; + <span class="lifetime">'a </span>{
-    fields.iter().filter_map(<span class="kw">move </span>|field| {
-        <span class="kw">let </span>ident = field.ident.as_ref().unwrap();
-        <span class="kw">let </span>name = ident.to_string();
-        <span class="kw">let </span>style_ident = syn::Ident::new(<span class="kw-2">&amp;</span>name.to_uppercase(), ident.span());
-        <span class="kw">let _ </span>= get_styled(<span class="kw-2">&amp;</span>field.ty)<span class="question-mark">?</span>;
-
-        <span class="prelude-val">Some</span>(<span class="macro">quote!</span> {
-            styles.insert(#style_name::#style_ident, style.#ident);
-        })
-    })
 }
 </code></pre></div></section></main></body></html>

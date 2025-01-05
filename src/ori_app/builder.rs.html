@@ -105,13 +105,7 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
+<a href="#107" id="107">107</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::{BorderRadius, BorderWidth},
     command::{CommandProxy, CommandWaker},
     context::Contexts,
@@ -175,12 +169,6 @@
     <span class="doccomment">/// Add a style to the application.
     </span><span class="kw">pub fn </span>style(<span class="kw-2">mut </span><span class="self">self</span>, styles: <span class="kw">impl </span>Into&lt;Styles&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.styles.extend(styles);
-        <span class="self">self
-    </span>}
-
-    <span class="doccomment">/// Add a theme to the application.
-    </span><span class="kw">pub fn </span>theme(<span class="kw-2">mut </span><span class="self">self</span>, theme: Theme) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.styles.extend(Styles::from(theme));
         <span class="self">self
     </span>}
 
