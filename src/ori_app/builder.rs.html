@@ -105,10 +105,15 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a></pre></div><pre class="rust"><code><span class="kw">use </span>ori_core::{
     canvas::{BorderRadius, BorderWidth},
     command::{CommandProxy, CommandWaker},
     context::Contexts,
+    layout::{Align, Justify},
     style::{Styles, Theme},
     text::{
         include_font, FontFamily, FontSource, FontStretch, FontStyle, FontWeight, Fonts, TextAlign,
@@ -151,6 +156,9 @@
         styles.add_conversion::&lt;String, <span class="kw">_</span>&gt;(FontStyle::from);
         styles.add_conversion::&lt;String, <span class="kw">_</span>&gt;(TextAlign::from);
         styles.add_conversion::&lt;String, <span class="kw">_</span>&gt;(TextWrap::from);
+
+        styles.add_conversion::&lt;String, <span class="kw">_</span>&gt;(Align::from);
+        styles.add_conversion::&lt;String, <span class="kw">_</span>&gt;(Justify::from);
 
         <span class="self">Self </span>{
             delegates: Vec::new(),
