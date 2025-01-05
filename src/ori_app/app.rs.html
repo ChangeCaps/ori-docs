@@ -854,7 +854,13 @@
 <a href="#853" id="853">853</a>
 <a href="#854" id="854">854</a>
 <a href="#855" id="855">855</a>
-<a href="#856" id="856">856</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{any::Any, collections::HashMap};
 
 <span class="kw">use </span>instant::Instant;
 <span class="kw">use </span>ori_core::{
@@ -1615,6 +1621,12 @@
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(window_state) = <span class="self">self</span>.windows.get_mut(<span class="kw-2">&amp;</span>window_id) {
             <span class="kw">let </span>requests = window_state.animate(animate);
             <span class="self">self</span>.requests.extend(requests);
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(styles) = <span class="self">self</span>.contexts.get_mut::&lt;Styles&gt;() {
+            <span class="kw">if </span>styles.pop_class() {
+                <span class="macro">panic!</span>(<span class="string">"Class stack is not empty after handling event"</span>);
+            }
         }
 
         <span class="comment">// handle any pending commands
