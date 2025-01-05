@@ -493,7 +493,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>, T&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'a</span>&gt;&gt;&gt; {
+<span class="kw">impl</span>&lt;T&gt; Wrap&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>AnyView&lt;T&gt; + <span class="lifetime">'_</span>&gt;&gt;&gt; {
     <span class="doccomment">/// Create a new [`Wrap`], with dynamic content.
     </span><span class="kw">pub fn </span>any(axis: Axis) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::new(axis, Vec::new())

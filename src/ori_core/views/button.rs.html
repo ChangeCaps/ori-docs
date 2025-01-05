@@ -397,7 +397,7 @@
                     Color::TRANSPARENT,
                     state.style.border_radius.expand(<span class="number">2.0</span>),
                     BorderWidth::all(<span class="number">2.0</span>),
-                    cx.styles().get_or(Color::BLUE, Theme::INFO),
+                    cx.styles().get_or(Color::BLUE, <span class="kw-2">&amp;</span>Theme::INFO),
                 );
             }
 

@@ -1699,7 +1699,7 @@
             <span class="prelude-val">Some</span>(color) =&gt; color,
             <span class="prelude-val">None </span>=&gt; {
                 <span class="kw">let </span>styles = (<span class="self">self</span>.contexts.get::&lt;Styles&gt;()).expect(<span class="string">"app has styles context"</span>);
-                styles.get_or(Color::WHITE, Theme::BACKGROUND)
+                styles.get_or(Color::WHITE, <span class="kw-2">&amp;</span>Theme::BACKGROUND)
             }
         };
 

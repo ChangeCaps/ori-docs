@@ -1547,8 +1547,8 @@
             cx.paragraph(<span class="kw-2">&amp;</span>placeholder, cx.rect());
         }
 
-        <span class="kw">let </span>contrast = cx.styles().get_or(Color::BLACK, Theme::CONTRAST);
-        <span class="kw">let </span>info = cx.styles().get_or(Color::BLUE, Theme::INFO);
+        <span class="kw">let </span>contrast = cx.styles().get_or(Color::BLACK, <span class="kw-2">&amp;</span>Theme::CONTRAST);
+        <span class="kw">let </span>info = cx.styles().get_or(Color::BLUE, <span class="kw-2">&amp;</span>Theme::INFO);
 
         <span class="comment">// draw the cursor
         </span><span class="kw">if </span>cx.is_focused() {

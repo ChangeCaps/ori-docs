@@ -513,11 +513,11 @@
                         input.parse::&lt;or&gt;()<span class="question-mark">?</span>;
                         <span class="kw">let </span>or_value = input.parse::&lt;syn::Expr&gt;()<span class="question-mark">?</span>;
                         default = <span class="prelude-val">Some</span>(<span class="macro">parse_quote_spanned!</span> { style.span() =&gt;
-                            #styles.get_or_else(|| #or_value, #style)
+                            #styles.get_or_else(|| #or_value, <span class="kw-2">&amp;</span>#style)
                         });
                     } <span class="kw">else </span>{
                         default = <span class="prelude-val">Some</span>(<span class="macro">parse_quote_spanned!</span> { style.span() =&gt;
-                            #styles.get(#style).expect(<span class="macro">concat!</span>(<span class="string">"missing style for `"</span>, #style, <span class="string">"`"</span>))
+                            #styles.get(<span class="kw-2">&amp;</span>#style).expect(<span class="macro">concat!</span>(<span class="string">"missing style for `"</span>, #style, <span class="string">"`"</span>))
                         });
                     }
                 } <span class="kw">else </span>{

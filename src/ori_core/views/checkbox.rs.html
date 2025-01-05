@@ -319,7 +319,7 @@
             <span class="kw">let </span>bright = style.border_color.lighten(<span class="number">0.2</span>);
 
             <span class="kw">let </span>border_color = <span class="kw">match </span>cx.is_focused() {
-                <span class="bool-val">true </span>=&gt; cx.styles().get_or(Color::BLUE, Theme::INFO),
+                <span class="bool-val">true </span>=&gt; cx.styles().get_or(Color::BLUE, <span class="kw-2">&amp;</span>Theme::INFO),
                 <span class="bool-val">false </span>=&gt; style.border_color.mix(bright, style.transition.get(<span class="kw-2">*</span>t)),
             };
 
