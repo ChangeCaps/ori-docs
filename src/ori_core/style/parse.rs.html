@@ -364,7 +364,8 @@
 <a href="#363" id="363">363</a>
 <a href="#364" id="364">364</a>
 <a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::Any,
     error::Error,
     fmt::{<span class="self">self</span>, Debug, Display},
@@ -595,7 +596,6 @@
     </span>I: Iterator&lt;Item = Token&lt;<span class="lifetime">'a</span>&gt;&gt;,
 {
     <span class="kw">let </span>name = expect_ident(next(tokens)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
-    <span class="kw">let </span>token = next(tokens)<span class="question-mark">?</span>;
 
     <span class="kw">let </span><span class="kw-2">mut </span>key = <span class="kw">match </span>key.is_empty() {
         <span class="bool-val">true </span>=&gt; name.to_string(),
@@ -608,6 +608,8 @@
         key.push(<span class="string">'.'</span>);
         key.push_str(ident);
     }
+
+    <span class="kw">let </span>token = next(tokens)<span class="question-mark">?</span>;
 
     <span class="kw">match </span>token.kind {
         TokenKind::Colon =&gt; {
