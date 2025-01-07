@@ -361,14 +361,23 @@
 <a href="#360" id="360">360</a>
 <a href="#361" id="361">361</a>
 <a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::ops::{Deref, DerefMut};
 
 <span class="kw">use crate</span>::{
     canvas::Canvas,
     context::{BuildCx, DrawCx, EventCx, LayoutCx, RebuildCx},
     event::{Event, FocusTarget},
     layout::{Rect, Size, Space},
-    style::Styles,
+    style::{hash_style_key, Styles},
 };
 
 <span class="kw">use super</span>::{View, ViewState};
@@ -470,6 +479,11 @@
     ) -&gt; (T, ViewState) {
         <span class="kw">let </span><span class="kw-2">mut </span>view_state = ViewState::default();
 
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = cx.view_state.class() {
+            <span class="kw">let </span>hash = hash_style_key(class.as_bytes());
+            cx.context_mut::&lt;Styles&gt;().push_class_hash(hash);
+        }
+
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
         new_cx.view_state = <span class="kw-2">&amp;mut </span>view_state;
 
@@ -477,7 +491,7 @@
 
         cx.view_state.propagate(<span class="kw-2">&amp;mut </span>view_state);
 
-        <span class="kw">if </span>view_state.class().is_some() {
+        <span class="kw">if </span>cx.view_state.class().is_some() {
             cx.context_mut::&lt;Styles&gt;().pop_class();
         }
 
@@ -492,8 +506,9 @@
     ) {
         view_state.prepare();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = view_state.class() {
-            cx.context_mut::&lt;Styles&gt;().push_class(class);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = cx.view_state.class() {
+            <span class="kw">let </span>hash = hash_style_key(class.as_bytes());
+            cx.context_mut::&lt;Styles&gt;().push_class_hash(hash);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
@@ -503,7 +518,7 @@
 
         cx.view_state.propagate(view_state);
 
-        <span class="kw">if </span>view_state.class().is_some() {
+        <span class="kw">if </span>cx.view_state.class().is_some() {
             cx.context_mut::&lt;Styles&gt;().pop_class();
         }
     }
@@ -561,8 +576,9 @@
         view_state.set_hovered(cx.window().is_hovered(view_state.id()));
         view_state.prepare();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = view_state.class() {
-            cx.context_mut::&lt;Styles&gt;().push_class(class);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = cx.view_state.class() {
+            <span class="kw">let </span>hash = hash_style_key(class.as_bytes());
+            cx.context_mut::&lt;Styles&gt;().push_class_hash(hash);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
@@ -575,7 +591,7 @@
 
         cx.view_state.propagate(view_state);
 
-        <span class="kw">if </span>view_state.class().is_some() {
+        <span class="kw">if </span>cx.view_state.class().is_some() {
             cx.context_mut::&lt;Styles&gt;().pop_class();
         }
 
@@ -590,8 +606,9 @@
     ) -&gt; Size {
         view_state.mark_layed_out();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = view_state.class() {
-            cx.context_mut::&lt;Styles&gt;().push_class(class);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = cx.view_state.class() {
+            <span class="kw">let </span>hash = hash_style_key(class.as_bytes());
+            cx.context_mut::&lt;Styles&gt;().push_class_hash(hash);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>new_cx = cx.child();
@@ -599,7 +616,7 @@
 
         view_state.size = f(<span class="kw-2">&amp;mut </span>new_cx);
 
-        <span class="kw">if </span>view_state.class().is_some() {
+        <span class="kw">if </span>cx.view_state.class().is_some() {
             cx.context_mut::&lt;Styles&gt;().pop_class();
         }
 
@@ -614,8 +631,9 @@
     ) {
         view_state.mark_drawn();
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = view_state.class() {
-            cx.context_mut::&lt;Styles&gt;().push_class(class);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(class) = cx.view_state.class() {
+            <span class="kw">let </span>hash = hash_style_key(class.as_bytes());
+            cx.context_mut::&lt;Styles&gt;().push_class_hash(hash);
         }
 
         <span class="comment">// create the draw context
@@ -627,7 +645,7 @@
             f(cx);
         });
 
-        <span class="kw">if </span>view_state.class().is_some() {
+        <span class="kw">if </span>cx.view_state.class().is_some() {
             cx.context_mut::&lt;Styles&gt;().pop_class();
         }
     }

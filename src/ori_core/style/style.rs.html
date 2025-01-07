@@ -539,7 +539,12 @@
 <a href="#538" id="538">538</a>
 <a href="#539" id="539">539</a>
 <a href="#540" id="540">540</a>
-<a href="#541" id="541">541</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a></pre></div><pre class="rust"><code><span class="kw">use </span>std::{
     any::{Any, TypeId},
     borrow::Cow,
     collections::HashMap,
@@ -657,6 +662,11 @@
     <span class="doccomment">/// Push a class onto the stack.
     </span><span class="kw">pub fn </span>push_class(<span class="kw-2">&amp;mut </span><span class="self">self</span>, class: <span class="kw-2">&amp;</span>str) {
         <span class="kw">let </span>class = hash_style_key(class.as_bytes());
+        <span class="self">self</span>.push_class_hash(class);
+    }
+
+    <span class="doccomment">/// Push a class hash onto the stack.
+    </span><span class="kw">pub fn </span>push_class_hash(<span class="kw-2">&amp;mut </span><span class="self">self</span>, class: u64) {
         <span class="self">self</span>.stack.push(class);
     }
 
