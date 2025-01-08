@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Styled"],"fn":["comp","hash_style_key","style","val"],"struct":["Style","Styles","Theme"],"type":["Computed"]};
+window.SIDEBAR_ITEMS = {"enum":["Styled"],"fn":["comp","hash_style_key","style","val"],"struct":["ParseError","Style","Styles","Theme"],"type":["Computed"]};
